@@ -73,7 +73,7 @@ if ($cmd=="login") {
 				$_SESSION["login"]=1;
 				$_SESSION["user"]=$id;
 				echo "登录正常,请选择上面的各项菜单";
-				echo "<script language=JavaScript> parent.location='/noc/index.php?cmd=jifang'; </script>";
+				echo "<script language=JavaScript> parent.location='index.php?cmd=jifang'; </script>";
 				exit(0);
 			}
 		}
