@@ -19,3 +19,9 @@
 INSERT INTO `user` (`email`, `isadmin`, `truename`) VALUES ('james', 1, '用户名');
 
 
+3. 2015.09.24 修改
+增加 常用信息 中附件功能
+
+表： file file_del
+mkdir /usr/src/noc/file /usr/src/noc/file_del
+chown apache /usr/src/noc/file /usr/src/noc/file_del

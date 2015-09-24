@@ -15,7 +15,8 @@ font-weight:bold
 table tbody tr{ 
 height:28px; 
 // line-height:28px; 
-background:#6de324; 
+//background:#6de324; 
+background:#d0ffd0; 
 vertical-align:middle; 
 } 
 /* 
@@ -23,7 +24,7 @@ vertical-align:middle;
 */ 
 /*采用csss的这个方法，获得奇数行，让后设置其属性，这样避免使用expression这个容易出错的方法*/ 
 table tbody tr:nth-child(odd){ 
-background-color: #359272 
+background-color: #60ff60 
 } 
 
 table tbody tr:hover{ 

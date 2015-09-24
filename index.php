@@ -1,11 +1,3 @@
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
-<link href="table.css" type="text/css" rel="stylesheet" /> 
-<title>NOC.ustc.edu.cn</title>
-</head>
-<body bgcolor="#dddddd" text="#000000">
-
 <?php
 include("db.php");
 session_start();
@@ -18,6 +10,8 @@ function checkvalue($str) {
         	if( $str[$i] == '-' ) continue;
         	if( $str[$i] == '_' ) continue;
         	if( $str[$i] == ' ' ) continue;
+        	if( $str[$i] == '.' ) continue;
+        	if( $str[$i] == '/' ) continue;
         	if( $str[$i] == ':' ) continue;
         	echo $str."中第".$i."非法字符".$str[$i];
 		exit(0);
@@ -50,6 +44,43 @@ function changehist ($qstr) {
 }
 
 $cmd=safe_get("cmd");
+
+if ($cmd=="file_down") {
+	$login=$_SESSION["login"];
+	if($login<>1) {   // 用户没有登录
+		echo "请登录后下载";
+		exit(0);
+	}
+	$fid=safe_get("fid");
+	$query="select * from file where id=".$fid;
+        $result=mysql_query($query,$db);
+	$r=mysql_fetch_row($result);
+	$file=$uploaddir."/".$fid;
+	if (file_exists($file)) {
+    		header('Content-Description: File Transfer');
+    		header('Content-Type: application/octet-stream');
+    		header('Content-Disposition: attachment; filename="'.$r[2].'"');
+    		header('Expires: 0');
+    		header('Cache-Control: must-revalidate');
+    		header('Pragma: public');
+    		header('Content-Length: ' . $r[3]);
+    		readfile($file);
+    		exit(0);
+	}else  {
+		echo "文件不存在<p>";
+		exit(0);
+	}
+}
+?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
+<link href="table.css" type="text/css" rel="stylesheet" /> 
+<title>NOC.ustc.edu.cn</title>
+</head>
+<body bgcolor="#dddddd" text="#000000">
+
+<?php
 
 if ($cmd=="logout") {
 	$_SESSION["login"]=0;
@@ -272,10 +303,8 @@ while($r=mysql_fetch_row($result)){
 	$result2=mysql_query($q,$db);
 	$rows=mysql_num_rows($result2); 
 	echo "<td rowspan=".$rows." align=center>".$count."</td>";
-	if( $isadmin ==1 ) 
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket&id=".$r[0].">".$r[1]."</a></td>";
-	else echo "<td rowspan=".$rows.">".$r[1]."</td>";
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
+	echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket&id=".$r[0].">".$r[1]."</a></td>";
+	echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
 	echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
 	if ( $r[2] == "0000-00-00 00:00:00" )
 		echo " ";
@@ -425,7 +454,63 @@ if ($cmd=="info_detail") {
 	echo "<hr><pre>";
 	echo $r[2];
 	echo "</pre>";
-} 
+	echo "<hr>";
+        $query="select * from file where infoid=".$id;
+        $result=mysql_query($query,$db);
+        echo "附件信息<table>";
+        echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
+        $count = 0;
+        while($r=mysql_fetch_row($result)) {
+                $count++;
+                echo "<tr><td>";echo $count;"</td>";
+                echo "<td>".$r[5]."</td>";
+                echo "<td>".$r[2]."</td>";
+                echo "<td>".$r[3]."</td>";
+                echo "<td>".$r[4]."</td>";
+                echo "<td><a href=index.php?cmd=file_down&id=".$id."&fid=".$r[0]." target=_blank>下载</a></td>";
+                echo "</tr>\n";
+        }
+        echo "</table><p>";
+
+} // end cmd==info_detail
+
+if ($cmd=="file_upload") {
+	if($_FILES['userfile']['error']<>0) { 
+		echo "文件上载错误<p>";
+		echo "错误代码:".$_FILES['userfile']['error'];
+		$cmd="info_modi";
+	} else {
+		$infoid = safe_get("id");
+		echo $infoid;
+		$name = mysql_escape_string($_FILES['userfile']['name']);
+		$size = strval($_FILES['userfile']['size']);
+		$type = $_FILES['userfile']['type'];
+		checkvalue($size);
+		checkvalue($type);
+		$query = "insert into file (infoid,name,size,type,tm) values($infoid,'$name','$size','$type',now())";
+		echo $query;
+		mysql_query($query,$db);
+		$id = strval(mysql_insert_id());
+		echo $_FILES['userfile']['tmp_name'];
+		echo "<p>";
+		echo $uploaddir."/".$id;
+		move_uploaded_file($_FILES['userfile']['tmp_name'],$uploaddir."/".$id);
+		$cmd="info_modi";
+	}
+} // end cmd==file_upload
+
+if ($cmd=="file_del") {
+	$infoid = safe_get("id");
+	$fid = safe_get("fid");
+	$query = "insert into file_del select * from file where id=$fid";
+	echo $query;
+	mysql_query($query,$db);
+	$query = "delete from file where id=$fid";
+	echo $query;
+	mysql_query($query,$db);
+	rename($uploaddir."/".$fid, $uploaddir."_del/".$fid);
+	$cmd="info_modi";
+}
 
 if ($cmd=="info_modi") {
 	$id = safe_get("id");
@@ -437,11 +522,37 @@ if ($cmd=="info_modi") {
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd value=info_modido type=hidden>";
 	echo "<input name=id value=".$r[0]." type=hidden>";
-    	echo "标题:<input name=title value=\"".$r[1]."\" size=75><br>";
-   	echo "内容:<textarea name=memo cols=100 rows=40>";
+    	echo "标题:<br><input name=title value=\"".$r[1]."\" size=75><p>";
+   	echo "内容:<br><textarea name=memo cols=100 rows=40>";
 	echo $r[2];
-	echo "</textarea><br>";
-   	echo "<input type=submit value=修改></form>";
+	echo "</textarea><p>";
+   	echo "<input type=submit value=修改></form><p>";
+	echo "<hr>";
+
+	$query="select * from file where infoid=".$id;
+	$result=mysql_query($query,$db);
+	echo "附件信息<table>";
+	echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
+	$count = 0;
+	while($r=mysql_fetch_row($result)) {
+		$count++;
+		echo "<tr><td>";echo $count;"</td>";
+		echo "<td>".$r[5]."</td>";
+		echo "<td>".$r[2]."</td>";
+		echo "<td>".$r[3]."</td>";
+		echo "<td>".$r[4]."</td>";
+		echo "<td><a href=index.php?cmd=file_del&id=".$id."&fid=".$r[0].">删除(移到回收站)</a></td>";
+		echo "</tr>\n";
+	}
+	echo "</table><p>";
+	echo "上传附件<br>";
+	echo "<form enctype=\"multipart/form-data\" action=\"index.php\" method=\"post\">";
+	echo "<input name=cmd value=file_upload type=hidden>";
+	echo "<input name=id value=".$id." type=hidden>";
+	echo "请选择文件： <br> ";
+	echo "<input name=\"userfile\" type=\"file\"><br>";
+	echo "<input type=\"submit\" value=\"上传文件\">   ";
+	echo "</form>   ";
 } // end cmd==info_detail
 
 if($cmd=='cab_add') {
@@ -486,6 +597,7 @@ if($cmd=='cab_modi') {
 		echo "</form>";
 	}
 }
+
 if ($cmd=='cab_list') {
 	echo "机柜信息<p><table border=1>";
 	echo "<tr><th>机柜编号</th><th>用途</th><th>责任人</th><th>PS1</th><th>PS2</th><th>设备数</t><th>命令</th></tr>\n";
