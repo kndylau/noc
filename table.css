@@ -1,0 +1,31 @@
+body{ margin:4 auto; } 
+/*设置表头的margin为0则表居中显示，border为0则无边界*/ 
+table{ 
+border:1px; 
+solid:#000 
+} 
+/*设置th表头的属性，font-weight为bold则显示为黑粗*/ 
+table tr th{ height:28px; 
+color: #ffffff;
+width: auto; 
+// line-height:28px; 
+background:#0000aa; 
+font-weight:bold 
+} 
+table tbody tr{ 
+height:28px; 
+// line-height:28px; 
+background:#6de324; 
+vertical-align:middle; 
+} 
+/* 
+*设置鼠标经过颜色的变化 
+*/ 
+/*采用csss的这个方法，获得奇数行，让后设置其属性，这样避免使用expression这个容易出错的方法*/ 
+table tbody tr:nth-child(odd){ 
+background-color: #359272 
+} 
+
+table tbody tr:hover{ 
+background-color: #ffffff; 
+} 
