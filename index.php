@@ -366,7 +366,7 @@ while($r=mysql_fetch_row($rr)){
 	
 	echo "<td rowspan=".$rows.">".$r[3]."</td>";
 	$firstrow=1;
-	while($r2=mysql_fetch_row($result2)) {
+	while($r2=mysql_fetch_row($rr2)) {
 		if($firstrow==1) 
 			$firstrow=0;
 		else {
