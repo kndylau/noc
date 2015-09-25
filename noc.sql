@@ -84,6 +84,18 @@ CREATE TABLE `file` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `file_del` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `infoid` int(5) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `size` int(10) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `tm` datetime NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `hist` (
   `id` int(8) unsigned NOT NULL auto_increment,
   `tm` datetime NOT NULL,
