@@ -16,7 +16,7 @@
 
 并且需要在数据库中插入如下信息才能让用户登录：
 
-INSERT INTO `user` (`email`, `isadmin`, `truename`) VALUES ('james', 1, '用户名');
+INSERT INTO user (email, isadmin, truename) VALUES ('james', 1, '用户名');
 
 
 3. 2015.09.24 修改
@@ -25,3 +25,7 @@ INSERT INTO `user` (`email`, `isadmin`, `truename`) VALUES ('james', 1, '用户名'
 表： file file_del
 mkdir /usr/src/noc/file /usr/src/noc/file_del
 chown apache /usr/src/noc/file /usr/src/noc/file_del
+
+4. 2015.09.25 增加用户权限管理
+
+

@@ -118,6 +118,42 @@ CREATE TABLE `ODFPAN` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `file`
+--
+
+DROP TABLE IF EXISTS `file`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `file` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `infoid` int(5) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `size` int(10) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `tm` datetime NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `file_del`
+--
+
+DROP TABLE IF EXISTS `file_del`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `file_del` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `infoid` int(5) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `size` int(10) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `tm` datetime NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `hist`
 --
 
@@ -147,7 +183,7 @@ CREATE TABLE `info` (
   `title` varchar(150) NOT NULL,
   `memo` varchar(65000) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +201,22 @@ CREATE TABLE `jifang_daily` (
   `msg` varchar(255) NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `module`
+--
+
+DROP TABLE IF EXISTS `module`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `module` (
+  `id` int(4) unsigned NOT NULL auto_increment,
+  `module` varchar(50) NOT NULL,
+  `memo` varchar(50) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +233,7 @@ CREATE TABLE `ticket` (
   `memo` varchar(255) character set latin1 collate latin1_bin NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +250,7 @@ CREATE TABLE `ticketdetail` (
   `memo` varchar(255) character set latin1 collate latin1_bin NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,6 +267,22 @@ CREATE TABLE `user` (
   PRIMARY KEY  (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `userright`
+--
+
+DROP TABLE IF EXISTS `userright`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userright` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `user` varchar(50) NOT NULL,
+  `module` varchar(50) NOT NULL,
+  `right` int(1) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -226,4 +293,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-09-24 11:23:08
+-- Dump completed on 2015-09-25 10:35:56

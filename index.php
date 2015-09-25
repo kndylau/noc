@@ -24,12 +24,12 @@ function safe_get($str) {
 	return $x;
 }
 
-function changehist ($qstr) {
+function changehist ($q) {
 	echo "修改记录<p><table border=1>";
         echo "<tr><th>时间</th><th>修改内容</th></tr>\n";
 
         $count = 0;
-        $rr=mysql_query($qstr);
+        $rr=mysql_query($q);
         while($row=mysql_fetch_row($rr)) {
                 $count++;
                 echo "<tr><td>";
@@ -43,6 +43,29 @@ function changehist ($qstr) {
         echo "</table>";
 }
 
+// 0 no right
+// 1 read right
+// 2 new right
+// 3 full right 
+function getuserright($module) {
+	$user = $_SESSION["user"];
+	$q = "select isadmin from user where email='$user'";
+        $rr=mysql_query($q);
+        $row=mysql_fetch_row($rr);
+	if($row[0]=="1") // super user
+		return 3;  // full right
+	$q = "select `right` from userright where user='$user' and module='$module'";
+        $rr=mysql_query($q);
+        $row=mysql_fetch_row($rr);
+	return intval($row[0]);
+}
+
+function checkright($module, $right) {
+	if(getuserright($module)<$right) {
+		echo "无权限";
+		exit(0);
+	}
+}
 $cmd=safe_get("cmd");
 
 if ($cmd=="file_down") {
@@ -51,10 +74,14 @@ if ($cmd=="file_down") {
 		echo "请登录后下载";
 		exit(0);
 	}
+	if(getuserright("info")<1) {
+		echo "无权限下载";
+		exit(0);
+	}
 	$fid=safe_get("fid");
-	$query="select * from file where id=".$fid;
-        $result=mysql_query($query,$db);
-	$r=mysql_fetch_row($result);
+	$q="select * from file where id=".$fid;
+        $rr=mysql_query($q);
+	$r=mysql_fetch_row($rr);
 	$file=$uploaddir."/".$fid;
 	if (file_exists($file)) {
     		header('Content-Description: File Transfer');
@@ -93,9 +120,9 @@ if ($cmd=="login") {
 	$pass=$_REQUEST["pass"];
 	
 	if( $id<>"" ) {
-		$query="select isadmin,truename from user where email='".$id."'";
-		$result=mysql_query($query,$db);
-		$r=mysql_fetch_row($result);
+		$q="select isadmin,truename from user where email='".$id."'";
+		$rr=mysql_query($q);
+		$r=mysql_fetch_row($rr);
 		if($r) {
 			$_SESSION["isadmin"]=$r[0];
 			$_SESSION["truename"]=$r[1];
@@ -126,64 +153,80 @@ if($login<>1) {   // 用户没有登录
 	echo "<input type=submit value=登录></form>";
 	exit(0);
 } // login <> 1
-?>
 
-<a href=index.php?cmd=jifang>机房巡检</a>  
-<a href=index.php?cmd=ticket>故障处理</a>  
-<a href=index.php?cmd=cab_list>服务器管理</a>  
-<a href=index.php?cmd=odf_list>ODF管理</a>  
-<a href=index.php?cmd=ip>IP管理</a>  
-<a href=index.php?cmd=info>常用信息</a>  
-<a href=index.php?cmd=logout>退出</a>
+if(getuserright("jifang")>0) 
+	echo "<a href=index.php?cmd=jifang>机房巡检</a> ";
+if(getuserright("ticket")>0) 
+	echo "<a href=index.php?cmd=ticket>故障处理</a> ";
+if(getuserright("server")>0) 
+	echo "<a href=index.php?cmd=cab_list>服务器管理</a> ";
+if(getuserright("odf")>0) 
+	echo "<a href=index.php?cmd=odf_list>ODF管理</a> ";
+if(getuserright("ip")>0) 
+	echo "<a href=index.php?cmd=ip>IP管理</a> ";
+if(getuserright("info")>0) 
+	echo "<a href=index.php?cmd=info>常用信息</a> ";
+if(getuserright("user")>0) 
+	echo "<a href=index.php?cmd=user>用户管理</a> ";
 
-<?
+
 echo $_SESSION["truename"];
 echo " From:";
 echo  $_SERVER["REMOTE_ADDR"]; 
-echo "有任何问题请联系 james@ustc.edu.cn <hr>";
+echo "有任何问题请联系 james@ustc.edu.cn";
+echo " <a href=index.php?cmd=logout>退出</a>";
+echo "<hr>";
 
 if ($cmd=="" ) {
 	$cmd="jifang";
 }
 
+// JIFANG
+
 if($cmd=="jifang_new") {
+	checkright("jifang",2);
 	$cmd="jifang";
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
 	$msg=mysql_escape_string($_REQUEST["msg"]);
 	$q="insert into jifang_daily(tm,huanjing,server,msg,op) values(now(),".$huanjing.",".$server.",'".$msg."','".$_SESSION["user"]."')";
-	mysql_query($q,$db);
+	mysql_query($q);
 }  else if($cmd=="jifang_modido") {
+	checkright("jifang",3);
 	$cmd="jifang";
 	$id=safe_get("id");
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
 	$msg=mysql_escape_string($_REQUEST["msg"]);
 	$q="update jifang_daily set huanjing=".$huanjing.",server=".$server.",msg='".$msg."' where id=".$id;
-	mysql_query($q,$db);
+	mysql_query($q);
 }
 
 if ( $cmd=="jifang") {
+	checkright("jifang",1);
 	echo "<a href=index.php?cmd=jifang&all=yes>列出所有记录</a><p>";
 
 	if( $_REQUEST["all"] == "yes" )
-		$query="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc";
+		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc";
 	else
-		$query="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc limit 30";
-	$result=mysql_query($query,$db);
+		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc limit 30";
+	$rr=mysql_query($q);
 
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr> <th>序号</th> <th>时间</th> <th>环境</th> <th>服务器</th> <th>事件描述</th> <th>实施人</th> </tr>";
 
 	$count=0;
 
-while($r=mysql_fetch_row($result)){
+while($r=mysql_fetch_row($rr)){
 	$count++;
 	if ( ($r[3] == 1) ||($r[3] == 1)  ) 
 		echo "<tr style=\"background-color:#6dc334\">";
 	else
 		echo "<tr style=\"background-color:#3592e2\">";
-	echo "<td align=center><a href=index.php?cmd=jifang&id=".$r[0].">".$count."</a></td>";
+	if(getuserright("jifang")>=3) 
+		echo "<td align=center><a href=index.php?cmd=jifang&id=".$r[0].">".$count."</a></td>";
+	else 
+		echo "<td align=center>".$count."</td>";
 	echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
 	echo "<td>";
 	if ($r[2] == 0) echo "<font color=red>异常</font>";
@@ -201,9 +244,9 @@ while($r=mysql_fetch_row($result)){
 	echo "</table>\n";
 	$id = safe_get("id");
 	if( $id ) {
-		$query="select id,tm,huanjing,server,msg from jifang_daily where id=".$id;
-		$result=mysql_query($query,$db);
-		$r=mysql_fetch_row($result);
+		$q="select id,tm,huanjing,server,msg from jifang_daily where id=".$id;
+		$rr=mysql_query($q);
+		$r=mysql_fetch_row($rr);
 		echo "<p>";
 		echo "修改记录<br>";
 		echo "<form action=index.php method=post>";
@@ -223,7 +266,7 @@ while($r=mysql_fetch_row($result)){
 		echo "存在问题:<input type=text size=200 name=msg value=\"".$r[4]."\"><br>";
     		echo "<input type=submit name=修改记录></form>";
 
-	} else {
+	} else if(getuserright("jifang")>=2) {
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=jifang_new type=hidden>";
     		echo "环境状况: &nbsp;&nbsp;正常<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0><br>";
@@ -234,76 +277,85 @@ while($r=mysql_fetch_row($result)){
 	}
 } // end cmd==jifang
 
+// TICKET
 
 if($cmd=="ticket_new") {
+	checkright("ticket",2);
 	$cmd="ticket";
 	$st=safe_get("st");
 	$memo=mysql_escape_string($_REQUEST["memo"]);
 	$memo2=mysql_escape_string($_REQUEST["memo2"]);
 	$q="insert into ticket (st,et,memo,op) values('".$st."','0-0-0 00:00:00','".$memo."','".$_SESSION["user"]."')";
-	mysql_query($q,$db);
+	mysql_query($q);
 	$q="SELECT LAST_INSERT_ID()";
-	$result=mysql_query($q,$db);
-	$r=mysql_fetch_row($result);	
+	$rr=mysql_query($q);
+	$r=mysql_fetch_row($rr);	
 	$q="insert into ticketdetail (tid,tm,memo,op) values(".$r[0].",'".$st."','".$memo2."','".$_SESSION["user"]."')";
-	mysql_query($q,$db);
+	mysql_query($q);
 }  else if($cmd=="ticket_modi") {
+	checkright("ticket",3);
 	$cmd="ticket";
 	$id=safe_get("id");
 	$st=safe_get("st");
 	$et=safe_get("et");
 	$memo=mysql_escape_string($_REQUEST["memo"]);
 	$q="update ticket set st='".$st."',et='".$et."',memo='".$memo."' where id='".$id."'";
-	mysql_query($q,$db);
+	mysql_query($q);
 } else if($cmd=="ticketdetail_modi") {
+	checkright("ticket",3);
 	$cmd="ticket";
 	$tid=safe_get("tid");
 	$did=safe_get("did");
 	$tm=safe_get("tm");
 	$memo=mysql_escape_string($_REQUEST["memo"]);
 	$q="update ticketdetail set tm='".$tm."',memo='".$memo."' where id='".$did."'";
-	mysql_query($q,$db);
+	mysql_query($q);
 	$isend=safe_get("isend");
 	if( $isend ) 
 	$q="update ticket set et=\"".$tm."\" where id=".$tid;
-	mysql_query($q,$db);
+	mysql_query($q);
 } else if($cmd=="ticketdetail_new") {
+	checkright("ticket",2);
 	$cmd="ticket";
 	$tid=safe_get("tid");
 	$tm=safe_get("tm");
 	$memo=mysql_escape_string($_REQUEST["memo"]);
 	$q="insert into ticketdetail (tid,tm,memo,op) values(".$tid.",'".$tm."','".$memo."','".$_SESSION["user"]."')";
-	mysql_query($q,$db);
+	mysql_query($q);
 	$isend=safe_get("isend");
 	if( $isend )  {
 		$q="update ticket set et=\"".$tm."\" where id=".$tid;
-		mysql_query($q,$db);
+		mysql_query($q);
 	}
 }
 
 if ($cmd=="ticket") {
+	checkright("ticket",1);
 	echo "<a href=index.php?cmd=ticket&all=yes>列出所有记录</a><p>";
 	if( safe_get("all") == "yes" )
-		$query="select id,st,et,memo,op,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket order by st desc";
+		$q="select id,st,et,memo,op,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket order by st desc";
 	else
-		$query="select id,st,et,memo,op,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket where (year(st) = year(now())) or (year(et)=year(now())) or (year(et)=0) order by st desc";
-	$result=mysql_query($query,$db);
+		$q="select id,st,et,memo,op,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket where (year(st) = year(now())) or (year(et)=year(now())) or (year(et)=0) order by st desc";
+	$rr=mysql_query($q);
 
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr> <th>序号</th> <th>开始时间</th> <th>结束时间</th> <th>故障时间</th> <th>事件描述</th> <th>时间</th> <th>处理</th> <th>实施人</th> </tr>\n";
 
 	$count=0;
-while($r=mysql_fetch_row($result)){
+while($r=mysql_fetch_row($rr)){
 	$count++;
 	if ( $r[2] == "0000-00-00 00:00:00" ) 
 		echo "<tr style=\"background-color:#3592e2\">";
 	else
 		echo "<tr style=\"background-color:#6dc334\">";
 	$q="select id,tm,memo,truename from ticketdetail,user where op=email and tid='".$r[0]."' order by tm";
-	$result2=mysql_query($q,$db);
-	$rows=mysql_num_rows($result2); 
+	$rr2=mysql_query($q);
+	$rows=mysql_num_rows($rr2); 
 	echo "<td rowspan=".$rows." align=center>".$count."</td>";
-	echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket&id=".$r[0].">".$r[1]."</a></td>";
+	if(getuserright("ticket")>=2) 
+		echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket&id=".$r[0].">".$r[1]."</a></td>";
+	else
+		echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[1]."</td>";
 	echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
 	echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
 	if ( $r[2] == "0000-00-00 00:00:00" )
@@ -323,7 +375,10 @@ while($r=mysql_fetch_row($result)){
 			else
 				echo "<tr style=\"background-color:#6dc334\">";
 		}
-		echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket&did=".$r2[0].">".$r2[1]."</a></td>";
+		if(getuserright("ticket")>=3) 
+			echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket&did=".$r2[0].">".$r2[1]."</a></td>";
+		else
+			echo "<td nowrap=\"nowrap\">".$r2[1]."</td>";
 		echo "<td>".$r2[2]."</td>";
 		echo "<td>".$r2[3]."</td>";
 		echo "</tr>\n";
@@ -332,10 +387,10 @@ while($r=mysql_fetch_row($result)){
 	echo "</table>";
 	$id = safe_get("id");
 	$did = safe_get("did");
-	if ( $did ) {
-		$query="select id,tid,tm,memo from ticketdetail where id=".$did;
-		$result=mysql_query($query,$db);
-		$r=mysql_fetch_row($result);
+	if ( $did && (getuserright("ticket")>=3)) {
+		$q="select id,tid,tm,memo from ticketdetail where id=".$did;
+		$rr=mysql_query($q);
+		$r=mysql_fetch_row($rr);
 		echo "<p>";
 		echo "修改ticket处理信息<br>";
 		echo "<form action=index.php method=post>";
@@ -347,31 +402,35 @@ while($r=mysql_fetch_row($result)){
 		echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><br>";
     		echo "<input type=submit value=修改处理记录></form>";
 	} else if( $id ) {
-		$query="select id,st,et,memo from ticket where id=".$id;
-		$result=mysql_query($query,$db);
-		$r=mysql_fetch_row($result);
+		$q="select id,st,et,memo from ticket where id=".$id;
+		$rr=mysql_query($q);
+		$r=mysql_fetch_row($rr);
 		echo "<p>";
-		echo "修改ticket<br>";
-		echo "<form action=index.php method=post>";
-		echo "<input name=cmd value=iticket_modi type=hidden>";
-		echo "<input name=id value=".$r[0]." type=hidden>";
-    		echo "开始时间:<input name=st value=\"".$r[1]."\"><br>";
-    		echo "结束时间:<input name=et value=\"".$r[2]."\"><br>";
-    		echo "事件描述:<input name=memo value=\"".$r[3]."\"><br>";
-    		echo "<input type=submit name=修改ticket></form>";
+		if(getuserright("ticket")>=3) {
+			echo "修改ticket<br>";
+			echo "<form action=index.php method=post>";
+			echo "<input name=cmd value=iticket_modi type=hidden>";
+			echo "<input name=id value=".$r[0]." type=hidden>";
+    			echo "开始时间:<input name=st value=\"".$r[1]."\"><br>";
+    			echo "结束时间:<input name=et value=\"".$r[2]."\"><br>";
+    			echo "事件描述:<input name=memo value=\"".$r[3]."\"><br>";
+    			echo "<input type=submit name=修改ticket></form>";
+		}
 
-		echo "新增处理描述<br>";
-		echo "<form action=index.php method=post>";
-		echo "<input name=cmd value=ticketdetail_new type=hidden>";
-		echo "<input name=tid value=".$r[0]." type=hidden>";
-		echo "时间:<input name=tm value=\"";
-		echo strftime("%Y-%m-%d %H:%M:00",time());
-		echo "\"><br>";
-		echo "处理描述:<input name=memo size=100><br>";
-		echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><br>";
-		echo "<input type=submit value=新增处理描述>";
-		echo "</form>";
-	} else {
+		if(getuserright("ticket")>=2) {
+			echo "新增处理描述<br>";
+			echo "<form action=index.php method=post>";
+			echo "<input name=cmd value=ticketdetail_new type=hidden>";
+			echo "<input name=tid value=".$r[0]." type=hidden>";
+			echo "时间:<input name=tm value=\"";
+			echo strftime("%Y-%m-%d %H:%M:00",time());
+			echo "\"><br>";
+			echo "处理描述:<input name=memo size=100><br>";
+			echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><br>";
+			echo "<input type=submit value=新增处理描述>";
+			echo "</form>";
+		}
+	} else if(getuserright("ticket")>=2){
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ticket_new type=hidden>";
 		echo "开始时间:<input name=st value=\"";
@@ -384,209 +443,43 @@ while($r=mysql_fetch_row($result)){
 	}
 } // end cmd==ticket
 
-
-if($cmd=="info_new") {
-	$cmd="info";
-	$title=mysql_escape_string($_REQUEST["title"]);
-	$memo=mysql_escape_string($_REQUEST["memo"]);
-	if($title=="") {
-		echo "<form action=index.php method=post>";
-		echo "<input name=cmd value=info_new type=hidden>";
-		echo "标题:<input name=title size=75> <br>";
-		echo "内容:<textarea name=memo cols=100 rows=40></textarea><br>";
-		echo " <input type=submit value=新增常用信息> </form>";
- 		exit(0);
-	}
-	$q="insert into info (title,memo) values('$title','$memo')";
-	mysql_query($q,$db);
-}  else if($cmd=="info_modido") {
-	$cmd="info";
-	$id=safe_get("id");
-	$title=mysql_escape_string($_REQUEST["title"]);
-	$memo=mysql_escape_string($_REQUEST["memo"]);
-	$q="update info set title='$title',memo='$memo' where id=$id";
-	mysql_query($q,$db);
-} // end cmd==info_new
-
-if ($cmd=="info_up") {
-	$cmd="info";
-	$id=safe_get("id");
-	$q="update info set sortid=sortid-1 where id=$id";
-	mysql_query($q,$db);
-}
-if ($cmd=="info_down") {
-	$cmd="info";
-	$id=safe_get("id");
-	$q="update info set sortid=sortid+1 where id=$id";
-	mysql_query($q,$db);
-}
-
-if ($cmd=="info") { 
-	$query= "select id,title,left(memo,100) from info order by sortid,id";
-	$result=mysql_query($query,$db);
-	echo "<table border=1 cellspacing=0>";
-	echo " <tr> <th>序号</th> <th>标题</th> <th>内容摘要</th> <th>命令</th> </tr>";
-
-	$count=0;
-	while($r=mysql_fetch_row($result)){
-		$count++;
-		echo "<tr><td>".$count."</td>";
-		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[1]."<a/></td>";
-		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[2]."<a/></td>";
-		echo "<td><a href=index.php?cmd=info_modi&id=$r[0]>修改<a/> ";
-		echo "<a href=index.php?cmd=info_up&id=$r[0]>上移<a/> ";
-		echo "<a href=index.php?cmd=info_down&id=$r[0]>下移<a/> ";
-		echo "</td>";
-		echo "</tr>\n";
-	}
-	echo "</table>";
-	echo "<p>";
-	echo "<a href=index.php?cmd=info_new>新增常用信息</a>";
-} // end cmd==info
-
-if ($cmd=="info_detail") {
-	$id = safe_get("id");
-	$query="select id,title,memo from info where id=".$id;
-	$result=mysql_query($query,$db);
-	$r=mysql_fetch_row($result);
-	echo "<p>";
-	echo $r[1];
-	echo "<hr><pre>";
-	echo $r[2];
-	echo "</pre>";
-	echo "<hr>";
-        $query="select * from file where infoid=".$id;
-        $result=mysql_query($query,$db);
-        echo "附件信息<table>";
-        echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
-        $count = 0;
-        while($r=mysql_fetch_row($result)) {
-                $count++;
-                echo "<tr><td>";echo $count;"</td>";
-                echo "<td>".$r[5]."</td>";
-                echo "<td>".$r[2]."</td>";
-                echo "<td>".$r[3]."</td>";
-                echo "<td>".$r[4]."</td>";
-                echo "<td><a href=index.php?cmd=file_down&id=".$id."&fid=".$r[0]." target=_blank>下载</a></td>";
-                echo "</tr>\n";
-        }
-        echo "</table><p>";
-
-} // end cmd==info_detail
-
-if ($cmd=="file_upload") {
-	if($_FILES['userfile']['error']<>0) { 
-		echo "文件上载错误<p>";
-		echo "错误代码:".$_FILES['userfile']['error'];
-		$cmd="info_modi";
-	} else {
-		$infoid = safe_get("id");
-		echo $infoid;
-		$name = mysql_escape_string($_FILES['userfile']['name']);
-		$size = strval($_FILES['userfile']['size']);
-		$type = $_FILES['userfile']['type'];
-		checkvalue($size);
-		checkvalue($type);
-		$query = "insert into file (infoid,name,size,type,tm) values($infoid,'$name','$size','$type',now())";
-		echo $query;
-		mysql_query($query,$db);
-		$id = strval(mysql_insert_id());
-		echo $_FILES['userfile']['tmp_name'];
-		echo "<p>";
-		echo $uploaddir."/".$id;
-		move_uploaded_file($_FILES['userfile']['tmp_name'],$uploaddir."/".$id);
-		$cmd="info_modi";
-	}
-} // end cmd==file_upload
-
-if ($cmd=="file_del") {
-	$infoid = safe_get("id");
-	$fid = safe_get("fid");
-	$query = "insert into file_del select * from file where id=$fid";
-	echo $query;
-	mysql_query($query,$db);
-	$query = "delete from file where id=$fid";
-	echo $query;
-	mysql_query($query,$db);
-	rename($uploaddir."/".$fid, $uploaddir."_del/".$fid);
-	$cmd="info_modi";
-}
-
-if ($cmd=="info_modi") {
-	$id = safe_get("id");
-	$query="select id,title,memo from info where id=".$id;
-	$result=mysql_query($query,$db);
-	$r=mysql_fetch_row($result);
-
-	echo "修改信息<br>";
-	echo "<form action=index.php method=post>";
-	echo "<input name=cmd value=info_modido type=hidden>";
-	echo "<input name=id value=".$r[0]." type=hidden>";
-    	echo "标题:<br><input name=title value=\"".$r[1]."\" size=75><p>";
-   	echo "内容:<br><textarea name=memo cols=100 rows=40>";
-	echo $r[2];
-	echo "</textarea><p>";
-   	echo "<input type=submit value=修改></form><p>";
-	echo "<hr>";
-
-	$query="select * from file where infoid=".$id;
-	$result=mysql_query($query,$db);
-	echo "附件信息<table>";
-	echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
-	$count = 0;
-	while($r=mysql_fetch_row($result)) {
-		$count++;
-		echo "<tr><td>";echo $count;"</td>";
-		echo "<td>".$r[5]."</td>";
-		echo "<td>".$r[2]."</td>";
-		echo "<td>".$r[3]."</td>";
-		echo "<td>".$r[4]."</td>";
-		echo "<td><a href=index.php?cmd=file_del&id=".$id."&fid=".$r[0].">删除(移到回收站)</a></td>";
-		echo "</tr>\n";
-	}
-	echo "</table><p>";
-	echo "上传附件<br>";
-	echo "<form enctype=\"multipart/form-data\" action=\"index.php\" method=\"post\">";
-	echo "<input name=cmd value=file_upload type=hidden>";
-	echo "<input name=id value=".$id." type=hidden>";
-	echo "请选择文件： <br> ";
-	echo "<input name=\"userfile\" type=\"file\"><br>";
-	echo "<input type=\"submit\" value=\"上传文件\">   ";
-	echo "</form>   ";
-} // end cmd==info_detail
+// SERVER/CAB
 
 if($cmd=='cab_add') {
+	checkright("server",2);
 	$cabid = safe_get("cabid");
 	$ps1= safe_get("ps1");
 	$ps2= safe_get("ps2");
 	$mgt = mysql_escape_string($_REQUEST["mgt"]);
 	$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
-	$qstr="insert into JF_CAB values('$cabid','$ps1','$ps2','$mgt','$cabuse')";
-	$rr=mysql_query($qstr);
+	$q="insert into JF_CAB values('$cabid','$ps1','$ps2','$mgt','$cabuse')";
+	mysql_query($q);
 	echo "增加完成<p>";
 	$cmd='cab_list';
 }
 
 if($cmd=='cab_modido') {
+	checkright("server",3);
 	$oldcabid = safe_get("oldcabid");
 	$cabid = safe_get("cabid");
 	$ps1= safe_get("ps1");
 	$ps2= safe_get("ps2");
 	$mgt = mysql_escape_string($_REQUEST["mgt"]);
 	$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
-	$qstr="update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse'  where CABID='$oldcabid'";
-	$rr=mysql_query($qstr);
+	$q="update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse'  where CABID='$oldcabid'";
+	mysql_query($q);
 	echo "修改完成<p>";
 	$cmd='cab_list';
 }
 
 if($cmd=='cab_modi') {
+	checkright("server",3);
 	$cabid = safe_get("cabid");
 	echo "<form action=index.php method=post>";
 	echo "<input type=hidden name=cmd value=cab_modido>";
 	echo "<input type=hidden name=oldcabid value=$cabid>";
-	$qstr="select * from JF_CAB where CABID='$cabid'";
-	$rr=mysql_query($qstr);
+	$q="select * from JF_CAB where CABID='$cabid'";
+	$rr=mysql_query($q);
 	if($row=mysql_fetch_row($rr)) {
 		echo "机柜编号: <input name=cabid value=$row[0]> <br>";
 		echo "用途: <input name=cabuse value=$row[4]><br>";
@@ -599,11 +492,12 @@ if($cmd=='cab_modi') {
 }
 
 if ($cmd=='cab_list') {
+	checkright("server",1);
 	echo "机柜信息<p><table border=1>";
 	echo "<tr><th>机柜编号</th><th>用途</th><th>责任人</th><th>PS1</th><th>PS2</th><th>设备数</t><th>命令</th></tr>\n";
 
-	$qstr="select * from JF_CAB order by CABID";
-	$rr=mysql_query($qstr);
+	$q="select * from JF_CAB order by CABID";
+	$rr=mysql_query($q);
 	while($row=mysql_fetch_row($rr)) {
 		echo "<tr><td> "; echo "<a href=index.php?cmd=cabinfo_list&cabid=$row[0]>$row[0]</a>";
 		echo "</td><td>"; echo $row[4];
@@ -611,14 +505,16 @@ if ($cmd=='cab_list') {
 		echo "</td><td>"; echo $row[1];
 		echo "</td><td>"; echo $row[2];
 		echo "</td><td>"; 
-		$r=mysql_query("select count(*) from JF_Server where CABID='$row[0]'");
-		$r=mysql_fetch_row($r);
+		$rr2=mysql_query("select count(*) from JF_Server where CABID='$row[0]'");
+		$r=mysql_fetch_row($rr2);
 		echo $r[0];
 		echo "</td><td>"; 
-		echo "<a href=index.php?cmd=cab_modi&cabid=$row[0]>修改</a>";
+		if(getuserright("server")>=3)
+			echo "<a href=index.php?cmd=cab_modi&cabid=$row[0]>修改</a>";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
+	if(getuserright("server")>=2) {
 ?>
 
 	<form action=index.php method=post>
@@ -632,11 +528,13 @@ if ($cmd=='cab_list') {
 	<input type="submit" name="Submit" value="增加">
 	</form>
 <?
+	}
 	exit(0);
 } // end cmd = cab_list
 
 
 if($cmd=='server_add') {
+	checkright("server",2);
 	$serverid = safe_get("serverid");
         $cabid = safe_get("cabid");
         $startu = safe_get("startu");
@@ -653,13 +551,14 @@ if($cmd=='server_add') {
         $sn = safe_get("sn");
         $connector = safe_get("connector");
         $comment = safe_get("comment");
-        $qstr="insert into JF_Server values('$serverid','$cabid',$startu,$endu,'$kvm','$type','$name','$user','$mgt','$ip1','$ip2','$mac1','$mac2','$sn','$connector','$comment')";
-        $rr=mysql_query($qstr);
+        $q="insert into JF_Server values('$serverid','$cabid',$startu,$endu,'$kvm','$type','$name','$user','$mgt','$ip1','$ip2','$mac1','$mac2','$sn','$connector','$comment')";
+        mysql_query($q);
         echo "增加完成<p>";
         $cmd='cabinfo_list';
 }
 
 if($cmd=='server_modido') {
+	checkright("server",3);
         $oldserverid = safe_get("oldserverid");
         $serverid = safe_get("serverid");
         $cabid = safe_get("cabid");
@@ -677,19 +576,20 @@ if($cmd=='server_modido') {
         $sn = safe_get("sn");
         $connector = safe_get("connector");
         $comment = safe_get("comment");
-        $qstr="update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
-        $rr=mysql_query($qstr);
+        $q="update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
+        mysql_query($q);
         echo "修改完成<p>";
         $cmd='cabinfo_list';
 }
 
 if($cmd=='server_modi') {
+	checkright("server",3);
         $serverid = safe_get("serverid");
         echo "<form action=index.php method=post>";
         echo "<input type=hidden name=cmd value=server_modido>";
         echo "<input type=hidden name=oldserverid value=$serverid>";
-        $qstr="select * from JF_Server where ServerID='$serverid'";
-        $rr=mysql_query($qstr);
+        $q="select * from JF_Server where ServerID='$serverid'";
+        $rr=mysql_query($q);
         if($row=mysql_fetch_row($rr)) {
         	echo "Server编号: <input name=serverid value=\"$row[0]\"><br>";
                 echo "机柜编号: <input name=cabid value=\"$row[1]\"> <br>";
@@ -714,9 +614,10 @@ if($cmd=='server_modi') {
 
 
 if ( $cmd=='cabinfo_list') {
+	checkright("server",1);
 	$cabid = safe_get("cabid");
-	$qstr="select *,now() from JF_CAB where CABID='$cabid'";
-	$rr=mysql_query($qstr);
+	$q="select *,now() from JF_CAB where CABID='$cabid'";
+	$rr=mysql_query($q);
 	$row=mysql_fetch_row($rr);
 	echo "<table border=1 width=800>";
 	echo "<tr><td width=20%>";
@@ -750,18 +651,19 @@ if ( $cmd=='cabinfo_list') {
 	echo "</table>";
 	echo "\n";
 ?>		
-
-<p>
 <p><font size=1>
 	<table border=1>
 	<tr><th>U</th><th>KVM</th><th>服务器型号</th><th>服务器描述</th><th>服务器用途</th>
 	<th>责任人</th><th>IP地址</th><th>MAC地址</th><th>SN</th><th>网络连接</th><th>备注</th></tr>
 <?
-	$qstr="select EndU-StartU+1,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment,ServerID from JF_Server where CABID= '$cabid' order by EndU desc";
-	$rr=mysql_query($qstr);
+	$q="select EndU-StartU+1,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment,ServerID from JF_Server where CABID= '$cabid' order by EndU desc";
+	$rr=mysql_query($q);
 	while($row=mysql_fetch_row($rr)) {
 		echo "<tr><td>"; 
-		echo "<a href=index.php?cmd=server_modi&serverid=$row[14]>$row[1]</a>";
+		if(getuserright("server")>=3) 
+			echo "<a href=index.php?cmd=server_modi&serverid=$row[14]>$row[1]</a>";
+		else
+			echo "$row[1]";
 		echo "</td><td rowspan=".$row[0].">"; echo $row[2];
 		echo "</td><td rowspan=".$row[0].">"; echo $row[3];
 		echo "</td><td rowspan=".$row[0].">"; echo $row[4];
@@ -786,163 +688,76 @@ if ( $cmd=='cabinfo_list') {
 	}
 	echo "</table>";
 
-        echo "<form action=index.php method=post>";
-        echo "<input type=hidden name=cmd value=server_add>";
-        echo "Server编号: <input name=serverid><br>";
-        echo "机柜编号: <input name=cabid value=\"$cabid\"> <br>";
-        echo "开始U: <input name=startu><br>";
-        echo "结束U: <input name=endu><br>";
-        echo "KVM: <input name=kvm><br>";
-        echo "型号: <input name=type><br>";
-        echo "名称: <input name=name><br>";
-        echo "用途: <input name=user><br>";
-        echo "管理员: <input name=mgt><br>";
-        echo "IP1: <input name=ip1><br>";
-        echo "IP2: <input name=ip2><br>";
-        echo "MAC1: <input name=mac1><br>";
-        echo "MAC2: <input name=mac2><br>";
-        echo "SN: <input name=sn><br>";
-        echo "连接设备: <input name=connector><br>";
-        echo "备注: <input name=comment><br>";
-        echo "<input type=submit name=Submit value=增加>";
-        echo "</form>";
-
-	
+	if(getuserright("server")>=2) {
+        	echo "<form action=index.php method=post>";
+        	echo "<input type=hidden name=cmd value=server_add>";
+        	echo "Server编号: <input name=serverid><br>";
+        	echo "机柜编号: <input name=cabid value=\"$cabid\"> <br>";
+        	echo "开始U: <input name=startu><br>";
+        	echo "结束U: <input name=endu><br>";
+        	echo "KVM: <input name=kvm><br>";
+        	echo "型号: <input name=type><br>";
+        	echo "名称: <input name=name><br>";
+        	echo "用途: <input name=user><br>";
+        	echo "管理员: <input name=mgt><br>";
+        	echo "IP1: <input name=ip1><br>";
+        	echo "IP2: <input name=ip2><br>";
+        	echo "MAC1: <input name=mac1><br>";
+        	echo "MAC2: <input name=mac2><br>";
+        	echo "SN: <input name=sn><br>";
+        	echo "连接设备: <input name=connector><br>";
+        	echo "备注: <input name=comment><br>";
+        	echo "<input type=submit name=Submit value=增加>";
+        	echo "</form>";
+	}
 } // end cmd = 'cabinfo_list'
 
-
-if($cmd=="ip_new") {
-	$cmd="ip";
-	$ip=safe_get("ip");
-	$mask=safe_get("mask");
-	$net=safe_get("net");
-	$use=safe_get("use");
-	$lxr=safe_get("lxr");
-	$memo=safe_get("memo");
-	$q="insert into IP(IP,MASK,net,`use`,lxr,memo) values('$ip','$mask',$net,'$use','$lxr','$memo')";
-	mysql_query($q,$db);
-}  else if($cmd=="ip_modi") {
-	$cmd="ip";
-	$id=safe_get("id");
-	$ip=safe_get("ip");
-	$mask=safe_get("mask");
-	$net=safe_get("net");
-	$use=safe_get("use");
-	$lxr=safe_get("lxr");
-	$memo=safe_get("memo");
-	$q="update IP set IP='$ip',MASK='$mask',net=$net,`use`='$use',lxr='$lxr',memo='$memo' where id=$id";
-	mysql_query($q,$db);
-}
-
-if ( $cmd=="ip") {
-	$query="select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP)";
-	$result=mysql_query($query,$db);
-	echo "<table border=1 cellspacing=0>";
-	echo " <tr> <th>序号</th> <th>IP</th> <th>用途</th> <th>联系人</th> <th>备注</th> </tr>";
-	$count=0;
-while($r=mysql_fetch_row($result)){
-	$count++;
-	if( $r[3] == '1' )   // network 
-		echo "<tr style=\"background-color:#ffff00\">";
-	else 
-		echo "<tr>";
-	echo "<td align=center><a href=index.php?cmd=ip&id=".$r[0].">".$count."</a></td>";
-	if( $r[3] == '1' ) {  // network 
-		echo "<td>";
-		echo $r[1]."/".$r[2];
-	} else {
-		echo "<td align=right>";
-		if ( $r[2]=="255.255.255.255" ) 
-			echo $r[1];
-		else 
-			echo $r[1]."/".$r[2];
-	}
-	echo "</td>";
-	echo "<td>".$r[4]."</td>";
-	echo "<td>".$r[5]."</td>";
-	echo "<td>".$r[6]."</td>";
-	echo "</tr>";
-	echo "\n";
-}
-echo "</table>";
-	$id = safe_get("id");
-	if( $id ) {
-		$query="select id,IP,MASK,net,`use`,lxr,memo from IP where id=".$id;
-		$result=mysql_query($query,$db);
-		$r=mysql_fetch_row($result);
-		echo "<p>";
-		echo "修改记录<br>";
-		echo "<form action=index.php method=post>";
-		echo "<input name=cmd value=ip_modi type=hidden>";
-		echo "<input name=id value=".$r[0]." type=hidden>";
-    		echo "IP: <input name=ip value=\"".$r[1]."\"><br>";
-    		echo "MASK: <input name=mask value=\"".$r[2]."\"><br>";
-		if ( $r[3] == '0' )
-    			echo "network? no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
-		else
-    			echo "network? no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
-		echo "<br>";
-    		echo "用途: <input name=use value=\"".$r[4]."\"><br>";
-    		echo "联系人: <input name=lxr value=\"".$r[5]."\"><br>";
-    		echo "备注: <input name=memo value=\"".$r[6]."\"><br>";
-    		echo "<input type=submit name=修改记录></form>";
-
-	} else {
-		echo "<p><form action=index.php method=post>";
-		echo "<input name=cmd value=ip_new type=hidden>";
-    		echo "IP: <input name=ip><br>";
-    		echo "MASK: <input name=mask><br>";
-    		echo "network? no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1><br>";
-    		echo "用途: <input name=use><br>";
-    		echo "联系人: <input name=lxr><br>";
-    		echo "备注: <input name=memo><br>";
-		echo "<input type=submit value=新增IP记录>";
-		echo "</form>";
-	}
-} // end cmd==ip
-
+// ODF
 
 if($cmd=='odf_new') {
+	checkright("odf",2);
 	$bh = safe_get("bh");
 	$jf= safe_get("jf");
 	$use= safe_get("use");
 	$memo = safe_get("memo");
-	$qstr="insert into ODF (JF,BH,`USE`,MEMO) values('$jf','$bh','$use','$memo')";
-	$rr=mysql_query($qstr);
+	$q="insert into ODF (JF,BH,`USE`,MEMO) values('$jf','$bh','$use','$memo')";
+	mysql_query($q);
 	for ($i=1; $i<=12; $i++) {
-		$qstr="insert into ODFPAN (BH,X) values('$bh',$i)";
-		$rr=mysql_query($qstr);
+		$q="insert into ODFPAN (BH,X) values('$bh',$i)";
+		mysql_query($q);
 	}
 	echo "增加完成<p>";
 	$cmd='odf_list';
 }
 
 if($cmd=='odf_modido') {
+	checkright("odf",3);
 	$odfid = safe_get("odfid");
 	$bh = safe_get("bh");
 	$jf= safe_get("jf");
 	$use= safe_get("use");
 	$memo = safe_get("memo");
 
-	$qstr="select * from ODF where id ='$odfid'";
-	$rr=mysql_query($qstr);
+	$q="select * from ODF where id ='$odfid'";
+	$rr=mysql_query($q);
 	$row=mysql_fetch_row($rr);
-	$qstr="insert into hist (tm,oid,old,new) values (now(),'ODF$row[0]','$row[1]/$row[2]/$row[3]/$row[4]','$jf/$bh/$use/$memo')";
-	mysql_query($qstr);
+	$q="insert into hist (tm,oid,old,new) values (now(),'ODF$row[0]','$row[1]/$row[2]/$row[3]/$row[4]','$jf/$bh/$use/$memo')";
+	mysql_query($q);
 
-	$qstr="update ODF set JF='$jf',BH='$bh',`USE`='$use',MEMO='$memo' where id='$odfid'";
-	mysql_query($qstr);
+	$q="update ODF set JF='$jf',BH='$bh',`USE`='$use',MEMO='$memo' where id='$odfid'";
+	mysql_query($q);
 	echo "修改完成<p>";
 	$cmd='odf_list';
 }
 
 if($cmd=='odf_modi') {
+	checkright("odf",3);
 	$odfid = safe_get("odfid");
 	echo "<form action=index.php method=post>";
 	echo "<input type=hidden name=cmd value=odf_modido>";
 	echo "<input type=hidden name=odfid value=$odfid>";
-	$qstr="select * from ODF where id ='$odfid'";
-	$rr=mysql_query($qstr);
+	$q="select * from ODF where id ='$odfid'";
+	$rr=mysql_query($q);
 	if($row=mysql_fetch_row($rr)) {
 		echo "机房: <input name=jf value=$row[1]> <br>";
 		echo "ODF编号: <input name=bh value=$row[2]><br>";
@@ -953,12 +768,13 @@ if($cmd=='odf_modi') {
 	}
 }
 if ($cmd=='odf_list') {
+	checkright("odf",1);
 	echo "ODF信息<p><table border=1>";
 	echo "<tr><th>机房</th><th>ODF编号</th><th>用途</th><th>备注</th><th>命令</th></tr>\n";
 
-	$qstr="select * from ODF order by JF,BH";
+	$q="select * from ODF order by JF,BH";
 	$count = 0;
-	$rr=mysql_query($qstr);
+	$rr=mysql_query($q);
 	while($row=mysql_fetch_row($rr)) {
 		$count++;
 		echo "<tr><td> "; 
@@ -968,12 +784,13 @@ if ($cmd=='odf_list') {
 		echo "</td><td>"; echo $row[3];
 		echo "</td><td>"; echo $row[4];
 		echo "</td><td>"; 
-		echo "<a href=index.php?cmd=odf_mod&odfid=$row[0]>修改</a>";
+		if(getuserright("odf")>=3)
+			echo "<a href=index.php?cmd=odf_mod&odfid=$row[0]>修改</a>";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
+	if(getuserright("odf")>=2) {
 ?>
-
 	<form action=index.php method=post>
 	<input type=hidden name=cmd value=odf_new>
 	增加ODF:<p>
@@ -984,12 +801,13 @@ if ($cmd=='odf_list') {
 	<input type="submit" name="Submit" value="增加">
 	</form>
 <?
+	}
 	changehist("select * from hist where oid like 'ODF%' order by tm desc");
 	exit(0);
 } // end cmd = odf_list
 
-
 if($cmd=='odfpan_modido') {
+	checkright("odf",3);
 	$id = safe_get("id");
 	$bh = safe_get("bh");
 	$x = safe_get("x");
@@ -1000,26 +818,25 @@ if($cmd=='odfpan_modido') {
 	$sb = safe_get("sb");
 	$memo = safe_get("memo");
 
-	$qstr="select * from ODFPAN where id ='$id'";
-	$rr=mysql_query($qstr);
+	$q="select * from ODFPAN where id ='$id'";
+	$rr=mysql_query($q);
 	$row=mysql_fetch_row($rr);
-	$qstr="insert into hist (tm,oid,old,new) values (now(),'PAN$row[0]','$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]/$row[7]/$row[8]','$bh/$x/$s/$dx/$use/$tx/$sb/$memo')";
-	mysql_query($qstr);
-	$qstr="update ODFPAN set BH='$bh',X='$x',S='$s',DX='$dx',`USE`='$use',TX='$tx',SB='$sb',MEMO='$memo' where id='$id'";
-	$rr=mysql_query($qstr);
-	$rr=mysql_query("commit");
+	$q="insert into hist (tm,oid,old,new) values (now(),'PAN$row[0]','$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]/$row[7]/$row[8]','$bh/$x/$s/$dx/$use/$tx/$sb/$memo')";
+	mysql_query($q);
+	$q="update ODFPAN set BH='$bh',X='$x',S='$s',DX='$dx',`USE`='$use',TX='$tx',SB='$sb',MEMO='$memo' where id='$id'";
+	mysql_query($q);
 	echo "修改完成<p>";
 	$cmd='odfpan_list';
 }
 
 if($cmd=='odfpan_modi') {
+	checkright("odf",3);
 	$id = safe_get("id");
 	echo "<form action=index.php method=post>";
 	echo "<input type=hidden name=cmd value=odfpan_modido>";
 	echo "<input type=hidden name=id value=$id>";
-	$qstr="select * from ODFPAN where id ='$id'";
-
-	$rr=mysql_query($qstr);
+	$q="select * from ODFPAN where id ='$id'";
+	$rr=mysql_query($q);
 	if($row=mysql_fetch_row($rr)) {
 		echo "ODF编号: <input name=bh value=$row[1]><br>";
 		echo "芯号: <input name=x value=$row[2]><br>";
@@ -1037,10 +854,11 @@ if($cmd=='odfpan_modi') {
 	changehist("select * from hist where oid = 'PAN$id' order by tm desc");
 }
 if ($cmd=='odfpan_list') {
+	checkright("odf",1);
 	echo "ODF盘信息<p>";
 	$bh = safe_get("bh");
-	$qstr="select * from ODF where BH='$bh'";
-    	$rr=mysql_query($qstr);
+	$q="select * from ODF where BH='$bh'";
+    	$rr=mysql_query($q);
     	$row=mysql_fetch_row($rr);
 	echo "机房: ".$row[1]."<br>";
 	echo "ODF编号: ".$row[2]."<br>";
@@ -1050,13 +868,17 @@ if ($cmd=='odfpan_list') {
 	echo "<table border=1>";
 	echo "<tr><th>ODF编号</th><th>芯号</th><th>颜色</ht><th>对方芯号</th><th>用途</th><th>跳线</th><th>设备</th><th>备注</th></tr>\n";
 
-	$qstr="select * from ODFPAN where BH='$bh' order by X";
+	$q="select * from ODFPAN where BH='$bh' order by X";
 	$count = 0;
-	$rr=mysql_query($qstr);
+	$rr=mysql_query($q);
 	while($row=mysql_fetch_row($rr)) {
 		$count++;
 		echo "<tr><td>"; echo $row[1];
-		echo "</td><td> "; echo "<a href=index.php?cmd=odfpan_modi&id=$row[0]&bh=$row[1]>$row[2]</a>";
+		echo "</td><td> "; 
+		if(getuserright("odf")>=3) 	
+			echo "<a href=index.php?cmd=odfpan_modi&id=$row[0]&bh=$row[1]>$row[2]</a>";
+		else
+			echo "$row[2]";
 		echo "</td><td>"; echo $row[3];
 		echo "</td><td>"; echo $row[4];
 		echo "</td><td>"; echo $row[5];
@@ -1068,5 +890,405 @@ if ($cmd=='odfpan_list') {
 	echo "</table>";
 	exit(0);
 } // end cmd = odfpan_list
-?>
 
+// IP
+
+if($cmd=="ip_new") {
+	checkright("ip",2);
+	$cmd="ip";
+	$ip=safe_get("ip");
+	$mask=safe_get("mask");
+	$net=safe_get("net");
+	$use=safe_get("use");
+	$lxr=safe_get("lxr");
+	$memo=safe_get("memo");
+	$q="insert into IP(IP,MASK,net,`use`,lxr,memo) values('$ip','$mask',$net,'$use','$lxr','$memo')";
+	mysql_query($q);
+}  else if($cmd=="ip_modi") {
+	checkright("ip",3);
+	$cmd="ip";
+	$id=safe_get("id");
+	$ip=safe_get("ip");
+	$mask=safe_get("mask");
+	$net=safe_get("net");
+	$use=safe_get("use");
+	$lxr=safe_get("lxr");
+	$memo=safe_get("memo");
+	$q="update IP set IP='$ip',MASK='$mask',net=$net,`use`='$use',lxr='$lxr',memo='$memo' where id=$id";
+	mysql_query($q);
+}
+
+if ( $cmd=="ip") {
+	checkright("ip",1);
+	$q="select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP)";
+	$rr=mysql_query($q);
+	echo "<table border=1 cellspacing=0>";
+	echo " <tr> <th>序号</th> <th>IP</th> <th>用途</th> <th>联系人</th> <th>备注</th> </tr>";
+	$count=0;
+while($r=mysql_fetch_row($rr)){
+	$count++;
+	if( $r[3] == '1' )   // network 
+		echo "<tr style=\"background-color:#ffff00\">";
+	else 
+		echo "<tr>";
+	if(getuserright("ip")>=3) 
+		echo "<td align=center><a href=index.php?cmd=ip&id=".$r[0].">".$count."</a></td>";
+	else 
+		echo "<td align=center>".$count."</td>";
+	if( $r[3] == '1' ) {  // network 
+		echo "<td>";
+		echo $r[1]."/".$r[2];
+	} else {
+		echo "<td align=right>";
+		if ( $r[2]=="255.255.255.255" ) 
+			echo $r[1];
+		else 
+			echo $r[1]."/".$r[2];
+	}
+	echo "</td>";
+	echo "<td>".$r[4]."</td>";
+	echo "<td>".$r[5]."</td>";
+	echo "<td>".$r[6]."</td>";
+	echo "</tr>";
+	echo "\n";
+}
+	echo "</table>";
+	$id = safe_get("id");
+	if( $id ) {
+		$q="select id,IP,MASK,net,`use`,lxr,memo from IP where id=".$id;
+		$rr=mysql_query($q);
+		$r=mysql_fetch_row($rr);
+		echo "<p>";
+		echo "修改记录<br>";
+		echo "<form action=index.php method=post>";
+		echo "<input name=cmd value=ip_modi type=hidden>";
+		echo "<input name=id value=".$r[0]." type=hidden>";
+    		echo "IP: <input name=ip value=\"".$r[1]."\"><br>";
+    		echo "MASK: <input name=mask value=\"".$r[2]."\"><br>";
+		if ( $r[3] == '0' )
+    			echo "network? no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
+		else
+    			echo "network? no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
+		echo "<br>";
+    		echo "用途: <input name=use value=\"".$r[4]."\"><br>";
+    		echo "联系人: <input name=lxr value=\"".$r[5]."\"><br>";
+    		echo "备注: <input name=memo value=\"".$r[6]."\"><br>";
+    		echo "<input type=submit name=修改记录></form>";
+
+	} else if(getuserright("ip")>=2) {
+		echo "<p><form action=index.php method=post>";
+		echo "<input name=cmd value=ip_new type=hidden>";
+    		echo "IP: <input name=ip><br>";
+    		echo "MASK: <input name=mask><br>";
+    		echo "network? no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1><br>";
+    		echo "用途: <input name=use><br>";
+    		echo "联系人: <input name=lxr><br>";
+    		echo "备注: <input name=memo><br>";
+		echo "<input type=submit value=新增IP记录>";
+		echo "</form>";
+	}
+} // end cmd==ip
+
+// INFO
+
+if($cmd=="info_new") {
+	checkright("info",2);
+	$cmd="info";
+	$title=mysql_escape_string($_REQUEST["title"]);
+	$memo=mysql_escape_string($_REQUEST["memo"]);
+	if($title=="") {
+		echo "<form action=index.php method=post>";
+		echo "<input name=cmd value=info_new type=hidden>";
+		echo "标题:<input name=title size=75> <br>";
+		echo "内容:<textarea name=memo cols=100 rows=40></textarea><br>";
+		echo " <input type=submit value=新增常用信息> </form>";
+ 		exit(0);
+	}
+	$q="insert into info (title,memo) values('$title','$memo')";
+	mysql_query($q);
+}  else if($cmd=="info_modido") {
+	checkright("info",3);
+	$cmd="info";
+	$id=safe_get("id");
+	$title=mysql_escape_string($_REQUEST["title"]);
+	$memo=mysql_escape_string($_REQUEST["memo"]);
+	$q="update info set title='$title',memo='$memo' where id=$id";
+	mysql_query($q);
+} // end cmd==info_new
+
+if ($cmd=="info_up") {
+	checkright("info",3);
+	$cmd="info";
+	$id=safe_get("id");
+	$q="update info set sortid=sortid-1 where id=$id";
+	mysql_query($q);
+}
+if ($cmd=="info_down") {
+	checkright("info",3);
+	$cmd="info";
+	$id=safe_get("id");
+	$q="update info set sortid=sortid+1 where id=$id";
+	mysql_query($q);
+}
+
+if ($cmd=="info") { 
+	checkright("info",1);
+	$q= "select id,title,left(memo,100) from info order by sortid,id";
+	$rr=mysql_query($q);
+	echo "<table border=1 cellspacing=0>";
+	echo " <tr> <th>序号</th> <th>标题</th> <th>内容摘要</th> <th>命令</th> </tr>";
+
+	$count=0;
+	while($r=mysql_fetch_row($rr)){
+		$count++;
+		echo "<tr><td>".$count."</td>";
+		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[1]."<a/></td>";
+		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[2]."<a/></td>";
+		echo "<td>";
+		if(getuserright("info")>=2) 
+			echo "<a href=index.php?cmd=info_modi&id=$r[0]>修改<a/> ";
+		if(getuserright("info")>=3) {
+			echo "<a href=index.php?cmd=info_up&id=$r[0]>上移<a/> ";
+			echo "<a href=index.php?cmd=info_down&id=$r[0]>下移<a/> ";
+		}
+		echo "</td>";
+		echo "</tr>\n";
+	}
+	echo "</table>";
+	echo "<p>";
+	if(getuserright("info")>=2) 
+		echo "<a href=index.php?cmd=info_new>新增常用信息</a>";
+} // end cmd==info
+
+if ($cmd=="info_detail") {
+	checkright("info",1);
+	$id = safe_get("id");
+	$q="select id,title,memo from info where id=".$id;
+	$rr=mysql_query($q);
+	$r=mysql_fetch_row($rr);
+	echo "<p>";
+	echo $r[1];
+	echo "<hr><pre>";
+	echo $r[2];
+	echo "</pre>";
+	echo "<hr>";
+        $q="select * from file where infoid=".$id;
+        $rr=mysql_query($q);
+        echo "附件信息<table>";
+        echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
+        $count = 0;
+        while($r=mysql_fetch_row($rr)) {
+                $count++;
+                echo "<tr><td>";echo $count;"</td>";
+                echo "<td>".$r[5]."</td>";
+                echo "<td>".$r[2]."</td>";
+                echo "<td>".$r[3]."</td>";
+                echo "<td>".$r[4]."</td>";
+                echo "<td><a href=index.php?cmd=file_down&id=".$id."&fid=".$r[0]." target=_blank>下载</a></td>";
+                echo "</tr>\n";
+        }
+        echo "</table><p>";
+
+} // end cmd==info_detail
+
+if ($cmd=="file_upload") {
+	checkright("info",2);
+	if($_FILES['userfile']['error']<>0) { 
+		echo "文件上载错误<p>";
+		echo "错误代码:".$_FILES['userfile']['error'];
+		$cmd="info_modi";
+	} else {
+		$infoid = safe_get("id");
+		echo $infoid;
+		$name = mysql_escape_string($_FILES['userfile']['name']);
+		$size = strval($_FILES['userfile']['size']);
+		$type = $_FILES['userfile']['type'];
+		checkvalue($size);
+		checkvalue($type);
+		$q = "insert into file (infoid,name,size,type,tm) values($infoid,'$name','$size','$type',now())";
+		mysql_query($q);
+		$id = strval(mysql_insert_id());
+		move_uploaded_file($_FILES['userfile']['tmp_name'],$uploaddir."/".$id);
+		$cmd="info_modi";
+	}
+} // end cmd==file_upload
+
+if ($cmd=="file_del") {
+	checkright("info",3);
+	$infoid = safe_get("id");
+	$fid = safe_get("fid");
+	$q = "insert into file_del select * from file where id=$fid";
+	mysql_query($q);
+	$q = "delete from file where id=$fid";
+	mysql_query($q);
+	rename($uploaddir."/".$fid, $uploaddir."_del/".$fid);
+	$cmd="info_modi";
+}
+
+if ($cmd=="info_modi") {
+	checkright("info",2);
+	$id = safe_get("id");
+	$q ="select id,title,memo from info where id=".$id;
+	$rr=mysql_query($q);
+	$r=mysql_fetch_row($rr);
+
+	echo "修改信息<br>";
+	echo "<form action=index.php method=post>";
+	echo "<input name=cmd value=info_modido type=hidden>";
+	echo "<input name=id value=".$r[0]." type=hidden>";
+    	echo "标题:<br><input name=title value=\"".$r[1]."\" size=75><p>";
+   	echo "内容:<br><textarea name=memo cols=100 rows=40>";
+	echo $r[2];
+	echo "</textarea><p>";
+	if(getuserright("info")>=3) 
+   		echo "<input type=submit value=修改></form><p>";
+	else echo "</form><p>";
+	echo "<hr>";
+
+	$q="select * from file where infoid=".$id;
+	$rr=mysql_query($q);
+	echo "附件信息<table>";
+	echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
+	$count = 0;
+	while($r=mysql_fetch_row($rr)) {
+		$count++;
+		echo "<tr><td>";echo $count;"</td>";
+		echo "<td>".$r[5]."</td>";
+		echo "<td>".$r[2]."</td>";
+		echo "<td>".$r[3]."</td>";
+		echo "<td>".$r[4]."</td>";
+		if(getuserright("info")>=3) 
+			echo "<td><a href=index.php?cmd=file_del&id=".$id."&fid=".$r[0].">删除(移到回收站)</a></td>";
+		else
+			echo "<td></td>";
+		echo "</tr>\n";
+	}
+	echo "</table><p>";
+	echo "上传附件<br>";
+	echo "<form enctype=\"multipart/form-data\" action=\"index.php\" method=\"post\">";
+	echo "<input name=cmd value=file_upload type=hidden>";
+	echo "<input name=id value=".$id." type=hidden>";
+	echo "请选择文件： <br> ";
+	echo "<input name=\"userfile\" type=\"file\"><br>";
+	echo "<input type=\"submit\" value=\"上传文件\">   ";
+	echo "</form>   ";
+} // end cmd==info_detail
+
+
+// USER 
+
+if($isadmin<>1) 
+	exit(0);
+
+if($cmd=="user_new") {
+	var_dump($_REQUEST);
+	$email = safe_get("email");
+	$fullname = $_REQUEST["fullname"];
+	$super = safe_get("super");
+	$q="delete from user where email='$email'";
+	mysql_query($q);
+	if($super=="1") 
+		$q="insert into user values('$email',1,'$fullname')";
+	else 
+		$q="insert into user values('$email',0,'$fullname')";
+	mysql_query($q);
+		
+	$cmd="user";
+}
+
+if($cmd=="user_right") {
+	var_dump($_REQUEST);
+	$user = safe_get("user");
+	$module = safe_get("module");
+	$right = safe_get("right");
+	
+	$q="delete from userright where user='$user' and module='$module'";
+	mysql_query($q);
+	if($right<>"0") 
+		$q="insert into userright (user,module,`right`) values('$user','$module',$right)";
+	mysql_query($q);
+	echo $q;
+		
+	$cmd="user";
+}
+
+if($cmd=="user") {
+	$q="select * from user";
+	$rr=mysql_query($q);
+	$count = 0;
+	echo "用户信息<p><table border=1>";
+	echo "<tr><th>序号</th><th>登录名</th><th>全名</th><th>超级管理员</th><th>详细权限</th></tr>\n";
+	while($r=mysql_fetch_row($rr)) {
+		$count++;
+		echo "<tr><td>";echo $count;"</td>";
+		echo "<td>".$r[0]."</td>";
+		echo "<td>".$r[2]."</td>";
+		echo "<td>";
+		if($r[1]=="0")
+			echo "否";
+		else echo "是";
+		echo "</td>";
+		echo "<td>";
+		$q="select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='".$r[0]."'";
+		
+		$rr2=mysql_query($q);
+		echo "<table>";
+		while($r2=mysql_fetch_row($rr2)) {
+			echo "<tr>";
+			echo "<td>".$r2[0]."</td>";
+			echo "<td>".$r2[1]."</td>";
+			echo "<td>";
+			if($r2[2]=="1") echo "只读";
+			else if($r2[2]=="2") echo "新增";
+			else if($r2[2]=="3") echo "所有";
+			echo "</td>";
+			echo "</tr>";
+		}
+		echo "</table>";
+		echo "</td>";
+		echo "</tr>";
+	}
+	echo "</table>";
+?>
+<hr width=500 align=left>
+<p>
+注：增加同名用户可以用来修改信息<p>
+<form action=index.php method=get>
+<input name=cmd value=user_new type=hidden>
+用户邮件登录名：<input name=email><br>
+全名: <input name=fullname><br>
+是否超级管理员：<input name=super type=checkbox value=1><br>
+<input type=submit value=新增用户>
+</form>
+
+<hr width=500 align=left>
+<form action=index.php method=get>
+<input name=cmd value=user_right type=hidden>
+用户登录名：<select name=user>
+<?
+	$q="select email from user";
+	$rr=mysql_query($q);
+	while($r=mysql_fetch_row($rr)) {
+		echo "<option value=\"$r[0]\">$r[0]</option>\n";
+	}
+?>
+</select>
+模块: <select name=module>
+<?
+	$q="select module,memo from module";
+	$rr=mysql_query($q);
+	while($r=mysql_fetch_row($rr)) {
+		echo "<option value=\"$r[0]\">$r[0]/$r[1]</option>\n";
+	}
+?>
+</select><br>
+权限：<br>
+<input name=right type=checkbox value=0 checked>无<br>
+<input name=right type=checkbox value=1>只读<br>
+<input name=right type=checkbox value=2>新增<br>
+<input name=right type=checkbox value=3>所有<br>
+<input type=submit value=修改用户权限>
+</form>
+<?
+} // end cmd==user
+?>
