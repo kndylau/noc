@@ -44,7 +44,7 @@ function changehist ($q) {
 }
 
 // 0 no right
-// 1 read right
+// 1 readonly right
 // 2 new right
 // 3 full right 
 function getuserright($module) {
@@ -66,6 +66,7 @@ function checkright($module, $right) {
 		exit(0);
 	}
 }
+
 $cmd=safe_get("cmd");
 
 if ($cmd=="file_down") {
@@ -86,7 +87,8 @@ if ($cmd=="file_down") {
 	if (file_exists($file)) {
     		header('Content-Description: File Transfer');
     		header('Content-Type: application/octet-stream');
-    		header('Content-Disposition: attachment; filename="'.$r[2].'"');
+		$fn=iconv("gb2312","utf-8",$r[2]);
+    		header('Content-Disposition: attachment; filename="'.$fn.'"');
     		header('Expires: 0');
     		header('Cache-Control: must-revalidate');
     		header('Pragma: public');

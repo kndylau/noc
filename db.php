@@ -6,6 +6,8 @@ $db_passwd = "";
 $db_dbname = "noc";
 
 
+// 存放上载文件的目录，注意 删除文件会放到这个目录_del
+// 这两个目录对httpd进程要可以读写访问
 $uploaddir = "/usr/src/noc/file";
 
 // 连接服务器
