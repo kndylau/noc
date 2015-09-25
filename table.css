@@ -1,32 +1,44 @@
-body{ margin:4 auto; } 
+body{ 
+	margin:4 auto; 
+	color: #0f6b72;
+	background: #E6EAE9;
+} 
+
+#nav { margin:0 auto;width:1100px; border: 1px solid #CCC; height:26px; background: #eee;} 
+#nav ul { list-style: none; margin: 0px; padding: 0px; } 
+#nav ul li { float:left; } 
+#nav ul li a {width:100px; display:block; height: 26px; line-height: 26px; text-align:center; float:left;} 
+#nav ul li a:hover { background:#333; color:#fff;} 
+
+
 /*设置表头的margin为0则表居中显示，border为0则无边界*/ 
 table{ 
-border:1px; 
-solid:#000 
+	border:1px; 
+	solid:#000 
 } 
+
 /*设置th表头的属性，font-weight为bold则显示为黑粗*/ 
-table tr th{ height:28px; 
-color: #ffffff;
-width: auto; 
-// line-height:28px; 
-background:#0000aa; 
-font-weight:bold 
+table tr th{ 
+	height:28px; 
+	color: #ffffff;
+	width: auto; 
+	background:#0000aa; 
+	font-weight:bold 
 } 
+
 table tbody tr{ 
-height:28px; 
-// line-height:28px; 
-//background:#6de324; 
-background:#d0ffd0; 
-vertical-align:middle; 
+	height:28px; 
+	background:#fff; 
+	vertical-align:middle; 
 } 
 /* 
 *设置鼠标经过颜色的变化 
 */ 
 /*采用csss的这个方法，获得奇数行，让后设置其属性，这样避免使用expression这个容易出错的方法*/ 
 table tbody tr:nth-child(odd){ 
-background-color: #60ff60 
+	background-color: #F5FAFA 
 } 
 
 table tbody tr:hover{ 
-background-color: #ffffff; 
+	background-color: #ffffff; 
 } 

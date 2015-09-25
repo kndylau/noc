@@ -107,7 +107,7 @@ if ($cmd=="file_down") {
 <link href="table.css" type="text/css" rel="stylesheet" /> 
 <title>NOC.ustc.edu.cn</title>
 </head>
-<body bgcolor="#dddddd" text="#000000">
+<body>
 
 <?php
 
@@ -158,27 +158,32 @@ if($login<>1) {   // 用户没有登录
 	exit(0);
 } // login <> 1
 
+echo "<div id=\"nav\"><ul>";
+
 if(getuserright("jifang")>0) 
-	echo "<a href=index.php?cmd=jifang>机房巡检</a> ";
+	echo "<li><a href=index.php?cmd=jifang>机房巡检</a></li>";
 if(getuserright("ticket")>0) 
-	echo "<a href=index.php?cmd=ticket>故障处理</a> ";
+	echo "<li><a href=index.php?cmd=ticket>故障处理</a></li>";
 if(getuserright("server")>0) 
-	echo "<a href=index.php?cmd=cab_list>服务器管理</a> ";
+	echo "<li><a href=index.php?cmd=cab_list>服务器管理</a></li>";
 if(getuserright("odf")>0) 
-	echo "<a href=index.php?cmd=odf_list>ODF管理</a> ";
+	echo "<li><a href=index.php?cmd=odf_list>ODF管理</a></li>";
 if(getuserright("ip")>0) 
-	echo "<a href=index.php?cmd=ip>IP管理</a> ";
+	echo "<li><a href=index.php?cmd=ip>IP管理</a></li>";
 if(getuserright("info")>0) 
-	echo "<a href=index.php?cmd=info>常用信息</a> ";
+	echo "<li><a href=index.php?cmd=info>常用信息</a></li>";
 if(getuserright("user")>0) 
-	echo "<a href=index.php?cmd=user>用户管理</a> ";
+	echo "<li><a href=index.php?cmd=user>用户管理</a></li>";
 
 
+echo "<li>";
 echo $_SESSION["truename"];
-echo " From:";
+echo " From: ";
 echo  $_SERVER["REMOTE_ADDR"]; 
-echo "有任何问题请联系 james@ustc.edu.cn";
-echo " <a href=index.php?cmd=logout>退出</a>";
+echo "</li>";
+echo "<li><a href=index.php?cmd=logout>退出</a></li>";
+echo "</ul>";
+echo "</div>";
 echo "<hr>";
 
 if ($cmd=="" ) {
@@ -224,9 +229,9 @@ if ( $cmd=="jifang") {
 while($r=mysql_fetch_row($rr)){
 	$count++;
 	if ( ($r[3] == 1) ||($r[3] == 1)  ) 
-		echo "<tr style=\"background-color:#6dc334\">";
+		echo "<tr>";
 	else
-		echo "<tr style=\"background-color:#3592e2\">";
+		echo "<tr>";
 	if(getuserright("jifang")>=3) 
 		echo "<td align=center><a href=index.php?cmd=jifang&id=".$r[0].">".$count."</a></td>";
 	else 
@@ -273,7 +278,7 @@ while($r=mysql_fetch_row($rr)){
 	} else if(getuserright("jifang")>=2) {
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=jifang_new type=hidden>";
-    		echo "环境状况: &nbsp;&nbsp;正常<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0><br>";
+    		echo "环境状况: &nbsp;正常<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0><br>";
     		echo "服务器状况: 正常<input type=radio name=server value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=server value=0><br>";
 		echo "存在问题:<input type=text size=200 name=msg><br>";
 		echo "<input type=submit value=新增巡检记录>";
@@ -349,9 +354,9 @@ if ($cmd=="ticket") {
 while($r=mysql_fetch_row($rr)){
 	$count++;
 	if ( $r[2] == "0000-00-00 00:00:00" ) 
-		echo "<tr style=\"background-color:#3592e2\">";
+		echo "<tr>";
 	else
-		echo "<tr style=\"background-color:#6dc334\">";
+		echo "<tr>";
 	$q="select id,tm,memo,truename from ticketdetail,user where op=email and tid='".$r[0]."' order by tm";
 	$rr2=mysql_query($q);
 	$rows=mysql_num_rows($rr2); 
@@ -375,9 +380,9 @@ while($r=mysql_fetch_row($rr)){
 			$firstrow=0;
 		else {
 			if ( $r[3] == "0000-00-00 00:00:00" ) 
-				echo "<tr style=\"background-color:#3592e2\">";
+				echo "<tr>";
 			else
-				echo "<tr style=\"background-color:#6dc334\">";
+				echo "<tr>";
 		}
 		if(getuserright("ticket")>=3) 
 			echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket&did=".$r2[0].">".$r2[1]."</a></td>";
