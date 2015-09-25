@@ -1,7 +1,7 @@
 简单的机房管理辅助程序
 
 
-
+<pre>
 1. 安装过程
 
 创建数据库:参考noc.sql 内容创建table
@@ -37,3 +37,5 @@ chown apache /usr/src/noc/file /usr/src/noc/file_del
 3.2 2015.09.25 增加用户权限管理
 
 3.3 2015.09.25 增加 pop3server 字段
+
+</pre>
