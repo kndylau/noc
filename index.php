@@ -54,7 +54,7 @@ function getuserright($module) {
         $row=mysql_fetch_row($rr);
 	if($row[0]=="1") // super user
 		return 3;  // full right
-	$q = "select `right` from userright where user='$user' and module='$module'";
+	$q = "select max(`right`) from userright where user='$user' and ( module='ALL' or module='$module')";
         $rr=mysql_query($q);
         $row=mysql_fetch_row($rr);
 	return intval($row[0]);
@@ -120,13 +120,13 @@ if ($cmd=="login") {
 	$pass=$_REQUEST["pass"];
 	
 	if( $id<>"" ) {
-		$q="select isadmin,truename from user where email='".$id."'";
+		$q="select isadmin,truename,pop3server from user where email='".$id."'";
 		$rr=mysql_query($q);
 		$r=mysql_fetch_row($rr);
 		if($r) {
 			$_SESSION["isadmin"]=$r[0];
 			$_SESSION["truename"]=$r[1];
-			$r = imap_open("{202.38.64.8:110/pop3/novalidate-cert}INBOX",$id."@ustc.edu.cn",$pass,0,1);
+			$r = imap_open("{".$r[2].":110/pop3/novalidate-cert}INBOX",$id,$pass,0,1);
 			if( $r ) {
 				$_SESSION["login"]=1;
 				$_SESSION["user"]=$id;
@@ -146,11 +146,13 @@ if($login<>1) {   // 用户没有登录
 	$_SESSION["login"]=0;
 	echo "<p>有任何问题请联系 james@ustc.edu.cn";
 	echo "<p>";
-	echo "请输入邮箱的id和密码登录<p>";
+	echo "请输入邮箱和密码登录<p>";
+	echo "系统会连接到邮件POP3服务器登录验证密码";
 	echo " <form action=index.php method=post>";
-	echo "<input name=cmd type=hidden value=login>邮箱id:<input name=id>@ustc.edu.cn<br>";
-	echo "邮箱密码: <input name=pass type=password><br>";
-	echo "<input type=submit value=登录></form>";
+	echo "<input name=cmd type=hidden value=login>";
+	echo "用户邮箱:<input name=id><br>";
+	echo "邮箱密码:<input name=pass type=password><p>";
+	echo "<input type=submit value=\"登 录\"></form>";
 	exit(0);
 } // login <> 1
 
@@ -1181,34 +1183,29 @@ if($isadmin<>1)
 	exit(0);
 
 if($cmd=="user_new") {
-	var_dump($_REQUEST);
 	$email = safe_get("email");
+	$pop3server = safe_get("pop3server");
 	$fullname = $_REQUEST["fullname"];
 	$super = safe_get("super");
 	$q="delete from user where email='$email'";
 	mysql_query($q);
 	if($super=="1") 
-		$q="insert into user values('$email',1,'$fullname')";
+		$q="insert into user values('$email','$pop3server',1,'$fullname')";
 	else 
-		$q="insert into user values('$email',0,'$fullname')";
+		$q="insert into user values('$email','$pop3server',0,'$fullname')";
 	mysql_query($q);
-		
 	$cmd="user";
 }
 
 if($cmd=="user_right") {
-	var_dump($_REQUEST);
 	$user = safe_get("user");
 	$module = safe_get("module");
 	$right = safe_get("right");
-	
 	$q="delete from userright where user='$user' and module='$module'";
 	mysql_query($q);
 	if($right<>"0") 
 		$q="insert into userright (user,module,`right`) values('$user','$module',$right)";
 	mysql_query($q);
-	echo $q;
-		
 	$cmd="user";
 }
 
@@ -1217,14 +1214,15 @@ if($cmd=="user") {
 	$rr=mysql_query($q);
 	$count = 0;
 	echo "用户信息<p><table border=1>";
-	echo "<tr><th>序号</th><th>登录名</th><th>全名</th><th>超级管理员</th><th>详细权限</th></tr>\n";
+	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>详细权限</th></tr>\n";
 	while($r=mysql_fetch_row($rr)) {
 		$count++;
 		echo "<tr><td>";echo $count;"</td>";
 		echo "<td>".$r[0]."</td>";
-		echo "<td>".$r[2]."</td>";
+		echo "<td>".$r[1]."</td>";
+		echo "<td>".$r[3]."</td>";
 		echo "<td>";
-		if($r[1]=="0")
+		if($r[2]=="0")
 			echo "否";
 		else echo "是";
 		echo "</td>";
@@ -1253,10 +1251,12 @@ if($cmd=="user") {
 <hr width=500 align=left>
 <p>
 注：增加同名用户可以用来修改信息<p>
+登录时，连接到POP3邮件服务器上，利用登录名和密码验证用户身份<br>
 <form action=index.php method=get>
 <input name=cmd value=user_new type=hidden>
 用户邮件登录名：<input name=email><br>
-全名: <input name=fullname><br>
+POP3邮件服务器：<input name=pop3server><br>
+用户姓名: <input name=fullname><br>
 是否超级管理员：<input name=super type=checkbox value=1><br>
 <input type=submit value=新增用户>
 </form>
@@ -1283,10 +1283,10 @@ if($cmd=="user") {
 ?>
 </select><br>
 权限：<br>
-<input name=right type=checkbox value=0 checked>无<br>
-<input name=right type=checkbox value=1>只读<br>
-<input name=right type=checkbox value=2>新增<br>
-<input name=right type=checkbox value=3>所有<br>
+<input name=right type=radio value=0 checked>无<br>
+<input name=right type=radio value=1>只读<br>
+<input name=right type=radio value=2>新增<br>
+<input name=right type=radio value=3>所有<br>
 <input type=submit value=修改用户权限>
 </form>
 <?
