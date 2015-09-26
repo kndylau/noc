@@ -4,6 +4,8 @@
 <pre>
 1. 安装过程
 
+php 需要 php-imap 模块
+
 创建数据库:参考noc.sql 内容创建table
 
 修改db.php中数据库有关信息
