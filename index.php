@@ -116,7 +116,7 @@ if ($cmd=="file_down") {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
 <link href="table.css" type="text/css" rel="stylesheet" /> 
-<title><?echo $systitle; ?></title>
+<title><?php echo $systitle; ?></title>
 </head>
 <body>
 
@@ -552,7 +552,7 @@ if ($cmd=='cab_list') {
 	责任人: <input name=mgt size=80> <br>
 	<input type="submit" name="Submit" value="增加">
 	</form>
-<?
+<?php
 	}
 	exit(0);
 } // end cmd = cab_list
@@ -680,7 +680,7 @@ if ( $cmd=='cabinfo_list') {
 	<table border=1>
 	<tr><th>U</th><th>KVM</th><th>服务器型号</th><th>服务器描述</th><th>服务器用途</th>
 	<th>责任人</th><th>IP地址</th><th>MAC地址</th><th>SN</th><th>网络连接</th><th>备注</th></tr>
-<?
+<?php
 	$q="select EndU-StartU+1,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment,ServerID from JF_Server where CABID= '$cabid' order by EndU desc";
 	$rr=mysql_query($q);
 	while($row=mysql_fetch_row($rr)) {
@@ -825,7 +825,7 @@ if ($cmd=='odf_list') {
 	备注: <input name=memo size=80> <br>
 	<input type="submit" name="Submit" value="增加">
 	</form>
-<?
+<?php
 	}
 	changehist("select * from hist where oid like 'ODF%' order by tm desc");
 	exit(0);
@@ -1290,7 +1290,7 @@ POP3邮件服务器：<input name=pop3server><br>
 <form action=index.php method=get>
 <input name=cmd value=user_right type=hidden>
 用户登录名：<select name=user>
-<?
+<?php
 	$q="select email from user";
 	$rr=mysql_query($q);
 	while($r=mysql_fetch_row($rr)) {
@@ -1299,7 +1299,7 @@ POP3邮件服务器：<input name=pop3server><br>
 ?>
 </select>
 模块: <select name=module>
-<?
+<?php
 	$q="select module,memo from module order by id";
 	$rr=mysql_query($q);
 	while($r=mysql_fetch_row($rr)) {
@@ -1314,7 +1314,7 @@ POP3邮件服务器：<input name=pop3server><br>
 <input name=right type=radio value=3>所有<br>
 <input type=submit value=修改用户权限>
 </form>
-<?
+<?php
 	} // 
 } // end cmd==user
 
@@ -1341,15 +1341,15 @@ if($cmd=="sysinfo") {
 
 <form action=index.php method=get>
 <input name=cmd value=sysinfo_modi type=hidden>
-系统版本号：<input name=version value="<?echo $sysversion;?>"><br>
-网页标题：<input name=title value="<?echo $systitle;?>"><br>
-联系信息：<input name=lxr value="<?echo $syslxr;?>"><br>
+系统版本号：<input name=version value="<?php echo $sysversion;?>"><br>
+网页标题：<input name=title value="<?php echo $systitle;?>"><br>
+联系信息：<input name=lxr value="<?php echo $syslxr;?>"><br>
 
-<? 	if(getuserright("sysinfo")>=3) 
+<?php 	if(getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=修改系统信息>";
 ?>
 
 </form>
-<?
+<?php
 }  // end cmd==sysinfo
 ?>
