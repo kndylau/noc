@@ -38,4 +38,6 @@ chown apache /usr/src/noc/file /usr/src/noc/file_del
 
 3.3 2015.09.25 增加 pop3server 字段
 
+3.4 2015.09.26 增加 sysinfo 系统配置
+
 </pre>
