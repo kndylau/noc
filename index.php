@@ -1,5 +1,15 @@
 <?php
 include("db.php");
+$q="select info from sysinfo where name='version'";
+$r=mysql_fetch_row(mysql_query($q));
+$sysversion=$r[0];
+$q="select info from sysinfo where name='title'";
+$r=mysql_fetch_row(mysql_query($q));
+$systitle=$r[0];
+$q="select info from sysinfo where name='lxr'";
+$r=mysql_fetch_row(mysql_query($q));
+$syslxr=$r[0];
+
 session_start();
 
 function checkvalue($str) {
@@ -7,6 +17,7 @@ function checkvalue($str) {
         	if( ($str[$i] >='a') && ($str[$i]<='z') ) continue;
         	if( ($str[$i] >='A') && ($str[$i]<='Z') ) continue;
         	if( ($str[$i] >='0') && ($str[$i]<='9') ) continue;
+        	if( $str[$i] == '@' ) continue;
         	if( $str[$i] == '-' ) continue;
         	if( $str[$i] == '_' ) continue;
         	if( $str[$i] == ' ' ) continue;
@@ -105,7 +116,7 @@ if ($cmd=="file_down") {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
 <link href="table.css" type="text/css" rel="stylesheet" /> 
-<title>NOC.ustc.edu.cn</title>
+<title><?echo $systitle; ?></title>
 </head>
 <body>
 
@@ -136,8 +147,10 @@ if ($cmd=="login") {
 				echo "<script language=JavaScript> parent.location='index.php?cmd=jifang'; </script>";
 				exit(0);
 			}
-		}
-		echo "用户名或密码错误,请重新输入";
+			echo "<font color=red>密码错误，请检查</font>";
+
+		} else
+			echo "<font color=red>用户名不存在，请联系管理员</font>";
 	}
 } // end cmd==login
 
@@ -146,7 +159,8 @@ $isadmin=$_SESSION["isadmin"];
 if($login<>1) {   // 用户没有登录
 	$login=0;
 	$_SESSION["login"]=0;
-	echo "<p>有任何问题请联系 james@ustc.edu.cn";
+	echo "<p>系统版本: ".$sysversion;
+	echo "<p>有任何问题请联系 ".$syslxr;
 	echo "<p>";
 	echo "请输入邮箱和密码登录<p>";
 	echo "系统会连接到邮件POP3服务器登录验证密码";
@@ -174,6 +188,8 @@ if(getuserright("info")>0)
 	echo "<li><a href=index.php?cmd=info>常用信息</a></li>";
 if(getuserright("user")>0) 
 	echo "<li><a href=index.php?cmd=user>用户管理</a></li>";
+if(getuserright("sysinfo")>0) 
+	echo "<li><a href=index.php?cmd=sysinfo>系统管理</a></li>";
 
 
 echo "<li>";
@@ -1186,10 +1202,8 @@ if ($cmd=="info_modi") {
 
 // USER 
 
-if($isadmin<>1) 
-	exit(0);
-
 if($cmd=="user_new") {
+	checkright("user",3);
 	$email = safe_get("email");
 	$pop3server = safe_get("pop3server");
 	$fullname = $_REQUEST["fullname"];
@@ -1205,6 +1219,7 @@ if($cmd=="user_new") {
 }
 
 if($cmd=="user_right") {
+	checkright("user",3);
 	$user = safe_get("user");
 	$module = safe_get("module");
 	$right = safe_get("right");
@@ -1217,6 +1232,7 @@ if($cmd=="user_right") {
 }
 
 if($cmd=="user") {
+	checkright("user",1);
 	$q="select * from user";
 	$rr=mysql_query($q);
 	$count = 0;
@@ -1234,7 +1250,7 @@ if($cmd=="user") {
 		else echo "是";
 		echo "</td>";
 		echo "<td>";
-		$q="select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='".$r[0]."'";
+		$q="select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='".$r[0]."' order by module.id";
 		
 		$rr2=mysql_query($q);
 		echo "<table>";
@@ -1254,6 +1270,8 @@ if($cmd=="user") {
 		echo "</tr>";
 	}
 	echo "</table>";
+
+	if(getuserright("user")>=3) {
 ?>
 <hr width=500 align=left>
 <p>
@@ -1282,7 +1300,7 @@ POP3邮件服务器：<input name=pop3server><br>
 </select>
 模块: <select name=module>
 <?
-	$q="select module,memo from module";
+	$q="select module,memo from module order by id";
 	$rr=mysql_query($q);
 	while($r=mysql_fetch_row($rr)) {
 		echo "<option value=\"$r[0]\">$r[0]/$r[1]</option>\n";
@@ -1297,5 +1315,41 @@ POP3邮件服务器：<input name=pop3server><br>
 <input type=submit value=修改用户权限>
 </form>
 <?
+	} // 
 } // end cmd==user
+
+// SYSINFO
+
+if($cmd=="sysinfo_modi") {
+	checkright("sysinfo",3);
+	$sysversion = mysql_escape_string($_REQUEST["version"]);
+	$systitle = mysql_escape_string($_REQUEST["title"]);
+	$syslxr = mysql_escape_string($_REQUEST["lxr"]);
+	$q="replace into sysinfo values('version','$sysversion')";
+	mysql_query($q);
+	$q="replace into sysinfo values('title','$systitle')";
+	mysql_query($q);
+	$q="replace into sysinfo values('lxr','$syslxr')";
+	mysql_query($q);
+	echo "修改完毕";
+	exit(0);
+}
+
+if($cmd=="sysinfo") {
+	checkright("sysinfo",1);
+?>
+
+<form action=index.php method=get>
+<input name=cmd value=sysinfo_modi type=hidden>
+系统版本号：<input name=version value="<?echo $sysversion;?>"><br>
+网页标题：<input name=title value="<?echo $systitle;?>"><br>
+联系信息：<input name=lxr value="<?echo $syslxr;?>"><br>
+
+<? 	if(getuserright("sysinfo")>=3) 
+		echo "<input type=submit value=修改系统信息>";
+?>
+
+</form>
+<?
+}  // end cmd==sysinfo
 ?>

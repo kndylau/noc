@@ -178,4 +178,13 @@ CREATE TABLE `module` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO `module` VALUES (1,'jifang','机房巡检'),(2,'ticket','故障处理'),(3,'server','服务器管理'),(4,'odf','ODF管理'),(5,'ip','IP管理'),(6,'info','常用信息'),(7,'user','用户管理'),(8,'ALL','所有模块');
+INSERT INTO `module` VALUES (1,'jifang','机房巡检'),(2,'ticket','故障处理'),(3,'server','服务器管理'),(4,'odf','ODF管理'),(5,'ip','IP管理'),(6,'info','常用信息'),(7,'user','用户管理'),(0,'ALL','所有模块'),(8,'sysinfo','系统管理');
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sysinfo` (
+  `name` varchar(50) NOT NULL,
+  `info` varchar(200) NOT NULL,
+  PRIMARY KEY  (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO `sysinfo` VALUES ('version','2015092602'),('title','USTC机房管理'),('lxr','james@ustc.edu.cn');
