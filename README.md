@@ -5,6 +5,7 @@
 1. 安装过程
 
 1.1 安装好的虚拟机ovf文件请到 http://staff.ustc.edu.cn/~james/noc 下载
+    虚拟机root密码为 noctest, 启动后请立即修改
     导入虚拟机系统后，设置网卡，启动后修改IP地址，参照INSTALL.txt 2.5 创建第一个用户即可使用，即执行命令
 mysql noc
 > INSERT INTO user VALUES ('xyz@x.y.z', 'x.x.x.x', 1, '第一个用户');
