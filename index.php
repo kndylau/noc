@@ -56,7 +56,7 @@ function changehist ($q) {
 
 // 0 no right
 // 1 readonly right
-// 2 new right
+// 2 add right
 // 3 full right 
 function getuserright($module) {
 	$user = $_SESSION["user"];
@@ -200,11 +200,10 @@ echo "</li>";
 echo "<li><a href=index.php?cmd=logout>退出</a></li>";
 echo "</ul>";
 echo "</div>";
-echo "<hr>";
+echo "<div id=\"navbg\"></div><p>";
 
-if ($cmd=="" ) {
+if ($cmd=="" ) 
 	$cmd="jifang";
-}
 
 // JIFANG
 
@@ -239,7 +238,6 @@ if ( $cmd=="jifang") {
 
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr> <th>序号</th> <th>时间</th> <th>环境</th> <th>服务器</th> <th>事件描述</th> <th>实施人</th> </tr>";
-
 	$count=0;
 
 while($r=mysql_fetch_row($rr)){
@@ -336,9 +334,10 @@ if($cmd=="ticket_new") {
 	$q="update ticketdetail set tm='".$tm."',memo='".$memo."' where id='".$did."'";
 	mysql_query($q);
 	$isend=safe_get("isend");
-	if( $isend ) 
-	$q="update ticket set et=\"".$tm."\" where id=".$tid;
-	mysql_query($q);
+	if( $isend ) {
+		$q="update ticket set et=\"".$tm."\" where id=".$tid;
+		mysql_query($q);
+	}
 } else if($cmd=="ticketdetail_new") {
 	checkright("ticket",2);
 	$cmd="ticket";
@@ -364,7 +363,7 @@ if ($cmd=="ticket") {
 	$rr=mysql_query($q);
 
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr> <th>序号</th> <th>开始时间</th> <th>结束时间</th> <th>故障时间</th> <th>事件描述</th> <th>时间</th> <th>处理</th> <th>实施人</th> </tr>\n";
+	echo "<tr><th>序号</th><th>开始时间</th><th>结束时间</th><th>故障时间</th><th>事件描述</th><th>时间</th><th>处理</th><th>实施人</th> </tr>\n";
 
 	$count=0;
 while($r=mysql_fetch_row($rr)){
@@ -1066,7 +1065,7 @@ if ($cmd=="info") {
 	$count=0;
 	while($r=mysql_fetch_row($rr)){
 		$count++;
-		echo "<tr><td>".$count."</td>";
+		echo "<tr><td align=center>".$count."</td>";
 		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[1]."<a/></td>";
 		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[2]."<a/></td>";
 		echo "<td>";
@@ -1218,6 +1217,18 @@ if($cmd=="user_new") {
 	$cmd="user";
 }
 
+if($cmd=="user_del") {
+	checkright("user",3);
+	$email = safe_get("email");
+	if($email==$_SESSION["user"]) {
+		echo "<font color=red>不能删除自己</font><p>";
+	} else {
+		$q="delete from user where email='$email'";
+		mysql_query($q);
+	}
+	$cmd="user";
+}
+
 if($cmd=="user_right") {
 	checkright("user",3);
 	$user = safe_get("user");
@@ -1237,14 +1248,14 @@ if($cmd=="user") {
 	$rr=mysql_query($q);
 	$count = 0;
 	echo "用户信息<p><table border=1>";
-	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>详细权限</th></tr>\n";
+	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th><th>命令</th></tr>\n";
 	while($r=mysql_fetch_row($rr)) {
 		$count++;
-		echo "<tr><td>";echo $count;"</td>";
+		echo "<tr><td align=center>";echo $count;"</td>";
 		echo "<td>".$r[0]."</td>";
 		echo "<td>".$r[1]."</td>";
 		echo "<td>".$r[3]."</td>";
-		echo "<td>";
+		echo "<td align=center>";
 		if($r[2]=="0")
 			echo "否";
 		else echo "是";
@@ -1266,6 +1277,9 @@ if($cmd=="user") {
 			echo "</tr>";
 		}
 		echo "</table>";
+		echo "</td>";
+		echo "<td>";
+		echo "<a href=index.php?cmd=user_del&email=".$r[0]." onclick=\"return confirm('确信删除 $r[0] ?');\">删除</a>";
 		echo "</td>";
 		echo "</tr>";
 	}
