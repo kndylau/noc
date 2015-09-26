@@ -4,6 +4,9 @@
 <pre>
 1. 安装过程
 
+注意： 从虚拟机开始安装的详细步骤请参考 INSTALL.txt
+
+
 php 需要 php-imap 模块
 
 创建数据库:参考noc.sql 内容创建table
