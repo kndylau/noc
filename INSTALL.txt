@@ -1,0 +1,73 @@
+
+
+1. 安装Centos 6.7
+1.1 下载 CentOS-6.7-x86_64-minimal.iso
+    我从 http://ctos.ustc.edu.cn/centos/6/isos/x86_64/ 下载
+
+1.2 添加一个虚拟机，2G内存，16G磁盘空间
+
+1.3 默认安装即可
+    这样安装的系统最干净，除了对外开放22 ssh端口，不开放其他任何服务
+1.4 登录系统，禁用SELinux
+vi /etc/selinux/config
+将SELINUX=enforcing修改为
+SELINUX=disabled
+
+1.5 对系统更新并安装需要的软件包
+yum update
+yum install -y mysql-server apache php php-imap  php-mysql git
+
+1.6 将mysqld httpd服务设置为开机启动
+chkconfig mysqld  on
+chkconfig httpd on
+
+1.7 修改 httpd的默认字符集
+vi /etc/httpd/conf/httpd.conf
+将AddDefaultCharset UTF-8修改为
+AddDefaultCharset gb2312
+
+1.8 删除默认页面
+rm /etc/httpd/conf.d/welcome.conf 
+
+1.9 设置iptables, 开放80端口
+vi /etc/sysconfig/iptables
+在-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT 之后，增加一行
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+
+建议这里限制22端口的访问范围。
+
+1.10 重启服务器
+
+2. 安装软件
+2.1 创建目录，放在 /usr/src/noc 下, file和file_del目录是存放上载附件的
+mkdir -p /usr/src/noc /usr/src/noc/file /usr/src/noc/file_del
+chown apache /usr/src/noc/file /usr/src/noc/file_del
+cd /var/www/html
+ln -s /usr/src/noc/web noc
+
+2.2 下载软件
+cd /usr/src/noc
+git clone https://github.com/bg6cq/noc.git web
+
+2.3 创建数据库
+mysql
+> create database noc;
+
+2.4 创建相关的表
+mysql noc < noc.sql 
+
+2.5 创建第一个用户
+mysql noc
+> insert into user values('james@ustc.edu.cn','202.38.64.8',1,'管理员');
+请根据实际情况，修改邮件地址和POP3服务器IP
+
+2.6 访问http://x.x.x.x/noc  x.x.x.x是服务器IP地址
+登录即可
+
+
+3. 软件的更新
+3.1 更新代码
+cd /usr/src/noc/web
+git pull
+
+3.2 如果需要修改数据库结构，只能手工修改
