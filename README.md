@@ -12,7 +12,7 @@
 mysql noc
 > INSERT INTO user VALUES ('xyz@x.y.z', 'x.x.x.x', 1, '第一个用户');
 
-其中xyz@x.y.z 是登录名，x.x.x.x是该邮件的POP3服务器，
+其中xyz@x.y.z 是登录名，x.x.x.x是该邮件的POP3服务器，1 的含义是超级管理员
 程序依靠用户输入的用户名、密码，到邮件服务器上，利用pop3协议连接并认证身份
 
 1.2 从虚拟机开始安装的详细步骤请参考 INSTALL.txt
