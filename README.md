@@ -1,27 +1,20 @@
 简单的机房管理辅助程序
 
-
 <pre>
+
 1. 安装过程
 
-注意： 从虚拟机开始安装的详细步骤请参考 INSTALL.txt
+1.1 安装好的虚拟机ovf文件请到 http://staff.ustc.edu.cn/~james/noc 下载
+    导入虚拟机系统后，设置网卡，启动后修改IP地址，参照INSTALL.txt 2.5 创建第一个用户即可使用，即执行命令
+mysql noc
+> INSERT INTO user VALUES ('xyz@x.y.z', 'x.x.x.x', 1, '第一个用户');
 
+其中xyz@x.y.z 是登录名，x.x.x.x是该邮件的POP3服务器，
+程序依靠用户输入的用户名、密码，到邮件服务器上，利用pop3协议连接并认证身份
 
-php 需要 php-imap 模块
+1.2 从虚拟机开始安装的详细步骤请参考 INSTALL.txt
 
-创建数据库:参考noc.sql 内容创建table
-
-修改db.php中数据库有关信息
-
-选择上传文件的保存目录，默认是 /usr/src/noc/file /usr/src/noc/file_del 
-创建这两个目录，并且允许httpd进程用户可写
-
-mkdir -p /usr/src/noc/file /usr/src/noc/file_del
-chown apache /usr/src/noc/file /usr/src/noc/file_del
-
-并且需要在数据库中插入如下信息才能让第一个用户登录：
-
-INSERT INTO user (email, pop3server, isadmin, truename) VALUES ('james@ustc.edu.cn', '202.38.64.8', 1, '第一个用户');
+1.3 如果在现有系统安装, 请参考INSTALL.txt
 
 
 2. 认证说明
@@ -34,7 +27,6 @@ INSERT INTO user (email, pop3server, isadmin, truename) VALUES ('james@ustc.edu.
 
 3.1 2015.09.24 修改
 增加 常用信息 中附件功能
-
 表： file file_del
 mkdir /usr/src/noc/file /usr/src/noc/file_del
 chown apache /usr/src/noc/file /usr/src/noc/file_del
@@ -45,4 +37,5 @@ chown apache /usr/src/noc/file /usr/src/noc/file_del
 
 3.4 2015.09.26 增加 sysinfo 系统配置
 
+3.5 2015.09.26 增加 INSTALL.txt 
 </pre>
