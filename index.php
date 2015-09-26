@@ -434,7 +434,7 @@ while($r=mysql_fetch_row($rr)){
 		if(getuserright("ticket")>=3) {
 			echo "修改ticket<br>";
 			echo "<form action=index.php method=post>";
-			echo "<input name=cmd value=iticket_modi type=hidden>";
+			echo "<input name=cmd value=ticket_modi type=hidden>";
 			echo "<input name=id value=".$r[0]." type=hidden>";
     			echo "开始时间:<input name=st value=\"".$r[1]."\"><br>";
     			echo "结束时间:<input name=et value=\"".$r[2]."\"><br>";
