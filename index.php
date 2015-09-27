@@ -1248,7 +1248,10 @@ if($cmd=="user") {
 	$rr=mysql_query($q);
 	$count = 0;
 	echo "用户信息<p><table border=1>";
-	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th><th>命令</th></tr>\n";
+	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th>";
+	if(getuserright("user")>=3) 
+		echo "<th>命令</th>";
+	echo "</tr>\n";
 	while($r=mysql_fetch_row($rr)) {
 		$count++;
 		echo "<tr><td align=center>";echo $count;"</td>";
@@ -1278,19 +1281,23 @@ if($cmd=="user") {
 		}
 		echo "</table>";
 		echo "</td>";
-		echo "<td>";
-		echo "<a href=index.php?cmd=user_del&email=".$r[0]." onclick=\"return confirm('确信删除 $r[0] ?');\">删除</a>";
-		echo "</td>";
+		if(getuserright("user")>=3)  {
+			echo "<td>";
+			echo "<a href=index.php?cmd=user&email=".$r[0].">修改</a> &nbsp;&nbsp;";
+			echo "<a href=index.php?cmd=user_del&email=".$r[0]." onclick=\"return confirm('确信删除 $r[0] ?');\">删除</a>";
+			echo "</td>";
+		}
 		echo "</tr>";
 	}
 	echo "</table>";
+	echo "<hr width=500 align=left><p>";
 
-	if(getuserright("user")>=3) {
+	$email=safe_get("email");
+	if( $email=="") {
+		if(getuserright("user")>=2) {
 ?>
-<hr width=500 align=left>
-<p>
-注：增加同名用户可以用来修改信息<p>
-登录时，连接到POP3邮件服务器上，利用登录名和密码验证用户身份<br>
+
+登录时，利用登录名和密码连接到POP3邮件服务器上验证用户身份<br>
 <form action=index.php method=get>
 <input name=cmd value=user_new type=hidden>
 用户邮件登录名：<input name=email><br>
@@ -1299,6 +1306,30 @@ POP3邮件服务器：<input name=pop3server><br>
 是否超级管理员：<input name=super type=checkbox value=1><br>
 <input type=submit value=新增用户>
 </form>
+
+<?php 
+		}
+	} else {
+		if(getuserright("user")>=3) {
+			$q="select email,pop3server,truename,isadmin from user where email='$email'";
+			$rr=mysql_query($q);
+			$r=mysql_fetch_row($rr);
+?>
+登录时，利用登录名和密码连接到POP3邮件服务器上验证用户身份<br>
+<form action=index.php method=get>
+<input name=cmd value=user_new type=hidden>
+用户邮件登录名：<input name=email value="<?php echo $r[0]; ?>"><br>
+POP3邮件服务器：<input name=pop3server value="<?php echo $r[1]; ?>"><br>
+用户姓名: <input name=fullname value="<?php echo $r[2]; ?>"><br>
+是否超级管理员：<input name=super type=checkbox value=1 <?php if($r[3]=="1") echo "checked"; ?>><br>
+<input type=submit value=修改用户>
+</form>
+
+<?php
+		}
+	}
+	if(getuserright("user")>=3) {
+?>
 
 <hr width=500 align=left>
 <form action=index.php method=get>
