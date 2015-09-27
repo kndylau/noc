@@ -30,7 +30,7 @@ function checkvalue($str) {
 }
 
 function safe_get($str) {
-	$x = $_REQUEST[$str];
+	@$x = $_REQUEST[$str];
 	checkvalue($x);
 	return $x;
 }
@@ -154,8 +154,8 @@ if ($cmd=="login") {
 	}
 } // end cmd==login
 
-$login=$_SESSION["login"];
-$isadmin=$_SESSION["isadmin"];
+@$login=$_SESSION["login"];
+@$isadmin=$_SESSION["isadmin"];
 if($login<>1) {   // 用户没有登录
 	$login=0;
 	$_SESSION["login"]=0;
@@ -212,7 +212,7 @@ if($cmd=="jifang_new") {
 	$cmd="jifang";
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
-	$msg=mysql_escape_string($_REQUEST["msg"]);
+	@$msg=mysql_escape_string($_REQUEST["msg"]);
 	$q="insert into jifang_daily(tm,huanjing,server,msg,op) values(now(),".$huanjing.",".$server.",'".$msg."','".$_SESSION["user"]."')";
 	mysql_query($q);
 }  else if($cmd=="jifang_modido") {
@@ -221,7 +221,7 @@ if($cmd=="jifang_new") {
 	$id=safe_get("id");
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
-	$msg=mysql_escape_string($_REQUEST["msg"]);
+	@$msg=mysql_escape_string($_REQUEST["msg"]);
 	$q="update jifang_daily set huanjing=".$huanjing.",server=".$server.",msg='".$msg."' where id=".$id;
 	mysql_query($q);
 }
@@ -230,7 +230,7 @@ if ( $cmd=="jifang") {
 	checkright("jifang",1);
 	echo "<a href=index.php?cmd=jifang&all=yes>列出所有记录</a><p>";
 
-	if( $_REQUEST["all"] == "yes" )
+	if( safe_get("all") == "yes" )
 		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc";
 	else
 		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc limit 30";
@@ -306,8 +306,8 @@ if($cmd=="ticket_new") {
 	checkright("ticket",2);
 	$cmd="ticket";
 	$st=safe_get("st");
-	$memo=mysql_escape_string($_REQUEST["memo"]);
-	$memo2=mysql_escape_string($_REQUEST["memo2"]);
+	@$memo=mysql_escape_string($_REQUEST["memo"]);
+	@$memo2=mysql_escape_string($_REQUEST["memo2"]);
 	$q="insert into ticket (st,et,memo,op) values('".$st."','0-0-0 00:00:00','".$memo."','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$q="SELECT LAST_INSERT_ID()";
@@ -321,7 +321,7 @@ if($cmd=="ticket_new") {
 	$id=safe_get("id");
 	$st=safe_get("st");
 	$et=safe_get("et");
-	$memo=mysql_escape_string($_REQUEST["memo"]);
+	@$memo=mysql_escape_string($_REQUEST["memo"]);
 	$q="update ticket set st='".$st."',et='".$et."',memo='".$memo."' where id='".$id."'";
 	mysql_query($q);
 } else if($cmd=="ticketdetail_modi") {
@@ -330,7 +330,7 @@ if($cmd=="ticket_new") {
 	$tid=safe_get("tid");
 	$did=safe_get("did");
 	$tm=safe_get("tm");
-	$memo=mysql_escape_string($_REQUEST["memo"]);
+	@$memo=mysql_escape_string($_REQUEST["memo"]);
 	$q="update ticketdetail set tm='".$tm."',memo='".$memo."' where id='".$did."'";
 	mysql_query($q);
 	$isend=safe_get("isend");
@@ -343,7 +343,7 @@ if($cmd=="ticket_new") {
 	$cmd="ticket";
 	$tid=safe_get("tid");
 	$tm=safe_get("tm");
-	$memo=mysql_escape_string($_REQUEST["memo"]);
+	@$memo=mysql_escape_string($_REQUEST["memo"]);
 	$q="insert into ticketdetail (tid,tm,memo,op) values(".$tid.",'".$tm."','".$memo."','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$isend=safe_get("isend");
@@ -474,8 +474,8 @@ if($cmd=='cab_add') {
 	$cabid = safe_get("cabid");
 	$ps1= safe_get("ps1");
 	$ps2= safe_get("ps2");
-	$mgt = mysql_escape_string($_REQUEST["mgt"]);
-	$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
+	@$mgt = mysql_escape_string($_REQUEST["mgt"]);
+	@$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
 	$q="insert into JF_CAB values('$cabid','$ps1','$ps2','$mgt','$cabuse')";
 	mysql_query($q);
 	echo "增加完成<p>";
@@ -488,8 +488,8 @@ if($cmd=='cab_modido') {
 	$cabid = safe_get("cabid");
 	$ps1= safe_get("ps1");
 	$ps2= safe_get("ps2");
-	$mgt = mysql_escape_string($_REQUEST["mgt"]);
-	$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
+	@$mgt = mysql_escape_string($_REQUEST["mgt"]);
+	@$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
 	$q="update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse'  where CABID='$oldcabid'";
 	mysql_query($q);
 	echo "修改完成<p>";
@@ -1018,8 +1018,8 @@ while($r=mysql_fetch_row($rr)){
 if($cmd=="info_new") {
 	checkright("info",2);
 	$cmd="info";
-	$title=mysql_escape_string($_REQUEST["title"]);
-	$memo=mysql_escape_string($_REQUEST["memo"]);
+	@$title=mysql_escape_string($_REQUEST["title"]);
+	@$memo=mysql_escape_string($_REQUEST["memo"]);
 	if($title=="") {
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=info_new type=hidden>";
@@ -1034,8 +1034,8 @@ if($cmd=="info_new") {
 	checkright("info",3);
 	$cmd="info";
 	$id=safe_get("id");
-	$title=mysql_escape_string($_REQUEST["title"]);
-	$memo=mysql_escape_string($_REQUEST["memo"]);
+	@$title=mysql_escape_string($_REQUEST["title"]);
+	@$memo=mysql_escape_string($_REQUEST["memo"]);
 	$q="update info set title='$title',memo='$memo' where id=$id";
 	mysql_query($q);
 } // end cmd==info_new
@@ -1205,7 +1205,7 @@ if($cmd=="user_new") {
 	checkright("user",3);
 	$email = safe_get("email");
 	$pop3server = safe_get("pop3server");
-	$fullname = $_REQUEST["fullname"];
+	@$fullname = $_REQUEST["fullname"];
 	$super = safe_get("super");
 	$q="delete from user where email='$email'";
 	mysql_query($q);
@@ -1336,9 +1336,9 @@ POP3邮件服务器：<input name=pop3server><br>
 
 if($cmd=="sysinfo_modi") {
 	checkright("sysinfo",3);
-	$sysversion = mysql_escape_string($_REQUEST["version"]);
-	$systitle = mysql_escape_string($_REQUEST["title"]);
-	$syslxr = mysql_escape_string($_REQUEST["lxr"]);
+	@$sysversion = mysql_escape_string($_REQUEST["version"]);
+	@$systitle = mysql_escape_string($_REQUEST["title"]);
+	@$syslxr = mysql_escape_string($_REQUEST["lxr"]);
 	$q="replace into sysinfo values('version','$sysversion')";
 	mysql_query($q);
 	$q="replace into sysinfo values('title','$systitle')";
