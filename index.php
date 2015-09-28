@@ -41,9 +41,8 @@ function safe_get2($str) {
 
 
 function changehist ($q) {
-	echo "修改记录<p><table border=1>";
+	echo "修改日志<p><table border=1>";
         echo "<tr><th>时间</th><th>修改内容</th></tr>\n";
-
         $count = 0;
         $rr=mysql_query($q);
         while($row=mysql_fetch_row($rr)) {
@@ -995,7 +994,18 @@ if($cmd=="ip_new") {
 	$use=safe_get2("use");
 	$lxr=safe_get2("lxr");
 	$memo=safe_get2("memo");
+	$q="select * from IP where id ='$id'";
+        $rr=mysql_query($q);
+        $row=mysql_fetch_row($rr);
+        $q="insert into hist (tm,oid,old,new) values (now(),'IP$row[0]','$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]','$ip/$mask/$net/$use/$lxr/$memo')";
+        mysql_query($q);
 	$q="update IP set IP='$ip',MASK='$mask',net=$net,`use`='$use',lxr='$lxr',memo='$memo' where id=$id";
+	mysql_query($q);
+} else if($cmd=="ip_del") {
+	checkright("ip",3);
+	$cmd="ip";
+	$id=safe_get("ipid");
+	$q="delete from IP where id=$id";
 	mysql_query($q);
 }
 
@@ -1004,7 +1014,10 @@ if ( $cmd=="ip") {
 	$q="select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP)";
 	$rr=mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr> <th>序号</th> <th>IP</th> <th>用途</th> <th>联系人</th> <th>备注</th> </tr>";
+	echo " <tr><th>序号</th><th>IP</th><th>用途</th><th>联系人</th><th>备注</th>";
+	if(getuserright("ip")>=3) 
+		echo "<th> 操作 </th>";
+	echo "</tr>";
 	$count=0;
 while($r=mysql_fetch_row($rr)){
 	$count++;
@@ -1030,6 +1043,8 @@ while($r=mysql_fetch_row($rr)){
 	echo "<td>".$r[4]."</td>";
 	echo "<td>".$r[5]."</td>";
 	echo "<td>".$r[6]."</td>";
+	if(getuserright("ip")>=3) 
+		echo "<td align=center><a href=index.php?cmd=ip_del&ipid=$r[0] onclick=\"return confirm('确信删除IP $r[1] ?');\">删除</a></td>";
 	echo "</tr>";
 	echo "\n";
 }
@@ -1055,6 +1070,7 @@ while($r=mysql_fetch_row($rr)){
     		echo "联系人: <input name=lxr value=\"".$r[5]."\"><br>";
     		echo "备注: <input name=memo value=\"".$r[6]."\"><br>";
     		echo "<input type=submit name=修改记录></form>";
+		changehist("select * from hist where oid = 'IP$id' order by tm desc");
 
 	} else if(getuserright("ip")>=2) {
 		echo "<p><form action=index.php method=post>";
