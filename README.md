@@ -15,7 +15,7 @@ mysql noc
 其中xyz@x.y.z 是登录名，x.x.x.x是对应的POP3服务器，1 的含义是超级管理员
 程序依靠用户输入的用户名、密码，利用pop3协议连接到邮件服务器上并认证身份
 
-使用虚拟机镜像，启动后请按照下述1.4更新软件
+虚拟机镜像软件版本为4.7 2015.08.28 版本，使用虚拟机镜像，启动后请按照下述1.4更新软件
 
 1.2 从虚拟机开始安装的详细步骤请参考 INSTALL.txt
 
@@ -26,7 +26,7 @@ cd /usr/src/noc/web
 git pull
 可以下载最新的软件
 
-如果数据库结构需要调整，只能手工做
+如果数据库结构需要调整，只能手工做。具体请参考下面修改日志部分。
 
 2. 认证说明
 程序依靠用户输入的用户名、密码，利用pop3协议连接到邮件服务器上并认证身份
@@ -44,12 +44,16 @@ git pull
 4.6 2015.09.26 增加虚拟机镜像
 4.7 2015.08.28 增加故障处理显示的宽屏/窄屏选择
 注：需使用以下命令增加 userpref table
-
 CREATE TABLE `userpref` (
   `user` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
   `value` varchar(200) NOT NULL,
   PRIMARY KEY  (`user`,`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+5. 致谢
+感谢如下老师提出的意见和建议：
+陕西国防工业职业技术学院 徐华宇
+合肥工业大学 程克勤
 
 </pre>
