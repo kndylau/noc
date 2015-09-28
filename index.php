@@ -78,6 +78,19 @@ function checkright($module, $right) {
 	}
 }
 
+// "0" or "1"
+function getticketdisplaymode(){
+	$user = $_SESSION["user"];
+        $q = "select value from userpref where user='$user' and name='ticketdisplaymode'";
+        $rr=mysql_query($q);
+        if($rr) {
+		$row=mysql_fetch_row($rr);
+		if( $row[0]=="1" ) 
+                	return "1";  
+	}
+       	return "0";  
+}
+
 $cmd=safe_get("cmd");
 
 if ($cmd=="file_down") {
@@ -191,6 +204,7 @@ if(getuserright("user")>0)
 if(getuserright("sysinfo")>0) 
 	echo "<li><a href=index.php?cmd=sysinfo>系统管理</a></li>";
 
+echo "<li><a href=index.php?cmd=user_pref>个人设置</a></li>";
 
 echo "<li>";
 echo $_SESSION["truename"];
@@ -308,7 +322,11 @@ if($cmd=="ticket_new") {
 	$st=safe_get("st");
 	@$memo=mysql_escape_string($_REQUEST["memo"]);
 	@$memo2=mysql_escape_string($_REQUEST["memo2"]);
-	$q="insert into ticket (st,et,memo,op) values('".$st."','0-0-0 00:00:00','".$memo."','".$_SESSION["user"]."')";
+	$isend=safe_get("isend");
+	if( $isend ) 
+		$q="insert into ticket (st,et,memo,op) values('".$st."','".$st."','".$memo."','".$_SESSION["user"]."')";
+	else
+		$q="insert into ticket (st,et,memo,op) values('".$st."','0-0-0 00:00:00','".$memo."','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$q="SELECT LAST_INSERT_ID()";
 	$rr=mysql_query($q);
@@ -355,15 +373,20 @@ if($cmd=="ticket_new") {
 
 if ($cmd=="ticket") {
 	checkright("ticket",1);
+	$tdm = getticketdisplaymode();
+	
 	echo "<a href=index.php?cmd=ticket&all=yes>列出所有记录</a><p>";
 	if( safe_get("all") == "yes" )
-		$q="select id,st,et,memo,op,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket order by st desc";
+		$q="select id,st,et,memo,truename,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket,user where op=email order by st desc";
 	else
-		$q="select id,st,et,memo,op,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket where (year(st) = year(now())) or (year(et)=year(now())) or (year(et)=0) order by st desc";
+		$q="select id,st,et,memo,truename,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket,user where op=email and ((year(st) = year(now())) or (year(et)=year(now())) or (year(et)=0)) order by st desc";
 	$rr=mysql_query($q);
 
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><th>序号</th><th>开始时间</th><th>结束时间</th><th>故障时间</th><th>事件描述</th><th>时间</th><th>处理</th><th>实施人</th> </tr>\n";
+	if($tdm=="1")
+		echo "<tr><th>序号</th><th>开始时间</th><th>结束时间</th><th>故障时间</th><th>事件描述/处理</th><th>实施人</th> </tr>\n";
+	else 
+		echo "<tr><th>序号</th><th>开始时间</th><th>结束时间</th><th>故障时间</th><th>事件描述</th><th>时间</th><th>处理</th><th>实施人</th> </tr>\n";
 
 	$count=0;
 while($r=mysql_fetch_row($rr)){
@@ -375,20 +398,43 @@ while($r=mysql_fetch_row($rr)){
 	$q="select id,tm,memo,truename from ticketdetail,user where op=email and tid='".$r[0]."' order by tm";
 	$rr2=mysql_query($q);
 	$rows=mysql_num_rows($rr2); 
-	echo "<td rowspan=".$rows." align=center>".$count."</td>";
+	if($tdm=="1") {
+		echo "<td rowspan=";
+		echo $rows+1;
+		echo " align=center>".$count."</td>";
+	} else {
+		echo "<td rowspan=".$rows." align=center>".$count."</td>";
+	}
 	if(getuserright("ticket")>=2) 
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket&id=".$r[0].">".$r[1]."</a></td>";
+		if($tdm=="1") 
+			echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket&id=".$r[0].">".$r[1]."</a></td>";
+		else
+			echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket&id=".$r[0].">".$r[1]."</a></td>";
 	else
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[1]."</td>";
-	echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
-	echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
+		if($tdm=="1") 
+			echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
+		else 
+			echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[1]."</td>";
+	if($tdm=="1")  {
+		echo "<td nowrap=\"nowrap\">".$r[2]."</td>";
+		echo "<td align=right nowrap=\"nowrap\">";
+	} else {
+		echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
+		echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
+	}
 	if ( $r[2] == "0000-00-00 00:00:00" )
 		echo " ";
 	else 
 		echo round($r[5]/3600,1),"小时";
 	echo "</td>";
 	
-	echo "<td rowspan=".$rows.">".$r[3]."</td>";
+	if($tdm=="1")  {
+		echo "<td>".$r[3]."</td>";
+		echo "<td>".$r[4]."</td>";
+		echo "</tr>";
+	} else {
+		echo "<td rowspan=".$rows.">".$r[3]."</td>";
+	}
 	$firstrow=1;
 	while($r2=mysql_fetch_row($rr2)) {
 		if($firstrow==1) 
@@ -399,10 +445,12 @@ while($r=mysql_fetch_row($rr)){
 			else
 				echo "<tr>";
 		}
+		if($tdm=="1") echo "<td></td>";
 		if(getuserright("ticket")>=3) 
 			echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket&did=".$r2[0].">".$r2[1]."</a></td>";
 		else
 			echo "<td nowrap=\"nowrap\">".$r2[1]."</td>";
+		if($tdm=="1")echo "<td></td>";
 		echo "<td>".$r2[2]."</td>";
 		echo "<td>".$r2[3]."</td>";
 		echo "</tr>\n";
@@ -462,6 +510,7 @@ while($r=mysql_fetch_row($rr)){
 		echo "\"><br>";
 		echo "事件描述:<input name=memo><br>";
 		echo "处理描述:<input name=memo2 size=100><br>";
+		echo "一次性事件，直接更新结束时间:<input type=checkbox name=isend value=1><br>";
 		echo "<input type=submit value=新增事件记录>";
 		echo "</form>";
 	}
@@ -1384,9 +1433,10 @@ if($cmd=="sysinfo") {
 	checkright("sysinfo",1);
 ?>
 
+系统信息设置<p>
 <form action=index.php method=get>
 <input name=cmd value=sysinfo_modi type=hidden>
-系统版本号：<input name=version value="<?php echo $sysversion;?>"><br>
+系统版本：<input name=version value="<?php echo $sysversion;?>"><br>
 网页标题：<input name=title value="<?php echo $systitle;?>"><br>
 联系信息：<input name=lxr value="<?php echo $syslxr;?>"><br>
 
@@ -1397,4 +1447,31 @@ if($cmd=="sysinfo") {
 </form>
 <?php
 }  // end cmd==sysinfo
+
+
+// USER_PREF
+
+if($cmd=="user_pref_tdm") {
+	$tdm=safe_get("tdm");
+	$user = $_SESSION["user"];
+	if( $tdm <> "1" ) $tdm = "0";
+	$q = "replace into userpref values('$user','ticketdisplaymode','$tdm')";
+	mysql_query($q);
+	$cmd="user_pref";
+}
+if($cmd=="user_pref") {
+	echo "个人偏好设置<p>";
+	$tdm = getticketdisplaymode();
+?>
+
+<form action=index.php method=get>
+<input name=cmd value=user_pref_tdm type=hidden>
+故障处理显示模式: 
+<input type=radio name=tdm value=0<?php if($tdm=="0") echo " checked";?>>适合宽屏</input>
+<input type=radio name=tdm value=1<?php if($tdm=="1") echo " checked";?>>适合窄屏</input>
+<input type=submit value=修改故障处理显示模式>  <p>
+
+<?php
+	
+}
 ?>

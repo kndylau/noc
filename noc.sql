@@ -113,7 +113,7 @@ CREATE TABLE `info` (
   `title` varchar(150) NOT NULL,
   `memo` varchar(65000) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -136,7 +136,7 @@ CREATE TABLE `ticket` (
   `memo` varchar(255) character set latin1 collate latin1_bin NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -147,7 +147,7 @@ CREATE TABLE `ticketdetail` (
   `memo` varchar(255) character set latin1 collate latin1_bin NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -171,6 +171,15 @@ CREATE TABLE `userright` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userpref` (
+  `user` varchar(50) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `value` varchar(200) NOT NULL,
+  PRIMARY KEY  (`user`,`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `module` (
   `id` int(4) unsigned NOT NULL auto_increment,
   `module` varchar(50) NOT NULL,
@@ -187,4 +196,4 @@ CREATE TABLE `sysinfo` (
   PRIMARY KEY  (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO `sysinfo` VALUES ('version','2015092602'),('title','USTC机房管理'),('lxr','james@ustc.edu.cn');
+INSERT INTO `sysinfo` VALUES ('version','20150928'),('title','USTC机房管理'),('lxr','james@ustc.edu.cn');

@@ -42,4 +42,14 @@ git pull
 4.4 2015.09.26 增加 sysinfo 系统配置
 4.5 2015.09.26 增加 INSTALL.txt 
 4.6 2015.09.26 增加虚拟机镜像
+4.7 2015.08.28 增加故障处理显示的宽屏/窄屏选择
+注：需使用以下命令增加 userpref table
+
+CREATE TABLE `userpref` (
+  `user` varchar(50) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `value` varchar(200) NOT NULL,
+  PRIMARY KEY  (`user`,`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 </pre>
