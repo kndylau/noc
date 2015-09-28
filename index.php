@@ -34,6 +34,11 @@ function safe_get($str) {
 	checkvalue($x);
 	return $x;
 }
+function safe_get2($str) {
+	@$x = $_REQUEST[$str];
+	return mysql_escape_string($x);
+}
+
 
 function changehist ($q) {
 	echo "修改记录<p><table border=1>";
@@ -226,7 +231,7 @@ if($cmd=="jifang_new") {
 	$cmd="jifang";
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
-	@$msg=mysql_escape_string($_REQUEST["msg"]);
+	$msg=safe_get2("msg");
 	$q="insert into jifang_daily(tm,huanjing,server,msg,op) values(now(),".$huanjing.",".$server.",'".$msg."','".$_SESSION["user"]."')";
 	mysql_query($q);
 }  else if($cmd=="jifang_modido") {
@@ -235,7 +240,7 @@ if($cmd=="jifang_new") {
 	$id=safe_get("id");
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
-	@$msg=mysql_escape_string($_REQUEST["msg"]);
+	$msg=safe_get2("msg");
 	$q="update jifang_daily set huanjing=".$huanjing.",server=".$server.",msg='".$msg."' where id=".$id;
 	mysql_query($q);
 }
@@ -320,8 +325,8 @@ if($cmd=="ticket_new") {
 	checkright("ticket",2);
 	$cmd="ticket";
 	$st=safe_get("st");
-	@$memo=mysql_escape_string($_REQUEST["memo"]);
-	@$memo2=mysql_escape_string($_REQUEST["memo2"]);
+	$memo=safe_get2("memo");
+	$memo2=safe_get2("memo2");
 	$isend=safe_get("isend");
 	if( $isend ) 
 		$q="insert into ticket (st,et,memo,op) values('".$st."','".$st."','".$memo."','".$_SESSION["user"]."')";
@@ -339,7 +344,7 @@ if($cmd=="ticket_new") {
 	$id=safe_get("id");
 	$st=safe_get("st");
 	$et=safe_get("et");
-	@$memo=mysql_escape_string($_REQUEST["memo"]);
+	$memo=safe_get2("memo");
 	$q="update ticket set st='".$st."',et='".$et."',memo='".$memo."' where id='".$id."'";
 	mysql_query($q);
 } else if($cmd=="ticketdetail_modi") {
@@ -348,7 +353,7 @@ if($cmd=="ticket_new") {
 	$tid=safe_get("tid");
 	$did=safe_get("did");
 	$tm=safe_get("tm");
-	@$memo=mysql_escape_string($_REQUEST["memo"]);
+	$memo=safe_get2("memo");
 	$q="update ticketdetail set tm='".$tm."',memo='".$memo."' where id='".$did."'";
 	mysql_query($q);
 	$isend=safe_get("isend");
@@ -361,7 +366,7 @@ if($cmd=="ticket_new") {
 	$cmd="ticket";
 	$tid=safe_get("tid");
 	$tm=safe_get("tm");
-	@$memo=mysql_escape_string($_REQUEST["memo"]);
+	$memo=safe_get2("memo");
 	$q="insert into ticketdetail (tid,tm,memo,op) values(".$tid.",'".$tm."','".$memo."','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$isend=safe_get("isend");
@@ -521,10 +526,10 @@ while($r=mysql_fetch_row($rr)){
 if($cmd=='cab_add') {
 	checkright("server",2);
 	$cabid = safe_get("cabid");
-	$ps1= safe_get("ps1");
-	$ps2= safe_get("ps2");
-	@$mgt = mysql_escape_string($_REQUEST["mgt"]);
-	@$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
+	$ps1= safe_get2("ps1");
+	$ps2= safe_get2("ps2");
+	$mgt = safe_get2("mgt");
+	$cabuse = safe_get2("cabuse");
 	$q="insert into JF_CAB values('$cabid','$ps1','$ps2','$mgt','$cabuse')";
 	mysql_query($q);
 	echo "增加完成<p>";
@@ -535,10 +540,10 @@ if($cmd=='cab_modido') {
 	checkright("server",3);
 	$oldcabid = safe_get("oldcabid");
 	$cabid = safe_get("cabid");
-	$ps1= safe_get("ps1");
-	$ps2= safe_get("ps2");
-	@$mgt = mysql_escape_string($_REQUEST["mgt"]);
-	@$cabuse = mysql_escape_string($_REQUEST["cabuse"]);
+	$ps1= safe_get2("ps1");
+	$ps2= safe_get2("ps2");
+	$mgt = safe_get2("mgt");
+	$cabuse = safe_get2("cabuse");
 	$q="update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse'  where CABID='$oldcabid'";
 	mysql_query($q);
 	echo "修改完成<p>";
@@ -593,7 +598,7 @@ if ($cmd=='cab_list') {
 	<form action=index.php method=post>
 	<input type=hidden name=cmd value=cab_add>
 	增加机柜:<p>
-	机柜ID: <input name=cabid> <br> 
+	机柜ID: <input name=cabid>字母或数字，可以包含-_ <br> 
 	用途: <input name=cabuse size=80> <br>
 	PS1: <input name=ps1 size=80> <br>
 	PS2: <input name=ps2 size=80> <br>
@@ -612,20 +617,21 @@ if($cmd=='server_add') {
         $cabid = safe_get("cabid");
         $startu = safe_get("startu");
         $endu = safe_get("endu");
-        $kvm = safe_get("kvm");
-        $type = safe_get("type");
-        $name = safe_get("name");
-        $user = safe_get("user");
-        $mgt = safe_get("mgt");
-        $ip1 = safe_get("ip1");
-        $ip2 = safe_get("ip2");
-        $mac1 = safe_get("mac1");
-        $mac2 = safe_get("mac2");
-        $sn = safe_get("sn");
-        $connector = safe_get("connector");
-        $comment = safe_get("comment");
+        $kvm = safe_get2("kvm");
+        $type = safe_get2("type");
+        $name = safe_get2("name");
+        $user = safe_get2("user");
+        $mgt = safe_get2("mgt");
+        $ip1 = safe_get2("ip1");
+        $ip2 = safe_get2("ip2");
+        $mac1 = safe_get2("mac1");
+        $mac2 = safe_get2("mac2");
+        $sn = safe_get2("sn");
+        $connector = safe_get2("connector");
+        $comment = safe_get2("comment");
         $q="insert into JF_Server values('$serverid','$cabid',$startu,$endu,'$kvm','$type','$name','$user','$mgt','$ip1','$ip2','$mac1','$mac2','$sn','$connector','$comment')";
         mysql_query($q);
+	echo $q;
         echo "增加完成<p>";
         $cmd='cabinfo_list';
 }
@@ -637,18 +643,20 @@ if($cmd=='server_modido') {
         $cabid = safe_get("cabid");
         $startu = safe_get("startu");
         $endu = safe_get("endu");
-        $kvm = safe_get("kvm");
-        $type = safe_get("type");
-        $name = safe_get("name");
-        $user = safe_get("user");
-        $mgt = safe_get("mgt");
-        $ip1 = safe_get("ip1");
-        $ip2 = safe_get("ip2");
-        $mac1 = safe_get("mac1");
-        $mac2 = safe_get("mac2");
-        $sn = safe_get("sn");
-        $connector = safe_get("connector");
-        $comment = safe_get("comment");
+	if($startu=="") $startu="1";
+	if($endu=="") $endu="1";
+        $kvm = safe_get2("kvm");
+        $type = safe_get2("type");
+        $name = safe_get2("name");
+        $user = safe_get2("user");
+        $mgt = safe_get2("mgt");
+        $ip1 = safe_get2("ip1");
+        $ip2 = safe_get2("ip2");
+        $mac1 = safe_get2("mac1");
+        $mac2 = safe_get2("mac2");
+        $sn = safe_get2("sn");
+        $connector = safe_get2("connector");
+        $comment = safe_get2("comment");
         $q="update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
         mysql_query($q);
         echo "修改完成<p>";
@@ -764,10 +772,10 @@ if ( $cmd=='cabinfo_list') {
 	if(getuserright("server")>=2) {
         	echo "<form action=index.php method=post>";
         	echo "<input type=hidden name=cmd value=server_add>";
-        	echo "Server编号: <input name=serverid><br>";
+        	echo "Server编号: <input name=serverid>必须唯一，不能为空<br>";
         	echo "机柜编号: <input name=cabid value=\"$cabid\"> <br>";
-        	echo "开始U: <input name=startu><br>";
-        	echo "结束U: <input name=endu><br>";
+        	echo "开始U: <input name=startu>数字<br>";
+        	echo "结束U: <input name=endu>数字<br>";
         	echo "KVM: <input name=kvm><br>";
         	echo "型号: <input name=type><br>";
         	echo "名称: <input name=name><br>";
@@ -789,10 +797,10 @@ if ( $cmd=='cabinfo_list') {
 
 if($cmd=='odf_new') {
 	checkright("odf",2);
-	$bh = safe_get("bh");
-	$jf= safe_get("jf");
-	$use= safe_get("use");
-	$memo = safe_get("memo");
+	$bh = safe_get2("bh");
+	$jf= safe_get2("jf");
+	$use= safe_get2("use");
+	$memo = safe_get2("memo");
 	$q="insert into ODF (JF,BH,`USE`,MEMO) values('$jf','$bh','$use','$memo')";
 	mysql_query($q);
 	for ($i=1; $i<=12; $i++) {
@@ -806,10 +814,10 @@ if($cmd=='odf_new') {
 if($cmd=='odf_modido') {
 	checkright("odf",3);
 	$odfid = safe_get("odfid");
-	$bh = safe_get("bh");
-	$jf= safe_get("jf");
-	$use= safe_get("use");
-	$memo = safe_get("memo");
+	$bh = safe_get2("bh");
+	$jf= safe_get2("jf");
+	$use= safe_get2("use");
+	$memo = safe_get2("memo");
 
 	$q="select * from ODF where id ='$odfid'";
 	$rr=mysql_query($q);
@@ -882,14 +890,14 @@ if ($cmd=='odf_list') {
 if($cmd=='odfpan_modido') {
 	checkright("odf",3);
 	$id = safe_get("id");
-	$bh = safe_get("bh");
-	$x = safe_get("x");
-	$s = safe_get("s");
-	$dx = safe_get("dx");
-	$use= safe_get("use");
-	$tx = safe_get("tx");
-	$sb = safe_get("sb");
-	$memo = safe_get("memo");
+	$bh = safe_get2("bh");
+	$x = safe_get2("x");
+	$s = safe_get2("s");
+	$dx = safe_get2("dx");
+	$use= safe_get2("use");
+	$tx = safe_get2("tx");
+	$sb = safe_get2("sb");
+	$memo = safe_get2("memo");
 
 	$q="select * from ODFPAN where id ='$id'";
 	$rr=mysql_query($q);
@@ -929,7 +937,7 @@ if($cmd=='odfpan_modi') {
 if ($cmd=='odfpan_list') {
 	checkright("odf",1);
 	echo "ODF盘信息<p>";
-	$bh = safe_get("bh");
+	$bh = safe_get2("bh");
 	$q="select * from ODF where BH='$bh'";
     	$rr=mysql_query($q);
     	$row=mysql_fetch_row($rr);
@@ -972,9 +980,9 @@ if($cmd=="ip_new") {
 	$ip=safe_get("ip");
 	$mask=safe_get("mask");
 	$net=safe_get("net");
-	$use=safe_get("use");
-	$lxr=safe_get("lxr");
-	$memo=safe_get("memo");
+	$use=safe_get2("use");
+	$lxr=safe_get2("lxr");
+	$memo=safe_get2("memo");
 	$q="insert into IP(IP,MASK,net,`use`,lxr,memo) values('$ip','$mask',$net,'$use','$lxr','$memo')";
 	mysql_query($q);
 }  else if($cmd=="ip_modi") {
@@ -984,9 +992,9 @@ if($cmd=="ip_new") {
 	$ip=safe_get("ip");
 	$mask=safe_get("mask");
 	$net=safe_get("net");
-	$use=safe_get("use");
-	$lxr=safe_get("lxr");
-	$memo=safe_get("memo");
+	$use=safe_get2("use");
+	$lxr=safe_get2("lxr");
+	$memo=safe_get2("memo");
 	$q="update IP set IP='$ip',MASK='$mask',net=$net,`use`='$use',lxr='$lxr',memo='$memo' where id=$id";
 	mysql_query($q);
 }
@@ -1067,8 +1075,8 @@ while($r=mysql_fetch_row($rr)){
 if($cmd=="info_new") {
 	checkright("info",2);
 	$cmd="info";
-	@$title=mysql_escape_string($_REQUEST["title"]);
-	@$memo=mysql_escape_string($_REQUEST["memo"]);
+	$title=safe_get2("title");
+	$memo=safe_get2("memo");
 	if($title=="") {
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=info_new type=hidden>";
@@ -1083,8 +1091,8 @@ if($cmd=="info_new") {
 	checkright("info",3);
 	$cmd="info";
 	$id=safe_get("id");
-	@$title=mysql_escape_string($_REQUEST["title"]);
-	@$memo=mysql_escape_string($_REQUEST["memo"]);
+	$title=safe_get2("title");
+	$memo=safe_get2("memo");
 	$q="update info set title='$title',memo='$memo' where id=$id";
 	mysql_query($q);
 } // end cmd==info_new
@@ -1254,7 +1262,7 @@ if($cmd=="user_new") {
 	checkright("user",3);
 	$email = safe_get("email");
 	$pop3server = safe_get("pop3server");
-	@$fullname = $_REQUEST["fullname"];
+	@$fullname = safe_get2("fullname");
 	$super = safe_get("super");
 	$q="delete from user where email='$email'";
 	mysql_query($q);
@@ -1416,9 +1424,9 @@ POP3邮件服务器：<input name=pop3server value="<?php echo $r[1]; ?>"><br>
 
 if($cmd=="sysinfo_modi") {
 	checkright("sysinfo",3);
-	@$sysversion = mysql_escape_string($_REQUEST["version"]);
-	@$systitle = mysql_escape_string($_REQUEST["title"]);
-	@$syslxr = mysql_escape_string($_REQUEST["lxr"]);
+	$sysversion = safe_get2("version");
+	$systitle = safe_get2("title");
+	$syslxr = safe_get2("lxr");
 	$q="replace into sysinfo values('version','$sysversion')";
 	mysql_query($q);
 	$q="replace into sysinfo values('title','$systitle')";
