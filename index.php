@@ -77,8 +77,11 @@ function lxr_display($lxrid) {
 	if($lxrid<>"") {
 		$q="select * from lxr where id='$lxrid'";
 		$r=mysql_fetch_row(mysql_query($q));
-                if($r) echo "<a href=index.php?cmd=lxr_detail&id=$r[0] target=_blank>$r[1]/$r[2]</a>";
-                else echo $lxrid.":未知联系人";
+                if($r) {
+			echo "<a class =\"lxrtips\" href=index.php?cmd=lxr_detail&id=$r[0] target=_blank>$r[1]/$r[2]";
+			echo "<span>$r[1]/$r[2]<br>$r[3]/$r[4]<br>$r[5]/$r[6]/$r[7]</span></a>";
+		} else 
+			echo $lxrid.":未知联系人";
         } else echo "";
 }
 

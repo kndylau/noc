@@ -38,3 +38,31 @@ table tbody tr:nth-child(odd){
 table tbody tr:hover{ 
 	background-color: #ffffff; 
 } 
+
+.lxrtips{
+text-decoration:none;
+position:relative;
+z-index:2;
+}
+
+.lxrtips:hover{
+z-index:3;
+background:none;
+}
+
+.lxrtips span{
+display: none;
+}
+
+.lxrtips:hover span{
+display:block;
+position:absolute;
+top:21px;
+left:9px;
+ 
+border:1px solid black;
+background-color:#FFFFFF;
+padding:3px;
+color:black;
+}
+
