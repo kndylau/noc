@@ -646,7 +646,7 @@ if ($cmd=='cab_list') {
 	echo "<p>机柜信息  ";
 	if(getuserright("server")>=2)
 		echo "<a href=index.php?cmd=cab_add>增加机柜</a>";
-	echo "<p><table border=1>";
+	echo "<p><table border=1 cellspacing=0>";
 	echo "<tr><th>机柜编号</th><th>用途</th><th>责任人</th><th>PS1</th><th>PS2</th><th>设备数</t><th>命令</th></tr>\n";
 
 	$q="select * from JF_CAB order by CABID";
@@ -770,7 +770,7 @@ if ( $cmd=='cabinfo_list') {
 	$q="select *,now() from JF_CAB where CABID='$cabid'";
 	$rr=mysql_query($q);
 	$row=mysql_fetch_row($rr);
-	echo "<table border=1 width=800>";
+	echo "<table border=1 cellspacing=0 width=800>";
 	echo "<tr><td width=20%>";
 	echo "机柜编号:";
 	echo "</td><td>";
@@ -803,7 +803,7 @@ if ( $cmd=='cabinfo_list') {
 	echo "\n";
 ?>		
 <p><font size=1>
-	<table border=1>
+	<table border=1 cellspacing=0>
 	<tr><th>U</th><th>KVM</th><th>服务器型号</th><th>服务器描述</th><th>服务器用途</th>
 	<th>责任人</th><th>IP地址</th><th>MAC地址</th><th>SN</th><th>网络连接</th><th>备注</th></tr>
 <?php
@@ -920,7 +920,7 @@ if($cmd=='odf_modi') {
 }
 if ($cmd=='odf_list') {
 	checkright("odf",1);
-	echo "ODF信息<p><table border=1>";
+	echo "ODF信息<p><table border=1 cellspacing=0>";
 	echo "<tr><th>机房</th><th>ODF编号</th><th>用途</th><th>备注</th><th>命令</th></tr>\n";
 
 	$q="select * from ODF order by JF,BH";
@@ -1016,7 +1016,7 @@ if ($cmd=='odfpan_list') {
 	echo "用途: ".$row[3]."<br>";
 	echo "备注: ".$row[4]."<p>";
 
-	echo "<table border=1>";
+	echo "<table border=1 cellspacing=0>";
 	echo "<tr><th>ODF编号</th><th>芯号</th><th>颜色</ht><th>对方芯号</th><th>用途</th><th>跳线</th><th>设备</th><th>备注</th></tr>\n";
 
 	$q="select * from ODFPAN where BH='$bh' order by X";
@@ -1896,7 +1896,7 @@ if($cmd=="user") {
 	$q="select * from user";
 	$rr=mysql_query($q);
 	$count = 0;
-	echo "用户信息<p><table border=1>";
+	echo "用户信息<p><table border=1 cellspacing=0>";
 	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th>";
 	if(getuserright("user")>=3) 
 		echo "<th>命令</th>";
