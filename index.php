@@ -564,20 +564,21 @@ while($r=mysql_fetch_row($rr)){
 
 // SERVER/CAB
 
-if($cmd=='cab_add') {
+if($cmd=='cab_new') {
 	checkright("server",2);
 	$cabid = safe_get("cabid");
 	$ps1= safe_get2("ps1");
 	$ps2= safe_get2("ps2");
 	$mgt = safe_get2("mgt");
 	$cabuse = safe_get2("cabuse");
+	if($cabid=="") {
+		echo "机柜编号不能为空";
+		exit(0);
+	}
 	$q="insert into JF_CAB values('$cabid','$ps1','$ps2','$mgt','$cabuse')";
 	mysql_query($q);
-	echo "增加完成<p>";
 	$cmd='cab_list';
-}
-
-if($cmd=='cab_modido') {
+} else if($cmd=='cab_modi_do') {
 	checkright("server",3);
 	$oldcabid = safe_get("oldcabid");
 	$cabid = safe_get("cabid");
@@ -585,17 +586,26 @@ if($cmd=='cab_modido') {
 	$ps2= safe_get2("ps2");
 	$mgt = safe_get2("mgt");
 	$cabuse = safe_get2("cabuse");
+	$q="select * from JF_CAB where CABID ='$oldcabid'";
+	$rr=mysql_query($q);
+	$row=mysql_fetch_row($rr);
+	$q="insert into hist (tm,oid,old,new) values (now(),'CAB$row[0]','$row[0]/$row[1]/$row[2]/$row[3]/$row[4]','$cabid/$ps1/$ps2/$mgt/$cabuse')";
+	mysql_query($q);
 	$q="update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse'  where CABID='$oldcabid'";
 	mysql_query($q);
-	echo "修改完成<p>";
 	$cmd='cab_list';
-}
-
-if($cmd=='cab_modi') {
+} else if($cmd=="cab_del") {
+        checkright("server",3);
+        $id=safe_get("cabid"); 
+        $q="delete from JF_CAB where id=$id";
+        mysql_query($q);
+	$cmd='cab_list';
+} else if($cmd=='cab_modi') {
 	checkright("server",3);
+	echo "<p>修改机柜信息<p>";
 	$cabid = safe_get("cabid");
 	echo "<form action=index.php method=post>";
-	echo "<input type=hidden name=cmd value=cab_modido>";
+	echo "<input type=hidden name=cmd value=cab_modi_do>";
 	echo "<input type=hidden name=oldcabid value=$cabid>";
 	$q="select * from JF_CAB where CABID='$cabid'";
 	$rr=mysql_query($q);
@@ -608,11 +618,35 @@ if($cmd=='cab_modi') {
 		echo "<input type=submit name=Submit value=修改>";
 		echo "</form>";
 	}
+	changehist("select * from hist where oid like 'CAB$cabid%' order by tm desc");
+	echo "<p><hr width=250 align=left>";
+	if(getuserright("server")>=3) 
+		echo "<a href=index.php?cmd=cab_del&cabid=$row[0] onclick=\"return confirm('删除机柜 $row[1]/$row[2] ?');\">删除机柜: $row[1]/$row[2]</a></td>";
+	exit(0);
+} else if($cmd=="cab_add") {
+	checkright("server",2);
+	echo "<p>增加机柜<p>";
+?>
+	<form action=index.php method=post>
+	<input type=hidden name=cmd value=cab_new>
+	增加机柜:<p>
+	机柜编号: <input name=cabid>字母或数字，可以包含-_ <br> 
+	用途: <input name=cabuse size=80> <br>
+	PS1: <input name=ps1 size=80> <br>
+	PS2: <input name=ps2 size=80> <br>
+	责任人: <input name=mgt size=80> <br>
+	<input type="submit" name="Submit" value="增加">
+	</form>
+<?php
+	exit(0);
 }
 
 if ($cmd=='cab_list') {
 	checkright("server",1);
-	echo "机柜信息<p><table border=1>";
+	echo "<p>机柜信息  ";
+	if(getuserright("server")>=2)
+		echo "<a href=index.php?cmd=cab_add>增加机柜</a>";
+	echo "<p><table border=1>";
 	echo "<tr><th>机柜编号</th><th>用途</th><th>责任人</th><th>PS1</th><th>PS2</th><th>设备数</t><th>命令</th></tr>\n";
 
 	$q="select * from JF_CAB order by CABID";
@@ -633,22 +667,6 @@ if ($cmd=='cab_list') {
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
-	if(getuserright("server")>=2) {
-?>
-
-	<form action=index.php method=post>
-	<input type=hidden name=cmd value=cab_add>
-	增加机柜:<p>
-	机柜ID: <input name=cabid>字母或数字，可以包含-_ <br> 
-	用途: <input name=cabuse size=80> <br>
-	PS1: <input name=ps1 size=80> <br>
-	PS2: <input name=ps2 size=80> <br>
-	责任人: <input name=mgt size=80> <br>
-	<input type="submit" name="Submit" value="增加">
-	</form>
-<?php
-	}
-	exit(0);
 } // end cmd = cab_list
 
 
@@ -672,12 +690,14 @@ if($cmd=='server_add') {
         $comment = safe_get2("comment");
         $q="insert into JF_Server values('$serverid','$cabid',$startu,$endu,'$kvm','$type','$name','$user','$mgt','$ip1','$ip2','$mac1','$mac2','$sn','$connector','$comment')";
         mysql_query($q);
-	echo $q;
-        echo "增加完成<p>";
         $cmd='cabinfo_list';
-}
-
-if($cmd=='server_modido') {
+} else if($cmd=='server_del') {
+	checkright("server",3);
+        $id=safe_get("serverid"); 
+        $q="delete from JF_Server where ServerID='$id'";
+        mysql_query($q);
+        $cmd='cabinfo_list';
+} else if($cmd=='server_modi_do') {
 	checkright("server",3);
         $oldserverid = safe_get("oldserverid");
         $serverid = safe_get("serverid");
@@ -698,6 +718,11 @@ if($cmd=='server_modido') {
         $sn = safe_get2("sn");
         $connector = safe_get2("connector");
         $comment = safe_get2("comment");
+	$q="select * from JF_Server where ServerID ='$oldserverid'";
+	$rr=mysql_query($q);
+	$row=mysql_fetch_row($rr);
+	$q="insert into hist (tm,oid,old,new) values (now(),'SERVER$row[0]','$row[0]/$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]/$row[7]/$row[8]/$row[9]/$row[10]/$row[11]/$row[12]/$row[13]/$row[14]','$serverid/$startu/$endu/$kvm/$type/$name/$user/$mgt/$ip1/$ip2/$mac1/$mac2/$sn/$connector/$comment')";
+	mysql_query($q);
         $q="update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
         mysql_query($q);
         echo "修改完成<p>";
@@ -708,7 +733,7 @@ if($cmd=='server_modi') {
 	checkright("server",3);
         $serverid = safe_get("serverid");
         echo "<form action=index.php method=post>";
-        echo "<input type=hidden name=cmd value=server_modido>";
+        echo "<input type=hidden name=cmd value=server_modi_do>";
         echo "<input type=hidden name=oldserverid value=$serverid>";
         $q="select * from JF_Server where ServerID='$serverid'";
         $rr=mysql_query($q);
@@ -732,8 +757,12 @@ if($cmd=='server_modi') {
                 echo "<input type=submit name=Submit value=修改>";
                 echo "</form>";
         }
+	changehist("select * from hist where oid like 'SERVER$serverid%' order by tm desc");
+	echo "<p><hr width=250 align=left>";
+	if(getuserright("server")>=3) 
+		echo "<a href=index.php?cmd=server_del&cabid=$row[1]&serverid=$row[0] onclick=\"return confirm('删除服务器 $row[0]/$row[5]/$row[6] ?');\">删除服务器: $row[0]/$row[5]/$row[6]</a></td>";
+	exit(0);
 }
-
 
 if ( $cmd=='cabinfo_list') {
 	checkright("server",1);
