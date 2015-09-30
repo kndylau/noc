@@ -9,7 +9,7 @@ CREATE TABLE `IP` (
   `lxr` varchar(100) NOT NULL,
   `memo` varchar(250) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=69 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=72 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -32,7 +32,7 @@ CREATE TABLE `JF_Server` (
   `KVM` varchar(10) NOT NULL default '',
   `Type` varchar(40) NOT NULL default '',
   `NAME` varchar(200) NOT NULL default '',
-  `USER` varchar(20) NOT NULL default '',
+  `USER` varchar(50) NOT NULL,
   `MGT` varchar(20) NOT NULL default '',
   `IP1` varchar(30) NOT NULL default '',
   `IP2` varchar(30) NOT NULL default '',
@@ -103,7 +103,7 @@ CREATE TABLE `hist` (
   `old` varchar(500) NOT NULL,
   `new` varchar(500) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=340 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=371 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -113,7 +113,7 @@ CREATE TABLE `info` (
   `title` varchar(150) NOT NULL,
   `memo` varchar(65000) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -125,7 +125,7 @@ CREATE TABLE `jifang_daily` (
   `msg` varchar(255) NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -167,7 +167,7 @@ CREATE TABLE `userright` (
   `module` varchar(50) NOT NULL,
   `right` int(1) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -180,14 +180,69 @@ CREATE TABLE `userpref` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lxr` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `dept` varchar(40) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `dh` varchar(20) NOT NULL,
+  `sj` varchar(20) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `qq` varchar(20) NOT NULL,
+  `memo` varchar(200) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vm_cluster` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `name` varchar(100) NOT NULL,
+  `ip` varchar(100) NOT NULL,
+  `memo` varchar(200) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vm_server` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `name` varchar(50) NOT NULL,
+  `cid` int(8) NOT NULL,
+  `ip` varchar(50) NOT NULL,
+  `memo` varchar(200) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vm_host` (
+  `id` int(6) unsigned NOT NULL auto_increment,
+  `name` varchar(50) NOT NULL,
+  `inuse` int(1) NOT NULL,
+  `cid` varchar(50) NOT NULL,
+  `ip` varchar(100) NOT NULL,
+  `use` varchar(100) NOT NULL,
+  `st` date NOT NULL,
+  `et` date NOT NULL,
+  `lxr` varchar(20) NOT NULL,
+  `cpu` varchar(3) NOT NULL,
+  `mem` varchar(3) NOT NULL,
+  `disk` varchar(8) NOT NULL,
+  `disk2` varchar(8) NOT NULL,
+  `memo` varchar(100) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `module` (
   `id` int(4) unsigned NOT NULL auto_increment,
   `module` varchar(50) NOT NULL,
   `memo` varchar(50) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=99 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO `module` VALUES (1,'jifang','机房巡检'),(2,'ticket','故障处理'),(3,'server','服务器管理'),(4,'odf','ODF管理'),(5,'ip','IP管理'),(6,'info','常用信息'),(7,'user','用户管理'),(0,'ALL','所有模块'),(8,'sysinfo','系统管理');
+INSERT INTO `module` VALUES (1,'jifang','机房巡检'),(2,'ticket','故障处理'),(3,'server','服务器管理'),(4,'odf','ODF管理'),(5,'ip','IP管理'),(6,'info','常用信息'),(97,'user','用户管理'),(0,'ALL','所有模块'),(98,'sysinfo','系统管理'),(7,'vm','VM管理模块'),(8,'lxr','联系人管理模块');
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sysinfo` (
