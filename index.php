@@ -1213,7 +1213,9 @@ if($cmd=="vm_s_new") {
 if ( $cmd=="vm_c") {
 	checkright("vm",1);
 	echo "<a href=index.php?cmd=vm>VM管理</a> <a href=index.php?cmd=vm_c>VM集群管理</a> ";
-	echo "<a href=index.php?cmd=vm_c_add>添加VM集群</a><p>";
+	if(getuserright("vm")>=2) 
+		echo "<a href=index.php?cmd=vm_c_add>添加VM集群</a>";
+	echo "<p>";
 	$q="select * from vm_cluster order by name";
 	$rr=mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
@@ -1233,8 +1235,11 @@ while($r=mysql_fetch_row($rr)){
 	$q="select * from vm_server where cid='$r[0]'";
 	$rr2=mysql_query($q);
 	while($r2=mysql_fetch_row($rr2)){
-		echo "<a href=index.php?cmd=vm_c&id=$r[0]&vmsid=$r2[0]>";
+		if(getuserright("vm")>=3) 
+			echo "<a href=index.php?cmd=vm_c&id=$r[0]&vmsid=$r2[0]>";
 		echo $r2[1]; echo "/"; echo $r2[3]; echo "/"; echo $r2[4]; 
+		if(getuserright("vm")>=3) 
+			echo "</a>";
 		echo "<br>";
 	}
 	echo "</td>";
@@ -1292,7 +1297,6 @@ while($r=mysql_fetch_row($rr)){
 			echo "<input type=submit value=新增VM集群成员服务器>";
 			echo "</form>";
 		}
-
 	}
 } // end cmd==vm_c
 
@@ -1434,7 +1438,9 @@ if($cmd=="vm_host_new") {
 if ( $cmd=="vm") {
 	checkright("vm",1);
 	echo "<a href=index.php?cmd=vm>VM管理</a> <a href=index.php?cmd=vm_c>VM集群管理</a> ";
-	echo " <a href=index.php?cmd=vm_host_modi>添加VM</a><p>\n";
+	if(getuserright("vm")>=2) 
+		echo " <a href=index.php?cmd=vm_host_modi>添加VM</a>";
+	echo "<p>\n";
 	$s = safe_get("s");
 	if( $s == "name") $sortby = "name";
 	else if( $s=="cluster") $sortby ="cid";
@@ -1442,6 +1448,7 @@ if ( $cmd=="vm") {
 	else if( $s=="ip") $sortby ="ip";
 	else if( $s=="use") $sortby ="`use`";
 	else if( $s=="lxr") $sortby ="lxr";
+	else if( $s=="et") $sortby ="et";
 	else $sortby = "id";
 	$q="select * from vm_host order by ".$sortby;
 	$rr=mysql_query($q);
@@ -1450,7 +1457,8 @@ if ( $cmd=="vm") {
 	echo "<td><a href=index.php?cmd=vm&s=inuse>在用</a></td>";
 	echo "<td><a href=index.php?cmd=vm&s=cluster>集群</a></td>";
 	echo "<td><a href=index.php?cmd=vm&s=ip>IP</a></td>";
-	echo "<td><a href=index.php?cmd=vm&s=use>用途</a></td><td>开始时间</td><td>结束时间</td>";
+	echo "<td><a href=index.php?cmd=vm&s=use>用途</a></td><td>开始时间</td>";
+	echo "<td><a href=index.php?cmd=vm&s=et>结束时间</a></td>";
 	echo "<td><a href=index.php?cmd=vm&s=lxr>联系人</a></td><td>CPU</td><td>MEM</td><td>DISK</td><td>DISK2</td><td>备注</td>";
 	echo "</tr>";
 	$count=0;
