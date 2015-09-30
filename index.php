@@ -1454,13 +1454,13 @@ if ( $cmd=="vm") {
 	$q="select * from vm_host order by ".$sortby;
 	$rr=mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><td>序号</td><td><a href=index.php?cmd=vm&s=name>名称</a></td>";
+	echo "<tr><td>序号</td><td align=center><a href=index.php?cmd=vm&s=name>名称</a></td>";
 	echo "<td><a href=index.php?cmd=vm&s=inuse>在用</a></td>";
-	echo "<td><a href=index.php?cmd=vm&s=cluster>集群</a></td>";
-	echo "<td><a href=index.php?cmd=vm&s=ip>IP</a></td>";
-	echo "<td><a href=index.php?cmd=vm&s=use>用途</a></td><td>开始时间</td>";
-	echo "<td><a href=index.php?cmd=vm&s=et>结束时间</a></td>";
-	echo "<td><a href=index.php?cmd=vm&s=lxr>联系人</a></td><td>CPU</td><td>MEM</td><td>DISK</td><td>DISK2</td><td>备注</td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=cluster>集群</a></td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=ip>IP</a></td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=use>用途</a></td><td align=center>开始时间</td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=et>结束时间</a></td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=lxr>联系人</a></td><td>CPU</td><td>MEM</td><td>DISK</td><td>DISK2</td><td>备注</td>";
 	echo "</tr>";
 	$count=0;
 while($r=mysql_fetch_row($rr)){
