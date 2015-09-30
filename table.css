@@ -52,6 +52,7 @@ background:none;
 
 .lxrtips span{
 display: none;
+width: 250px; 
 }
 
 .lxrtips:hover span{
@@ -61,7 +62,7 @@ top:21px;
 left:9px;
  
 border:1px solid black;
-background-color:#FFFFFF;
+background-color:#d0d0d0;
 padding:3px;
 color:black;
 }

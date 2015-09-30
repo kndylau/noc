@@ -79,7 +79,7 @@ function lxr_display($lxrid) {
 		$r=mysql_fetch_row(mysql_query($q));
                 if($r) {
 			echo "<a class =\"lxrtips\" href=index.php?cmd=lxr_detail&id=$r[0] target=_blank>$r[1]/$r[2]";
-			echo "<span>$r[1]/$r[2]<br>$r[3]/$r[4]<br>$r[5]/$r[6]/$r[7]</span></a>";
+			echo "<span>部门:$r[1]<br>姓名:$r[2]<br>电话:$r[3]<br>手机:$r[4]<br>邮箱:$r[5]<br>Q Q :$r[6]<br>备注:$r[7]</span></a>";
 		} else 
 			echo $lxrid.":未知联系人";
         } else echo "";
