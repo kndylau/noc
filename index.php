@@ -77,7 +77,7 @@ function lxr_display($lxrid) {
 	if($lxrid<>"") {
 		$q="select * from lxr where id='$lxrid'";
 		$r=mysql_fetch_row(mysql_query($q));
-                if($r) echo "$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]";
+                if($r) echo "<a href=index.php?cmd=lxr_detail&id=$r[0] target=_blank>$r[1]/$r[2]</a>";
                 else echo $lxrid.":未知联系人";
         } else echo "";
 }
@@ -1322,6 +1322,8 @@ if($cmd=="vm_host_new") {
 	$memo=safe_get2("memo");
 	$q="insert into vm_host(name,inuse,cid,ip,`use`,st,et,lxr,cpu,mem,disk,disk2,memo) values('$name',$inuse,'$cid','$ip','$use','$st','$et','$lxr','$cpu','$mem','$disk','$disk2','$memo')";
 	mysql_query($q);
+	echo $q;
+	echo "<br>";
 }  else if($cmd=="vm_host_modi_do") {
 	checkright("vm",3);
 	$cmd="vm";
@@ -1578,6 +1580,26 @@ if($cmd=="lxr_new") {
 		if(getuserright("lxr")>=3) 
 			echo "<a href=index.php?cmd=lxr_del&lxrid=$r[0] onclick=\"return confirm('删除联系人 $r[1]/$r[2] ?');\">删除联系人： $r[1]/$r[2]</a></td>";
 	}
+} else if($cmd=="lxr_detail") {
+	$id = safe_get("id");
+	checkright("lxr",1);
+	if( $id <>"" ) {
+		$q="select * from lxr where id=".$id;
+		$rr=mysql_query($q);
+		$r=mysql_fetch_row($rr);
+		echo "<p>";
+		echo "联系人详细信息<p>";
+    		echo "部门: $r[1]<br>";
+    		echo "姓名: $r[2]<br>";
+    		echo "电话: $r[3]<br>";
+    		echo "手机: $r[4]<br>";
+    		echo "邮箱: $r[5]<br>";
+    		echo "QQ  : $r[6]<br>";
+    		echo "备注: $r[7]<p>";
+		changehist("select * from hist where oid = 'VMLXR$id' order by tm desc");
+		echo "<p>";
+	}
+	exit(0);
 }
 if ( $cmd=="lxr") {
 	checkright("lxr",1);
