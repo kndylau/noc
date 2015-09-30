@@ -1322,7 +1322,6 @@ if($cmd=="vm_host_new") {
 	$memo=safe_get2("memo");
 	$q="insert into vm_host(name,inuse,cid,ip,`use`,st,et,lxr,cpu,mem,disk,disk2,memo) values('$name',$inuse,'$cid','$ip','$use','$st','$et','$lxr','$cpu','$mem','$disk','$disk2','$memo')";
 	mysql_query($q);
-	echo $q;
 }  else if($cmd=="vm_host_modi_do") {
 	checkright("vm",3);
 	$cmd="vm";
