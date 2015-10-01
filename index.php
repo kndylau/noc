@@ -14,17 +14,9 @@ session_start();
 
 function checkvalue($str) {
 	for($i = 0 ; $i < strlen($str) ; $i++) {
-        	if( ($str[$i] >='a') && ($str[$i]<='z') ) continue;
-        	if( ($str[$i] >='A') && ($str[$i]<='Z') ) continue;
-        	if( ($str[$i] >='0') && ($str[$i]<='9') ) continue;
-        	if( $str[$i] == '@' ) continue;
-        	if( $str[$i] == '-' ) continue;
-        	if( $str[$i] == '_' ) continue;
-        	if( $str[$i] == ' ' ) continue;
-        	if( $str[$i] == '.' ) continue;
-        	if( $str[$i] == '/' ) continue;
-        	if( $str[$i] == ':' ) continue;
-        	echo $str."中第".$i."非法字符".$str[$i];
+        	if( ctype_alnum($str[$i]) )  continue;
+		if( strchr("@-_ ./:", $str[$i]) ) continue;
+        	echo $str."中第 ".$i." 非法字符 ".$str[$i];
 		exit(0);
 	}
 }
@@ -34,26 +26,18 @@ function safe_get($str) {
 	checkvalue($x);
 	return $x;
 }
+
 function safe_get2($str) {
 	@$x = $_REQUEST[$str];
 	return mysql_escape_string($x);
 }
 
 function changehist ($q) {
-	echo "修改日志<p><table border=1>";
+	echo "修改日志<p><table border=1 cellspacing=0>";
         echo "<tr><th>时间</th><th>修改内容</th></tr>\n";
-        $count = 0;
         $rr=mysql_query($q);
-        while($row=mysql_fetch_row($rr)) {
-                $count++;
-                echo "<tr><td>";
-                echo $row[1];
-                echo "</td><td>";
-		echo $row[3];
-		echo "<br>";
-		echo $row[4];
-                echo "</td></tr>\n";
-        }
+        while($row=mysql_fetch_row($rr)) 
+                echo "<tr><td>$row[1]</td><td>$row[3]<br>$row[4]</td></tr>\n";
         echo "</table>";
 }
 
@@ -169,13 +153,12 @@ if ($cmd=="file_down") {
 if ($cmd=="logout") {
 	$_SESSION["login"]=0;
 	$_SESSION["isadmin"]=0;
-	echo "登录已经退出";
+	echo "<p>已经退出登录";
 }
 
 if ($cmd=="login") {
 	$id=safe_get("id");
 	$pass=$_REQUEST["pass"];
-	
 	if( $id<>"" ) {
 		$q="select isadmin,truename,pop3server from user where email='".$id."'";
 		$rr=mysql_query($q);
@@ -192,7 +175,6 @@ if ($cmd=="login") {
 				exit(0);
 			}
 			echo "<font color=red>密码错误，请检查</font>";
-
 		} else
 			echo "<font color=red>用户名不存在，请联系管理员</font>";
 	}
@@ -208,7 +190,7 @@ if($login<>1) {   // 用户没有登录
 	echo "<p>";
 	echo "请输入邮箱和密码登录<p>";
 	echo "系统会连接到邮件POP3服务器登录验证密码";
-	echo " <form action=index.php method=post>";
+	echo "<form action=index.php method=post>";
 	echo "<input name=cmd type=hidden value=login>";
 	echo "用户邮箱:<input name=id><br>";
 	echo "邮箱密码:<input name=pass type=password><p>";
@@ -231,7 +213,7 @@ if(getuserright("ip")>0)
 if(getuserright("vm")>0) 
 	echo "<li><a href=index.php?cmd=vm>VM管理</a></li>";
 if(getuserright("lxr")>0) 
-	echo "<li><a href=index.php?cmd=lxr>联系人管理</a></li>";
+	echo "<li><a href=index.php?cmd=lxr>联系人</a></li>";
 if(getuserright("info")>0) 
 	echo "<li><a href=index.php?cmd=info>常用信息</a></li>";
 if(getuserright("user")>0) 
@@ -258,36 +240,38 @@ if ($cmd=="" )
 
 if($cmd=="jifang_new") {
 	checkright("jifang",2);
-	$cmd="jifang";
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
 	$msg=safe_get2("msg");
-	$q="insert into jifang_daily(tm,huanjing,server,msg,op) values(now(),".$huanjing.",".$server.",'".$msg."','".$_SESSION["user"]."')";
+	$q="insert into jifang_daily(tm,huanjing,server,msg,op) values(now(),$huanjing,$server,'$msg','".$_SESSION["user"]."')";
 	mysql_query($q);
+	$cmd="jifang";
 }  else if($cmd=="jifang_modi_do") {
 	checkright("jifang",3);
-	$cmd="jifang";
 	$id=safe_get("id");
 	$huanjing=safe_get("huanjing");
 	$server=safe_get("server");
 	$msg=safe_get2("msg");
-	$q="update jifang_daily set huanjing=".$huanjing.",server=".$server.",msg='".$msg."' where id=".$id;
+	$q="update jifang_daily set huanjing=$huanjing,server=$server,msg='$msg' where id=$id";
 	mysql_query($q);
+	$cmd="jifang";
 } else if($cmd=="jifang_add") {
 	if(getuserright("jifang")>=2) {
-		echo "<p>新增巡检记录<p>";
+		echo "<p>新增机房巡检记录<p>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=jifang_new type=hidden>";
-    		echo "环境状况: &nbsp;正常<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0><br>";
-    		echo "服务器状况: 正常<input type=radio name=server value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=server value=0><br>";
-		echo "存在问题:<input type=text size=200 name=msg><br>";
-		echo "<input type=submit value=新增巡检记录>";
+		echo "<table width=100%>";
+    		echo "<tr><td>环境状况: </td><td>正常<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0></td></tr>";
+    		echo "<tr><td>服务器状况: </td><td>正常<input type=radio name=server value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=server value=0></td></tr>";
+		echo "<tr><td>存在问题:</td><td><input type=text size=200 name=msg></td></tr>";
+		echo "</table>";
+		echo "<input type=submit value=新增机房巡检记录>";
 		echo "</form>";
 	}
 	exit(0);
 } else if($cmd=="jifang_modi") {
 	checkright("jifang",3);
-	echo "<p>修改巡检记录<p>";
+	echo "<p>修改机房巡检记录<p>";
 	$id = safe_get("id");
 	if( $id ) {
 		$q="select id,tm,huanjing,server,msg from jifang_daily where id=".$id;
@@ -297,120 +281,117 @@ if($cmd=="jifang_new") {
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=jifang_modido type=hidden>";
 		echo "<input name=id value=".$r[0]." type=hidden>";
-    		echo "时间:".$r[1]."<br>";
-    		echo "环境状况: &nbsp;&nbsp;正常<input type=radio name=huanjing value=1";
+		echo "<table width=100%>";
+    		echo "<tr><td>时间:</td><td>".$r[1]."</td></tr>";
+    		echo "<tr><td>环境状况:</td><td>正常<input type=radio name=huanjing value=1";
 		if ($r[2] =="1") echo " checked";
 		echo "> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0";
 		if ($r[2] =="0") echo " checked";
-		echo "><br>";
-    		echo "服务器状况: 正常<input type=radio name=server value=1";
+		echo "></td></tr>";
+    		echo "<tr><td>服务器状况:</td><td>正常<input type=radio name=server value=1";
 		if ($r[3] =="1") echo " checked";
 		echo "> &nbsp; &nbsp; 异常<input type=radio name=server value=0";
 		if ($r[3] =="0") echo " checked";
-		echo "><br>";
-		echo "存在问题:<input type=text size=200 name=msg value=\"".$r[4]."\"><br>";
-    		echo "<input type=submit name=修改记录></form>";
+		echo "></td></tr>";
+		echo "<tr><td>存在问题:</td><td><input type=text size=200 name=msg value=\"".$r[4]."\"></td></tr>";
+		echo "</table>";
+    		echo "<input type=submit value=修改机房巡检记录></form>";
 	}
 	exit(0);
 }
 if ( $cmd=="jifang") {
 	checkright("jifang",1);
-	echo "<a href=index.php?cmd=jifang&all=yes>列出所有记录</a>  <a href=index.php?cmd=jifang_add>新增巡检记录</a><p>";
-
+	echo "<a href=index.php?cmd=jifang&all=yes>列出所有机房巡检记录</a>  <a href=index.php?cmd=jifang_add>新增机房巡检记录</a><p>";
 	if( safe_get("all") == "yes" )
 		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc";
 	else
 		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc limit 30";
 	$rr=mysql_query($q);
-
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr> <th>序号</th> <th>时间</th> <th>环境</th> <th>服务器</th> <th>事件描述</th> <th>实施人</th> </tr>";
+	echo "<tr><th>序号</th><th>时间</th><th>环境</th><th>服务器</th><th>事件描述</th><th>实施人</th></tr>";
 	$count=0;
-
-while($r=mysql_fetch_row($rr)){
-	$count++;
-	if ( ($r[3] == 1) ||($r[3] == 1)  ) 
+	while($r=mysql_fetch_row($rr)){
+		$count++;
 		echo "<tr>";
-	else
-		echo "<tr>";
-	if(getuserright("jifang")>=3) 
-		echo "<td align=center><a href=index.php?cmd=jifang_modi&id=".$r[0].">".$count."</a></td>";
-	else 
-		echo "<td align=center>".$count."</td>";
-	echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
-	echo "<td>";
-	if ($r[2] == 0) echo "<font color=red>异常</font>";
-	else echo "正常";
-	echo "</td>";
-	echo "<td>";
-	if ($r[3] == 0) echo "<font color=red>异常</font>";
-	else echo "正常";
-	echo "</td>";
-	echo "<td>".$r[4]."</td>";
-	echo "<td>".$r[5]."</td>";
-	echo "</tr>";
-	echo "\n";
-}
+		if(getuserright("jifang")>=3) 
+			echo "<td align=center><a href=index.php?cmd=jifang_modi&id=".$r[0].">".$count."</a></td>";
+		else 
+			echo "<td align=center>".$count."</td>";
+		echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
+		echo "<td>";
+		if ($r[2] == 0) echo "<font color=red>异常</font>";
+		else echo "正常";
+		echo "</td>";
+		echo "<td>";
+		if ($r[3] == 0) echo "<font color=red>异常</font>";
+		else echo "正常";
+		echo "</td>";
+		echo "<td>".$r[4]."</td>";
+		echo "<td>".$r[5]."</td>";
+		echo "</tr>";
+		echo "\n";
+	}
 	echo "</table>\n";
+	exit(0);
 } // end cmd==jifang
 
 // TICKET
 
 if($cmd=="ticket_new") {
 	checkright("ticket",2);
-	$cmd="ticket";
 	$st=safe_get("st");
 	$memo=safe_get2("memo");
 	$memo2=safe_get2("memo2");
 	$isend=safe_get("isend");
 	if( $isend ) 
-		$q="insert into ticket (st,et,memo,op) values('".$st."','".$st."','".$memo."','".$_SESSION["user"]."')";
+		$q="insert into ticket (st,et,memo,op) values('$st','$st','$memo','".$_SESSION["user"]."')";
 	else
-		$q="insert into ticket (st,et,memo,op) values('".$st."','0-0-0 00:00:00','".$memo."','".$_SESSION["user"]."')";
+		$q="insert into ticket (st,et,memo,op) values('$st','0-0-0 00:00:00','$memo','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$q="SELECT LAST_INSERT_ID()";
 	$rr=mysql_query($q);
 	$r=mysql_fetch_row($rr);	
-	$q="insert into ticketdetail (tid,tm,memo,op) values(".$r[0].",'".$st."','".$memo2."','".$_SESSION["user"]."')";
+	$q="insert into ticketdetail (tid,tm,memo,op) values($r[0],'$st','$memo2','".$_SESSION["user"]."')";
 	mysql_query($q);
+	$cmd="ticket";
 }  else if($cmd=="ticket_modi_do") {
 	checkright("ticket",3);
-	$cmd="ticket";
 	$id=safe_get("id");
 	$st=safe_get("st");
 	$et=safe_get("et");
 	$memo=safe_get2("memo");
-	$q="update ticket set st='".$st."',et='".$et."',memo='".$memo."' where id='".$id."'";
+	$q="update ticket set st='$st',et='$et',memo='$memo' where id=$id";
 	mysql_query($q);
+	$cmd="ticket";
 } else if($cmd=="ticketdetail_modi_do") {
 	checkright("ticket",3);
-	$cmd="ticket";
 	$tid=safe_get("tid");
 	$did=safe_get("did");
 	$tm=safe_get("tm");
 	$memo=safe_get2("memo");
-	$q="update ticketdetail set tm='".$tm."',memo='".$memo."' where id='".$did."'";
+	$q="update ticketdetail set tm='$tm',memo='$memo' where id=$did";
 	mysql_query($q);
 	$isend=safe_get("isend");
 	if( $isend ) {
-		$q="update ticket set et=\"".$tm."\" where id=".$tid;
+		$q="update ticket set et='$tm' where id=$tid";
 		mysql_query($q);
 	}
+	$cmd="ticket";
 } else if($cmd=="ticketdetail_new") {
 	checkright("ticket",2);
-	$cmd="ticket";
 	$tid=safe_get("tid");
 	$tm=safe_get("tm");
 	$memo=safe_get2("memo");
-	$q="insert into ticketdetail (tid,tm,memo,op) values(".$tid.",'".$tm."','".$memo."','".$_SESSION["user"]."')";
+	$q="insert into ticketdetail (tid,tm,memo,op) values($tid,'$tm','$memo','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$isend=safe_get("isend");
 	if( $isend )  {
-		$q="update ticket set et=\"".$tm."\" where id=".$tid;
+		$q="update ticket set et='$tm' where id=$tid";
 		mysql_query($q);
 	}
+	$cmd="ticket";
 } else if($cmd=="ticket_add") {
-	echo "<p>新增事件记录<p>";
+	echo "<p>新增故障处理事件记录<p>";
 	if(getuserright("ticket")>=2){
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ticket_new type=hidden>";
@@ -419,8 +400,8 @@ if($cmd=="ticket_new") {
 		echo "\"><br>";
 		echo "事件描述:<input name=memo><br>";
 		echo "处理描述:<input name=memo2 size=100><br>";
-		echo "一次性事件，直接更新结束时间:<input type=checkbox name=isend value=1><br>";
-		echo "<input type=submit value=新增事件记录>";
+		echo "一次性事件，直接更新结束时间:<input type=checkbox name=isend value=1><p>";
+		echo "<input type=submit value=新增故障处理事件记录>";
 		echo "</form>";
 	}
 	exit(0);
@@ -432,33 +413,33 @@ if($cmd=="ticket_new") {
 		$rr=mysql_query($q);
 		$r=mysql_fetch_row($rr);
 		echo "<p>";
-		echo "修改ticket处理信息<br>";
+		echo "修改故障处理过程记录<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ticketdetail_modi_do type=hidden>";
 		echo "<input name=tid value=".$r[1]." type=hidden>";
 		echo "<input name=did value=".$r[0]." type=hidden>";
     		echo "时间:<input name=tm value=\"".$r[2]."\"><br>";
     		echo "描述:<input name=memo value=\"".$r[3]."\" size=100><br>";
-		echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><br>";
-    		echo "<input type=submit value=修改处理记录></form>";
+		echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><p>";
+    		echo "<input type=submit value=修改故障处理过程记录></form>";
 	} else if( $id ) {
 		$q="select id,st,et,memo from ticket where id=".$id;
 		$rr=mysql_query($q);
 		$r=mysql_fetch_row($rr);
 		echo "<p>";
 		if(getuserright("ticket")>=3) {
-			echo "修改ticket<br>";
+			echo "修改故障处理信息<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticket_modi_do type=hidden>";
 			echo "<input name=id value=".$r[0]." type=hidden>";
     			echo "开始时间:<input name=st value=\"".$r[1]."\"><br>";
     			echo "结束时间:<input name=et value=\"".$r[2]."\"><br>";
-    			echo "事件描述:<input name=memo value=\"".$r[3]."\"><br>";
-    			echo "<input type=submit name=修改ticket></form>";
+    			echo "事件描述:<input name=memo value=\"".$r[3]."\"><p>";
+    			echo "<input type=submit value=修改故障处理信息></form>";
 		}
 
 		if(getuserright("ticket")>=2) {
-			echo "新增处理描述<br>";
+			echo "新增处理过程描述<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticketdetail_new type=hidden>";
 			echo "<input name=tid value=".$r[0]." type=hidden>";
@@ -466,7 +447,7 @@ if($cmd=="ticket_new") {
 			echo strftime("%Y-%m-%d %H:%M:00",time());
 			echo "\"><br>";
 			echo "处理描述:<input name=memo size=100><br>";
-			echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><br>";
+			echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><p>";
 			echo "<input type=submit value=新增处理描述>";
 			echo "</form>";
 		}
@@ -478,7 +459,7 @@ if ($cmd=="ticket") {
 	checkright("ticket",1);
 	$tdm = getticketdisplaymode();
 	
-	echo "<a href=index.php?cmd=ticket&all=yes>列出所有记录</a>  <a href=index.php?cmd=ticket_add>新增事件记录</a><p>";
+	echo "<a href=index.php?cmd=ticket&all=yes>列出所有记录</a>  <a href=index.php?cmd=ticket_add>新增故障事件记录</a><p>";
 	if( safe_get("all") == "yes" )
 		$q="select id,st,et,memo,truename,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket,user where op=email order by st desc";
 	else
@@ -492,74 +473,72 @@ if ($cmd=="ticket") {
 		echo "<tr><th>序号</th><th>开始时间</th><th>结束时间</th><th>故障时间</th><th>事件描述</th><th>时间</th><th>处理</th><th>实施人</th> </tr>\n";
 
 	$count=0;
-while($r=mysql_fetch_row($rr)){
-	$count++;
-	if ( $r[2] == "0000-00-00 00:00:00" ) 
+	while($r=mysql_fetch_row($rr)){
+		$count++;
 		echo "<tr>";
-	else
-		echo "<tr>";
-	$q="select id,tm,memo,truename from ticketdetail,user where op=email and tid='".$r[0]."' order by tm";
-	$rr2=mysql_query($q);
-	$rows=mysql_num_rows($rr2); 
-	if($tdm=="1") {
-		echo "<td rowspan=";
-		echo $rows+1;
-		echo " align=center>".$count."</td>";
-	} else {
-		echo "<td rowspan=".$rows." align=center>".$count."</td>";
-	}
-	if(getuserright("ticket")>=2) 
-		if($tdm=="1") 
-			echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=".$r[0].">".$r[1]."</a></td>";
-		else
-			echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=".$r[0].">".$r[1]."</a></td>";
-	else
-		if($tdm=="1") 
-			echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
-		else 
-			echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[1]."</td>";
-	if($tdm=="1")  {
-		echo "<td nowrap=\"nowrap\">".$r[2]."</td>";
-		echo "<td align=right nowrap=\"nowrap\">";
-	} else {
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
-		echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
-	}
-	if ( $r[2] == "0000-00-00 00:00:00" )
-		echo " ";
-	else 
-		echo round($r[5]/3600,1),"小时";
-	echo "</td>";
-	
-	if($tdm=="1")  {
-		echo "<td>".$r[3]."</td>";
-		echo "<td>".$r[4]."</td>";
-		echo "</tr>";
-	} else {
-		echo "<td rowspan=".$rows.">".$r[3]."</td>";
-	}
-	$firstrow=1;
-	while($r2=mysql_fetch_row($rr2)) {
-		if($firstrow==1) 
-			$firstrow=0;
-		else {
-			if ( $r[3] == "0000-00-00 00:00:00" ) 
-				echo "<tr>";
-			else
-				echo "<tr>";
+		$q="select id,tm,memo,truename from ticketdetail,user where op=email and tid='".$r[0]."' order by tm";
+		$rr2=mysql_query($q);
+		$rows=mysql_num_rows($rr2); 
+		if($tdm=="1") {
+			echo "<td rowspan=";
+			echo $rows+1;
+			echo " align=center>".$count."</td>";
+		} else {
+			echo "<td rowspan=".$rows." align=center>".$count."</td>";
 		}
-		if($tdm=="1") echo "<td></td>";
-		if(getuserright("ticket")>=3) 
-			echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&did=".$r2[0].">".$r2[1]."</a></td>";
+		if(getuserright("ticket")>=2) 
+			if($tdm=="1") 
+				echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=".$r[0].">".$r[1]."</a></td>";
+			else
+				echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=".$r[0].">".$r[1]."</a></td>";
 		else
-			echo "<td nowrap=\"nowrap\">".$r2[1]."</td>";
-		if($tdm=="1")echo "<td></td>";
-		echo "<td>".$r2[2]."</td>";
-		echo "<td>".$r2[3]."</td>";
-		echo "</tr>\n";
+			if($tdm=="1") 
+				echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
+			else 
+				echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[1]."</td>";
+		if($tdm=="1")  {
+			echo "<td nowrap=\"nowrap\">".$r[2]."</td>";
+			echo "<td align=right nowrap=\"nowrap\">";
+		} else {
+			echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
+			echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
+		}
+		if ( $r[2] == "0000-00-00 00:00:00" )
+			echo " ";
+		else 
+			echo round($r[5]/3600,1),"小时";
+		echo "</td>";
+	
+		if($tdm=="1")  {
+			echo "<td>".$r[3]."</td>";
+			echo "<td>".$r[4]."</td>";
+			echo "</tr>";
+		} else {
+			echo "<td rowspan=".$rows.">".$r[3]."</td>";
+		}
+		$firstrow=1;
+		while($r2=mysql_fetch_row($rr2)) {
+			if($firstrow==1) 
+				$firstrow=0;
+			else {
+				if ( $r[3] == "0000-00-00 00:00:00" ) 
+					echo "<tr>";
+				else
+					echo "<tr>";
+			}
+			if($tdm=="1") echo "<td></td>";
+			if(getuserright("ticket")>=3) 
+				echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&did=".$r2[0].">".$r2[1]."</a></td>";
+			else
+				echo "<td nowrap=\"nowrap\">".$r2[1]."</td>";
+			if($tdm=="1")echo "<td></td>";
+			echo "<td>".$r2[2]."</td>";
+			echo "<td>".$r2[3]."</td>";
+			echo "</tr>\n";
+		}
 	}
-}
 	echo "</table>";
+	exit(0);
 } // end cmd==ticket
 
 // SERVER/CAB
@@ -1715,8 +1694,8 @@ if ($cmd=="info") {
 	while($r=mysql_fetch_row($rr)){
 		$count++;
 		echo "<tr><td align=center>".$count."</td>";
-		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[1]."<a/></td>";
-		echo "<td><a href=index.php?cmd=info_detail&id=$r[0]>".$r[2]."<a/></td>";
+		echo "<td><a class=\"info\" href=index.php?cmd=info_detail&id=$r[0]>".$r[1]."<a/></td>";
+		echo "<td><a class=\"info\" href=index.php?cmd=info_detail&id=$r[0]>".$r[2]."<a/></td>";
 		echo "<td>";
 		if(getuserright("info")>=2) 
 			echo "<a href=index.php?cmd=info_modi&id=$r[0]>修改<a/> ";
@@ -1864,9 +1843,7 @@ if($cmd=="user_new") {
 		$q="insert into user values('$email','$pop3server',0,'$fullname')";
 	mysql_query($q);
 	$cmd="user";
-}
-
-if($cmd=="user_del") {
+} else if($cmd=="user_del") {
 	checkright("user",3);
 	$email = safe_get("email");
 	if($email==$_SESSION["user"]) {
@@ -1876,9 +1853,7 @@ if($cmd=="user_del") {
 		mysql_query($q);
 	}
 	$cmd="user";
-}
-
-if($cmd=="user_right") {
+} else if($cmd=="user_right") {
 	checkright("user",3);
 	$user = safe_get("user");
 	$module = safe_get("module");
@@ -1889,98 +1864,41 @@ if($cmd=="user_right") {
 		$q="insert into userright (user,module,`right`) values('$user','$module',$right)";
 	mysql_query($q);
 	$cmd="user";
-}
-
-if($cmd=="user") {
-	checkright("user",1);
-	$q="select * from user";
-	$rr=mysql_query($q);
-	$count = 0;
-	echo "用户信息<p><table border=1 cellspacing=0>";
-	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th>";
-	if(getuserright("user")>=3) 
-		echo "<th>命令</th>";
-	echo "</tr>\n";
-	while($r=mysql_fetch_row($rr)) {
-		$count++;
-		echo "<tr><td align=center>";echo $count;"</td>";
-		echo "<td>".$r[0]."</td>";
-		echo "<td>".$r[1]."</td>";
-		echo "<td>".$r[3]."</td>";
-		echo "<td align=center>";
-		if($r[2]=="0")
-			echo "否";
-		else echo "是";
-		echo "</td>";
-		echo "<td>";
-		$q="select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='".$r[0]."' order by module.id";
-		
-		$rr2=mysql_query($q);
-		echo "<table>";
-		while($r2=mysql_fetch_row($rr2)) {
-			echo "<tr>";
-			echo "<td>".$r2[0]."</td>";
-			echo "<td>".$r2[1]."</td>";
-			echo "<td>";
-			if($r2[2]=="1") echo "只读";
-			else if($r2[2]=="2") echo "新增";
-			else if($r2[2]=="3") echo "所有";
-			echo "</td>";
-			echo "</tr>";
-		}
-		echo "</table>";
-		echo "</td>";
-		if(getuserright("user")>=3)  {
-			echo "<td>";
-			echo "<a href=index.php?cmd=user&email=".$r[0].">修改</a> &nbsp;&nbsp;";
-			echo "<a href=index.php?cmd=user_del&email=".$r[0]." onclick=\"return confirm('确信删除 $r[0] ?');\">删除</a>";
-			echo "</td>";
-		}
-		echo "</tr>";
-	}
-	echo "</table>";
-	echo "<hr width=500 align=left><p>";
-
-	$email=safe_get("email");
-	if( $email=="") {
-		if(getuserright("user")>=2) {
+} else if($cmd=="user_add") {
+	checkright("user",2);
 ?>
-
+<p>添加用户<p>
 登录时，利用登录名和密码连接到POP3邮件服务器上验证用户身份<br>
 <form action=index.php method=get>
 <input name=cmd value=user_new type=hidden>
 用户邮件登录名：<input name=email><br>
 POP3邮件服务器：<input name=pop3server><br>
 用户姓名: <input name=fullname><br>
-是否超级管理员：<input name=super type=checkbox value=1><br>
+是否超级管理员：<input name=super type=checkbox value=1><p>
 <input type=submit value=新增用户>
 </form>
-
 <?php 
-		}
-	} else {
-		if(getuserright("user")>=3) {
-			$q="select email,pop3server,truename,isadmin from user where email='$email'";
-			$rr=mysql_query($q);
-			$r=mysql_fetch_row($rr);
+	exit(0);
+} else if($cmd=="user_modi") {
+	checkright("user",3);
+	$email=safe_get("email");
+	$q="select email,pop3server,truename,isadmin from user where email='$email'";
+	$rr=mysql_query($q);
+	$r=mysql_fetch_row($rr);
 ?>
+<p>修改用户<p>
 登录时，利用登录名和密码连接到POP3邮件服务器上验证用户身份<br>
 <form action=index.php method=get>
 <input name=cmd value=user_new type=hidden>
 用户邮件登录名：<input name=email value="<?php echo $r[0]; ?>"><br>
 POP3邮件服务器：<input name=pop3server value="<?php echo $r[1]; ?>"><br>
 用户姓名: <input name=fullname value="<?php echo $r[2]; ?>"><br>
-是否超级管理员：<input name=super type=checkbox value=1 <?php if($r[3]=="1") echo "checked"; ?>><br>
+是否超级管理员：<input name=super type=checkbox value=1 <?php if($r[3]=="1") echo "checked"; ?>><p>
 <input type=submit value=修改用户>
 </form>
 
-<?php
-		}
-	}
-	if(getuserright("user")>=3) {
-?>
-
 <hr width=500 align=left>
+修改用户权限<p>
 <form action=index.php method=get>
 <input name=cmd value=user_right type=hidden>
 用户登录名：<select name=user>
@@ -2005,11 +1923,60 @@ POP3邮件服务器：<input name=pop3server value="<?php echo $r[1]; ?>"><br>
 <input name=right type=radio value=0 checked>无<br>
 <input name=right type=radio value=1>只读<br>
 <input name=right type=radio value=2>新增<br>
-<input name=right type=radio value=3>所有<br>
+<input name=right type=radio value=3>所有<p>
 <input type=submit value=修改用户权限>
 </form>
 <?php
-	} // 
+	exit(0);
+}
+if($cmd=="user") {
+	checkright("user",1);
+	$q="select * from user";
+	$rr=mysql_query($q);
+	$count = 0;
+	echo "<p>用户管理 <a href=index.php?cmd=user_add>增加用户</a><p><table border=1 cellspacing=0>";
+	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th>";
+	if(getuserright("user")>=3) 
+		echo "<th>命令</th>";
+	echo "</tr>\n";
+	while($r=mysql_fetch_row($rr)) {
+		$count++;
+		echo "<tr><td align=center>";echo $count;"</td>";
+		echo "<td>".$r[0]."</td>";
+		echo "<td>".$r[1]."</td>";
+		echo "<td>".$r[3]."</td>";
+		echo "<td align=center>";
+		if($r[2]=="0")
+			echo "否";
+		else echo "是";
+		echo "</td>";
+		echo "<td>";
+		$q="select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='".$r[0]."' order by module.id";
+		
+		$rr2=mysql_query($q);
+		echo "<table width=300>";
+		while($r2=mysql_fetch_row($rr2)) {
+			echo "<tr>";
+			echo "<td width=30%>".$r2[0]."</td>";
+			echo "<td width=50%>".$r2[1]."</td>";
+			echo "<td width=20%>";
+			if($r2[2]=="1") echo "只读";
+			else if($r2[2]=="2") echo "新增";
+			else if($r2[2]=="3") echo "所有";
+			echo "</td>";
+			echo "</tr>";
+		}
+		echo "</table>";
+		echo "</td>";
+		if(getuserright("user")>=3)  {
+			echo "<td>";
+			echo "<a href=index.php?cmd=user_modi&email=".$r[0].">修改</a> &nbsp;&nbsp;";
+			echo "<a href=index.php?cmd=user_del&email=".$r[0]." onclick=\"return confirm('确信删除 $r[0] ?');\">删除</a>";
+			echo "</td>";
+		}
+		echo "</tr>";
+	}
+	echo "</table>";
 } // end cmd==user
 
 // SYSINFO
