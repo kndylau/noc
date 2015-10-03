@@ -4,12 +4,68 @@ body{
 } 
 
 #navbg { height:31px }
-#nav { position:fixed;top:0px;left:0;z-index:9999; margin:0 left;width: 100%; border: 1px solid #CCC; height:30px; background: #eee;} 
-#nav ul { list-style: none; margin: 0px; padding: 0px;} 
-#nav ul li { float:left; } 
-#nav ul li a {width:100px; display:block; height: 26px; line-height: 26px; text-align:center; float:left;} 
-#nav ul li a:hover { background:#333; color:#fff;} 
 
+.nav{
+	position:fixed;top:0px;left:0;z-index:9999; margin:0 ;width: 100%; border: 1px solid #CCC; height:30px; background: #eee;
+	padding:0;
+	list-style-type:none;
+	float:left;
+}
+.nav li {
+	float:left;
+	padding:0;
+	margin:0 2px 0 0;
+	_margin:0 2px 0 0;
+	width:125px;
+}
+.nav li dl {
+	width:125px;/*ie6*/
+	margin:0;
+	padding:0;
+	background-color:#fff;
+//	border:solid 2px #666;
+}
+.nav li dt a , .nav li dd a{ display:block;}
+.nav li dt {
+	margin:0;
+	padding: 5px;
+	text-align:center;
+	background-color:#fff;
+	font-size: 14px;
+	font-weight: bold;
+	height:15px;
+	overflow:hidden;
+}
+.nav li dt a ,.nav li dt a:visited {
+	display:block;
+	color:#333;
+	text-decoration:none;
+}
+.nav li dd {
+	margin:0;
+	padding:;
+	text-align:center;
+	color: #333;
+	background-color:#efefef;
+	border-bottom:dotted 1px #666;
+}
+.nav li dd.last {
+	border-bottom:0;
+}
+.nav li dd a, .navigation  li dd a:visited {
+	display:block;
+	color:#333;
+	text-decoration:none;
+	padding:4px 5px 4px 0px;
+}
+.nav li dd { display:none;}
+.nav li:hover dd, .nav li a:hover dd { display:block;}
+/*ie6 hack*/
+.nav li:hover,.nav li a:hover { border:0;}
+.nav table { border-collapse:collapse;
+	padding:0;
+	text-align:left;
+}
 table{ 
 	border:1px; 
 	solid:#000 

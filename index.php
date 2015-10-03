@@ -198,39 +198,91 @@ if($login<>1) {   // 用户没有登录
 	exit(0);
 } // login <> 1
 
-echo "<div id=\"nav\"><ul>";
+echo "<ul class=\"nav\">";
 
-if(getuserright("jifang")>0) 
-	echo "<li><a href=index.php?cmd=jifang>机房巡检</a></li>";
-if(getuserright("ticket")>0) 
-	echo "<li><a href=index.php?cmd=ticket>故障处理</a></li>";
-if(getuserright("server")>0) 
-	echo "<li><a href=index.php?cmd=cab_list>服务器管理</a></li>";
-if(getuserright("odf")>0) 
-	echo "<li><a href=index.php?cmd=odf_list>ODF管理</a></li>";
-if(getuserright("ip")>0) 
-	echo "<li><a href=index.php?cmd=ip>IP管理</a></li>";
-if(getuserright("vm")>0) 
-	echo "<li><a href=index.php?cmd=vm>VM管理</a></li>";
-if(getuserright("lxr")>0) 
-	echo "<li><a href=index.php?cmd=lxr>联系人</a></li>";
-if(getuserright("info")>0) 
-	echo "<li><a href=index.php?cmd=info>常用信息</a></li>";
-if(getuserright("user")>0) 
-	echo "<li><a href=index.php?cmd=user>用户管理</a></li>";
-if(getuserright("sysinfo")>0) 
-	echo "<li><a href=index.php?cmd=sysinfo>系统管理</a></li>";
+if(getuserright("jifang")>0)  {
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=jifang>机房巡检</a></dt>";
+	echo "<dd><a href=index.php?cmd=jifang&all=yes>所有记录</a></dd>";
+	if(getuserright("jifang")>=2) 
+		echo "<dd><a href=index.php?cmd=jifang_add>新增记录</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("ticket")>0) {
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=ticket>故障处理</a></dt>";
+	echo "<dd><a href=index.php?cmd=ticket&all=yes>所有记录</a></dd>";
+	if(getuserright("ticket")>=2) 
+	  	echo "<dd><a href=index.php?cmd=ticket_add>新增记录</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("server")>0) {
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=cab_list>服务器管理</a></dt>";
+	if(getuserright("server")>=2)
+		echo "<dd><a href=index.php?cmd=cab_add>增加机柜</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("odf")>0) {
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=odf_list>ODF管理</a></dt>";
+	if(getuserright("odf")>=2) 
+		echo "<dd><a href=index.php?cmd=odf_add>增加ODF</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("ip")>0) {
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=ip>IP管理</a></dt>";
+	if(getuserright("ip")>=2) 
+	echo "<dd><a href=index.php?cmd=ip_add>添加IP地址</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("vm")>0) {
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=vm>VM管理</a></dt>";
+	if(getuserright("vm")>=2)
+		echo "<dd><a href=index.php?cmd=vm_host_modi>添加VM</a></dd>";
+	echo "<dd><a href=index.php?cmd=vm_c>VM集群管理</a></dd>";
+	if(getuserright("vm")>=2) 
+		echo "<dd><a href=index.php?cmd=vm_c_add>添加VM集群</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("lxr")>0){
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=lxr>联系人</a></dt>";
+	if(getuserright("lxr")>=2) 
+		echo "<dd><a href=index.php?cmd=lxr_add>添加联系人</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("info")>0){
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=info>常用信息</a></dt>";
+	if(getuserright("info")>=2) 
+		echo "<dd><a href=index.php?cmd=info_add>新增常用信息</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("user")>0){
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=user>用户管理</a></dt>";
+	if(getuserright("user")>=2) 
+	echo "<dd><a href=index.php?cmd=user_add>增加用户</a></dd>";
+	echo "</dl></li>";
+}
+if(getuserright("sysinfo")>0) {
+	echo "<li><dl>";
+	echo "<dt><a href=index.php?cmd=sysinfo>系统管理</a></dt>";
+	echo "</dl></li>";
+}
 
-echo "<li><a href=index.php?cmd=user_pref>个人设置</a></li>";
+echo "<li><dl>";
+echo "<dt><a href=index.php?cmd=user_pref>个人设置</a></dt>";
+echo "</dl></li>";
 
-echo "<li>";
-echo $_SESSION["truename"];
-echo " From: ";
-echo  $_SERVER["REMOTE_ADDR"]; 
+echo "<li><dl>";
+echo "<dt><a href=index.php?cmd=logout>退出</a></dt>";
+echo "</dl>";
 echo "</li>";
-echo "<li><a href=index.php?cmd=logout>退出</a></li>";
 echo "</ul>";
-echo "</div>";
 echo "<div id=\"navbg\"></div><p>";
 
 if ($cmd=="" ) 
@@ -301,7 +353,6 @@ if($cmd=="jifang_new") {
 }
 if ( $cmd=="jifang") {
 	checkright("jifang",1);
-	echo "<a href=index.php?cmd=jifang&all=yes>列出所有机房巡检记录</a>  <a href=index.php?cmd=jifang_add>新增机房巡检记录</a><p>";
 	if( safe_get("all") == "yes" )
 		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc";
 	else
@@ -459,7 +510,6 @@ if ($cmd=="ticket") {
 	checkright("ticket",1);
 	$tdm = getticketdisplaymode();
 	
-	echo "<a href=index.php?cmd=ticket&all=yes>列出所有记录</a>  <a href=index.php?cmd=ticket_add>新增故障事件记录</a><p>";
 	if( safe_get("all") == "yes" )
 		$q="select id,st,et,memo,truename,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket,user where op=email order by st desc";
 	else
@@ -622,9 +672,6 @@ if($cmd=='cab_new') {
 
 if ($cmd=='cab_list') {
 	checkright("server",1);
-	echo "<p>机柜信息  ";
-	if(getuserright("server")>=2)
-		echo "<a href=index.php?cmd=cab_add>增加机柜</a>";
 	echo "<p><table border=1 cellspacing=0>";
 	echo "<tr><th>机柜编号</th><th>用途</th><th>责任人</th><th>PS1</th><th>PS2</th><th>设备数</t><th>命令</th></tr>\n";
 
@@ -910,9 +957,6 @@ if($cmd=='odf_new') {
 }
 if ($cmd=='odf_list') {
 	checkright("odf",1);
-	echo "<p>ODF信息 ";
-	if(getuserright("odf")>=2) 
-		echo "<a href=index.php?cmd=odf_add>增加ODF</a>";
 	echo "<p><table border=1 cellspacing=0>";
 	echo "<tr><th>机房</th><th>ODF编号</th><th>用途</th><th>备注</th><th>命令</th></tr>\n";
 
@@ -1105,7 +1149,6 @@ if ( $cmd=="ip") {
 	checkright("ip",1);
 	$q="select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP)";
 	$rr=mysql_query($q);
-	echo "IP地址管理  <a href=index.php?cmd=ip_add>添加IP地址记录</a><p>";
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr><th>序号</th><th>IP</th><th>用途</th><th>联系人</th><th>备注</th>";
 	echo "</tr>";
@@ -1222,9 +1265,6 @@ if($cmd=="vm_s_new") {
 }
 if ( $cmd=="vm_c") {
 	checkright("vm",1);
-	echo "<a href=index.php?cmd=vm>VM管理</a> <a href=index.php?cmd=vm_c>VM集群管理</a> ";
-	if(getuserright("vm")>=2) 
-		echo "<a href=index.php?cmd=vm_c_add>添加VM集群</a>";
 	echo "<p>";
 	$q="select * from vm_cluster order by name";
 	$rr=mysql_query($q);
@@ -1366,8 +1406,6 @@ if($cmd=="vm_host_new") {
 	$cmd="vm";
 } else if ( $cmd=="vm_host_modi") {
 	checkright("vm",2);
-	echo "<a href=index.php?cmd=vm>VM管理</a> <a href=index.php?cmd=vm_c>VM集群管理</a> ";
-	echo " <a href=index.php?cmd=vm_host_modi>添加VM</a><p>\n";
 	$id = safe_get("id");
 	if( ($id <>"") && (getuserright("vm")>=3) ) {
 		$q="select * from vm_host where id=".$id;
@@ -1446,10 +1484,6 @@ if($cmd=="vm_host_new") {
 }
 if ( $cmd=="vm") {
 	checkright("vm",1);
-	echo "<a href=index.php?cmd=vm>VM管理</a> <a href=index.php?cmd=vm_c>VM集群管理</a> ";
-	if(getuserright("vm")>=2) 
-		echo " <a href=index.php?cmd=vm_host_modi>添加VM</a>";
-	echo "<p>\n";
 	$s = safe_get("s");
 	if( $s == "name") $sortby = "name";
 	else if( $s=="cluster") $sortby ="cid";
@@ -1611,7 +1645,6 @@ if($cmd=="lxr_new") {
 }
 if ( $cmd=="lxr") {
 	checkright("lxr",1);
-	echo "联系人管理  <a href=index.php?cmd=lxr_add>添加联系人</a><p>\n";
 	$q="select * from lxr order by dept, name";
 	$rr=mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
@@ -1682,8 +1715,6 @@ if ($cmd=="info") {
 	checkright("info",1);
 	$q= "select id,title,left(memo,100) from info order by sortid,id";
 	$rr=mysql_query($q);
-	if(getuserright("info")>=2) 
-		echo "<a href=index.php?cmd=info_add>新增常用信息</a><p>";
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr> <th>序号</th> <th>标题</th> <th>内容摘要</th> <th>命令</th> </tr>";
 
@@ -1931,7 +1962,7 @@ if($cmd=="user") {
 	$q="select * from user order by email";
 	$rr=mysql_query($q);
 	$count = 0;
-	echo "<p>用户管理 <a href=index.php?cmd=user_add>增加用户</a><p><table border=1 cellspacing=0>";
+	echo "<p><table border=1 cellspacing=0>";
 	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th>";
 	if(getuserright("user")>=3) 
 		echo "<th>命令</th>";
@@ -2026,6 +2057,10 @@ if($cmd=="user_pref_tdm") {
 	$cmd="user_pref";
 }
 if($cmd=="user_pref") {
+	echo $_SESSION["truename"];
+	echo " From: ";
+	echo  $_SERVER["REMOTE_ADDR"]; 
+	echo "<p>";
 	echo "个人偏好设置<p>";
 	$tdm = getticketdisplaymode();
 ?>
