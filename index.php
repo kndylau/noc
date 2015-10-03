@@ -220,38 +220,38 @@ if(getuserright("server")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=cab_list>服务器管理</a></dt>";
 	if(getuserright("server")>=2)
-		echo "<dd><a href=index.php?cmd=cab_add>增加机柜</a></dd>";
+		echo "<dd><a href=index.php?cmd=cab_add>新增机柜</a></dd>";
 	echo "</dl></li>";
 }
 if(getuserright("odf")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=odf_list>ODF管理</a></dt>";
 	if(getuserright("odf")>=2) 
-		echo "<dd><a href=index.php?cmd=odf_add>增加ODF</a></dd>";
+		echo "<dd><a href=index.php?cmd=odf_add>新增ODF</a></dd>";
 	echo "</dl></li>";
 }
 if(getuserright("ip")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=ip>IP管理</a></dt>";
 	if(getuserright("ip")>=2) 
-	echo "<dd><a href=index.php?cmd=ip_add>添加IP地址</a></dd>";
+	echo "<dd><a href=index.php?cmd=ip_add>新增IP地址</a></dd>";
 	echo "</dl></li>";
 }
 if(getuserright("vm")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=vm>VM管理</a></dt>";
 	if(getuserright("vm")>=2)
-		echo "<dd><a href=index.php?cmd=vm_host_modi>添加VM</a></dd>";
+		echo "<dd><a href=index.php?cmd=vm_host_modi>新增VM</a></dd>";
 	echo "<dd><a href=index.php?cmd=vm_c>VM集群管理</a></dd>";
 	if(getuserright("vm")>=2) 
-		echo "<dd><a href=index.php?cmd=vm_c_add>添加VM集群</a></dd>";
+		echo "<dd><a href=index.php?cmd=vm_c_add>新增VM集群</a></dd>";
 	echo "</dl></li>";
 }
 if(getuserright("lxr")>0){
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=lxr>联系人</a></dt>";
 	if(getuserright("lxr")>=2) 
-		echo "<dd><a href=index.php?cmd=lxr_add>添加联系人</a></dd>";
+		echo "<dd><a href=index.php?cmd=lxr_add>新增联系人</a></dd>";
 	echo "</dl></li>";
 }
 if(getuserright("info")>0){
@@ -265,7 +265,7 @@ if(getuserright("user")>0){
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=user>用户管理</a></dt>";
 	if(getuserright("user")>=2) 
-	echo "<dd><a href=index.php?cmd=user_add>增加用户</a></dd>";
+	echo "<dd><a href=index.php?cmd=user_add>新增用户</a></dd>";
 	echo "</dl></li>";
 }
 if(getuserright("sysinfo")>0) {
@@ -309,14 +309,14 @@ if($cmd=="jifang_new") {
 	$cmd="jifang";
 } else if($cmd=="jifang_add") {
 	if(getuserright("jifang")>=2) {
-		echo "<p>新增机房巡检记录<p>";
+		echo "新增机房巡检记录<p>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=jifang_new type=hidden>";
 		echo "<table width=100%>";
-    		echo "<tr><td>环境状况: </td><td>正常<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0></td></tr>";
+    		echo "<tr><td width=100>环境状况: </td><td>正常<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0></td></tr>";
     		echo "<tr><td>服务器状况: </td><td>正常<input type=radio name=server value=1 checked> &nbsp; &nbsp; 异常<input type=radio name=server value=0></td></tr>";
 		echo "<tr><td>存在问题:</td><td><input type=text size=200 name=msg></td></tr>";
-		echo "</table>";
+		echo "</table><p>";
 		echo "<input type=submit value=新增机房巡检记录>";
 		echo "</form>";
 	}
@@ -334,7 +334,7 @@ if($cmd=="jifang_new") {
 		echo "<input name=cmd value=jifang_modi_do type=hidden>";
 		echo "<input name=id value=".$r[0]." type=hidden>";
 		echo "<table width=100%>";
-    		echo "<tr><td>时间:</td><td>".$r[1]."</td></tr>";
+    		echo "<tr><td width=100>时间:</td><td>".$r[1]."</td></tr>";
     		echo "<tr><td>环境状况:</td><td>正常<input type=radio name=huanjing value=1";
 		if ($r[2] =="1") echo " checked";
 		echo "> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0";
@@ -518,9 +518,9 @@ if ($cmd=="ticket") {
 
 	echo "<table border=1 cellspacing=0>";
 	if($tdm=="1")
-		echo "<tr><th>序号</th><th>开始时间</th><th>结束时间</th><th>故障时间</th><th>事件描述/处理</th><th>实施人</th> </tr>\n";
+		echo "<tr><th>序号</th><th nowrap=\"nowrap\">开始时间</th><th nowrap=\"nowrap\">结束时间</th><th nowrap=\"nowrap\">故障时间</th><th>事件描述/处理</th><t nowrap=\"nowrap\"h>实施人</th> </tr>\n";
 	else 
-		echo "<tr><th>序号</th><th>开始时间</th><th>结束时间</th><th>故障时间</th><th>事件描述</th><th>时间</th><th>处理</th><th>实施人</th> </tr>\n";
+		echo "<tr><th>序号</th><th nowrap=\"nowrap\">开始时间</th><th nowrap=\"nowrap\">结束时间</th><th nowrap=\"nowrap\">故障时间</th><th>事件描述</th><th nowrap=\"nowrap\">时间</th><th>处理</th><th nowrap=\"nowrap\">实施人</th> </tr>\n";
 
 	$count=0;
 	while($r=mysql_fetch_row($rr)){
@@ -639,12 +639,12 @@ if($cmd=='cab_new') {
 	$q="select * from JF_CAB where CABID='$cabid'";
 	$rr=mysql_query($q);
 	if($row=mysql_fetch_row($rr)) {
-		echo "机柜编号: <input name=cabid value=$row[0]> <br>";
-		echo "用途: <input name=cabuse value=$row[4]><br>";
-		echo "PS1: <input name=ps1 value='$row[1]' size=80> <br>";
-		echo "PS2: <input name=ps2 value='$row[2]' size=80> <br>";
-		echo "责任人: <input name=mgt value='$row[3]' size=80> <br>";
-		echo "<input type=submit name=Submit value=修改>";
+		echo "机柜编号: <input name=cabid value=$row[0]>唯一标识，字母或数字，可以包含-_<br>";
+		echo "机柜用途: <input name=cabuse value=$row[4]><br>";
+		echo "主用电源: <input name=ps1 value='$row[1]' size=80><br>";
+		echo "备用电源: <input name=ps2 value='$row[2]' size=80><br>";
+		echo "责 任 人: <input name=mgt value='$row[3]' size=80><p>";
+		echo "<input type=submit name=Submit value=修改机柜信息>";
 		echo "</form>";
 	}
 	changehist("select * from hist where oid like 'CAB$cabid%' order by tm desc");
@@ -654,17 +654,16 @@ if($cmd=='cab_new') {
 	exit(0);
 } else if($cmd=="cab_add") {
 	checkright("server",2);
-	echo "<p>增加机柜<p>";
+	echo "<p>新增机柜:<p>";
 ?>
 	<form action=index.php method=post>
 	<input type=hidden name=cmd value=cab_new>
-	增加机柜:<p>
-	机柜编号: <input name=cabid>字母或数字，可以包含-_ <br> 
-	用途: <input name=cabuse size=80> <br>
-	PS1: <input name=ps1 size=80> <br>
-	PS2: <input name=ps2 size=80> <br>
-	责任人: <input name=mgt size=80> <br>
-	<input type="submit" name="Submit" value="增加">
+	机柜编号: <input name=cabid>唯一标识，字母或数字，可以包含-_ <br> 
+	机柜用途: <input name=cabuse size=80> <br>
+	主用电源: <input name=ps1 size=80> <br>
+	备用电源: <input name=ps2 size=80> <br>
+	责 任 人: <input name=mgt size=80> <p>
+	<input type="submit" name="Submit" value="新增机柜">
 	</form>
 <?php
 	exit(0);
@@ -868,23 +867,25 @@ if ( $cmd=='cabinfo_list') {
 	if(getuserright("server")>=2) {
         	echo "<form action=index.php method=post>";
         	echo "<input type=hidden name=cmd value=server_add>";
-        	echo "Server编号: <input name=serverid>必须唯一，不能为空<br>";
-        	echo "机柜编号: <input name=cabid value=\"$cabid\"> <br>";
-        	echo "开始U: <input name=startu>数字<br>";
-        	echo "结束U: <input name=endu>数字<br>";
-        	echo "KVM: <input name=kvm><br>";
-        	echo "型号: <input name=type><br>";
-        	echo "名称: <input name=name><br>";
-        	echo "用途: <input name=user><br>";
-        	echo "管理员: <input name=mgt><br>";
-        	echo "IP1: <input name=ip1><br>";
-        	echo "IP2: <input name=ip2><br>";
-        	echo "MAC1: <input name=mac1><br>";
-        	echo "MAC2: <input name=mac2><br>";
-        	echo "SN: <input name=sn><br>";
-        	echo "连接设备: <input name=connector><br>";
-        	echo "备注: <input name=comment><br>";
-        	echo "<input type=submit name=Submit value=增加>";
+		echo "<table class=no>";
+        	echo "<tr><td>Server编号</td><td><input name=serverid>必须唯一，不能为空</td></tr>";
+        	echo "<tr><td>机柜编号</td><td><input name=cabid value=\"$cabid\"></td></tr>";
+        	echo "<tr><td>开始U</td><td><input name=startu>数字</td></tr>";
+        	echo "<tr><td>结束U</td><td><input name=endu>数字</td></tr>";
+        	echo "<tr><td>KVM</td><td><input name=kvm></td></tr>";
+        	echo "<tr><td>型号</td><td><input name=type></td></tr>";
+        	echo "<tr><td>名称</td><td><input name=name></td></tr>";
+        	echo "<tr><td>用途</td><td><input name=user></td></tr>";
+        	echo "<tr><td>管理员</td><td><input name=mgt></td></tr>";
+        	echo "<tr><td>IP1</td><td><input name=ip1></td></tr>";
+        	echo "<tr><td>IP2</td><td><input name=ip2></td></tr>";
+        	echo "<tr><td>MAC1</td><td><input name=mac1></td></tr>";
+        	echo "<tr><td>MAC2</td><td><input name=mac2></td></tr>";
+        	echo "<tr><td>SN</td><td><input name=sn></td></tr>";
+        	echo "<tr><td>连接设备</td><td><input name=connector></td></tr>";
+        	echo "<tr><td>备注</td><td><input name=comment></td></tr>";
+		echo "</table>";
+        	echo "<input type=submit name=Submit value=新增服务器>";
         	echo "</form>";
 	}
 } // end cmd = 'cabinfo_list'
@@ -942,14 +943,14 @@ if($cmd=='odf_new') {
 } else if($cmd=='odf_add') {
 	checkright("odf",2);
 ?>
-	<p>增加ODF:<p><form action=index.php method=post>
+	<p>新增ODF:<p><form action=index.php method=post>
 	<input type=hidden name=cmd value=odf_new>
 	机房: <input name=jf> <br> 
-	ODF编号: <input name=bh size=80><br>
+	ODF编号: <input name=bh size=20><br>
 	芯数: <input name=xin size=8 value=12><br>
-	用途: <input name=use size=80><br>
-	备注: <input name=memo size=80><p>
-	<input type="submit" name="Submit" value="增加ODF">
+	用途: <input name=use size=40><br>
+	备注: <input name=memo size=40><p>
+	<input type="submit" name="Submit" value="新增ODF">
 	</form>
 <?php
 	changehist("select * from hist where oid like 'ODF%' order by tm desc");
@@ -1106,7 +1107,7 @@ if($cmd=="ip_new") {
 		echo "<input name=cmd value=ip_new type=hidden>";
     		echo "IP: <input name=ip><br>";
     		echo "MASK: <input name=mask><br>";
-    		echo "network? no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1><br>";
+    		echo "子网? 否<input type=radio name=net value=0 checked>  是<input type=radio name=net value=1><br>";
     		echo "用途: <input name=use><br>";
 		lxr_select("");
     		echo "备注: <input name=memo><br>";
@@ -1581,7 +1582,7 @@ if($cmd=="lxr_new") {
 	mysql_query($q);
 	$cmd="lxr";
 } else if($cmd=="lxr_add") {
-	echo "<p>添加联系人<p>";
+	echo "<p>新增联系人<p>";
 	if(getuserright("lxr")>=2) {
 		echo "<p><form action=index.php method=post>";
 		echo "<input name=cmd value=lxr_new type=hidden>";
@@ -1603,7 +1604,7 @@ if($cmd=="lxr_new") {
 		$rr=mysql_query($q);
 		$r=mysql_fetch_row($rr);
 		echo "<p>";
-		echo "修改/添加联系人记录<br>";
+		echo "修改/新增联系人记录<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=id value=".$r[0]." type=hidden>";
 		echo "操作: 修改本条记录<input name=cmd value=lxr_modi_do type=radio checked>";
@@ -1615,7 +1616,7 @@ if($cmd=="lxr_new") {
     		echo "邮箱: <input name=email value=\"".$r[5]."\"><br>";
     		echo "QQ  : <input name=qq   value=\"".$r[6]."\"><br>";
     		echo "备注: <input name=memo value=\"".$r[7]."\"><br>";
-    		echo "<input type=submit name=修改/添加记录></form>";
+    		echo "<input type=submit name=修改/新增记录></form>";
 		changehist("select * from hist where oid = 'VMLXR$id' order by tm desc");
 		echo "<p>";
 		if(getuserright("lxr")>=3) 
@@ -1895,7 +1896,7 @@ if($cmd=="user_new") {
 } else if($cmd=="user_add") {
 	checkright("user",2);
 ?>
-<p>添加用户<p>
+<p>新增用户<p>
 登录时，利用登录名和密码连接到POP3邮件服务器上验证用户身份<br>
 <form action=index.php method=get>
 <input name=cmd value=user_new type=hidden>
@@ -2021,8 +2022,7 @@ if($cmd=="sysinfo_modi") {
 	mysql_query($q);
 	$q="replace into sysinfo values('lxr','$syslxr')";
 	mysql_query($q);
-	echo "修改完毕";
-	exit(0);
+	$cmd="sysinfo";
 }
 
 if($cmd=="sysinfo") {
@@ -2034,7 +2034,7 @@ if($cmd=="sysinfo") {
 <input name=cmd value=sysinfo_modi type=hidden>
 系统版本：<input name=version value="<?php echo $sysversion;?>"><br>
 网页标题：<input name=title value="<?php echo $systitle;?>"><br>
-联系信息：<input name=lxr value="<?php echo $syslxr;?>"><br>
+联系信息：<input name=lxr value="<?php echo $syslxr;?>"><p>
 
 <?php 	if(getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=修改系统信息>";

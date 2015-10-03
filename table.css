@@ -6,7 +6,7 @@ body{
 #navbg { height:31px }
 
 .nav{
-	position:fixed;top:0px;left:0;z-index:9999; margin:0 ;width: 100%; border: 1px solid #CCC; height:30px; background: #eee;
+	position:fixed;top:0px;left:0; margin:0 ;width: 100%; border: 1px solid #CCC; height:30px; background: #eee;
 	padding:0;
 	list-style-type:none;
 	float:left;
@@ -36,7 +36,7 @@ body{
 	height:15px;
 	overflow:hidden;
 }
-.nav li dt a ,.nav li dt a:visited {
+.nav li dt a , .nav li dt a:visited {
 	display:block;
 	color:#333;
 	text-decoration:none;
@@ -46,13 +46,13 @@ body{
 	padding:;
 	text-align:center;
 	color: #333;
-	background-color:#efefef;
+	background-color:#ffffff;
 	border-bottom:dotted 1px #666;
 }
 .nav li dd.last {
 	border-bottom:0;
 }
-.nav li dd a, .navigation  li dd a:visited {
+.nav li dd a, .nav li dd a:visited {
 	display:block;
 	color:#333;
 	text-decoration:none;
@@ -61,11 +61,12 @@ body{
 .nav li dd { display:none;}
 .nav li:hover dd, .nav li a:hover dd { display:block;}
 /*ie6 hack*/
-.nav li:hover,.nav li a:hover { border:0;}
+.nav li:hover, .nav li a:hover { border:0;}
 .nav table { border-collapse:collapse;
 	padding:0;
 	text-align:left;
 }
+
 table{ 
 	border:1px; 
 	solid:#000 
