@@ -293,7 +293,7 @@ if($login<>1) {   // 用户没有登录
 	exit(0);
 } // login <> 1
 
-echo "<ul class=\"nav\">";
+echo "<ul class=\"nav\">\n";
 
 if(getuserright("jifang")>0)  {
 	echo "<li><dl>";
@@ -301,36 +301,37 @@ if(getuserright("jifang")>0)  {
 	echo "<dd><a href=index.php?cmd=jifang&all=yes>所有记录</a></dd>";
 	if(getuserright("jifang")>=2) 
 		echo "<dd><a href=index.php?cmd=jifang_add>新增记录</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("ticket")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=ticket>故障处理</a></dt>";
 	echo "<dd><a href=index.php?cmd=ticket&all=yes>所有记录</a></dd>";
+	echo "<dd><a href=index.php?cmd=ticket_stat>故障统计</a></dd>";
 	if(getuserright("ticket")>=2) 
 	  	echo "<dd><a href=index.php?cmd=ticket_add>新增记录</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("server")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=cab_list>服务器管理</a></dt>";
 	if(getuserright("server")>=2)
 		echo "<dd><a href=index.php?cmd=cab_add>新增机柜</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("odf")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=odf_list>ODF管理</a></dt>";
 	if(getuserright("odf")>=2) 
 		echo "<dd><a href=index.php?cmd=odf_add>新增ODF</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("ip")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=ip>IP管理</a></dt>";
 	if(getuserright("ip")>=2) 
 	echo "<dd><a href=index.php?cmd=ip_add>新增IP地址</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("vm")>0) {
 	echo "<li><dl>";
@@ -340,48 +341,48 @@ if(getuserright("vm")>0) {
 	echo "<dd><a href=index.php?cmd=vm_c>VM集群管理</a></dd>";
 	if(getuserright("vm")>=2) 
 		echo "<dd><a href=index.php?cmd=vm_c_add>新增VM集群</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("lxr")>0){
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=lxr>联系人</a></dt>";
 	if(getuserright("lxr")>=2) 
 		echo "<dd><a href=index.php?cmd=lxr_add>新增联系人</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("info")>0){
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=info>常用信息</a></dt>";
 	if(getuserright("info")>=2) 
 		echo "<dd><a href=index.php?cmd=info_add>新增常用信息</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("user")>0){
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=user>用户管理</a></dt>";
 	if(getuserright("user")>=2) 
 	echo "<dd><a href=index.php?cmd=user_add>新增用户</a></dd>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 if(getuserright("sysinfo")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=sysinfo>系统管理</a></dt>";
-	echo "</dl></li>";
+	echo "</dl></li>\n";
 }
 
 /*
 echo "<li><dl>";
 echo "<dt><a href=index.php?cmd=user_pref>个人设置</a></dt>";
-echo "</dl></li>";
+echo "</dl></li>\n";
 
 */
 
 echo "<li><dl>";
 echo "<dt><a href=index.php?cmd=logout>退出</a></dt>";
 echo "</dl>";
-echo "</li>";
-echo "</ul>";
-echo "<div id=\"navbg\"></div><p>";
+echo "</li>\n";
+echo "</ul>\n";
+echo "<div id=\"navbg\"></div><p>\n";
 
 if ($cmd=="" ) 
 	$cmd="jifang";
@@ -614,6 +615,27 @@ if($cmd=="ticket_new") {
 			echo "<input type=submit value=新增处理描述>";
 			echo "</form>";
 		}
+	}
+	exit(0);
+} else if ($cmd=="ticket_stat") {
+	for($year=date('Y');$year>=2015;$year--) {
+		echo "<table>\n";
+		echo "<tr><td colspan=4 align=center>".$year."年故障统计</td></tr>\n";
+		echo "<tr><th>相关系统</th><th>故障原因</th><th>故障级别</th><th>出现次数</th></tr>\n";
+		$q="select system,reason,level,count(*) from ticket where year(st)=$year group by system,reason";
+		$rr=mysql_query($q);
+		while($r=mysql_fetch_row($rr)){
+			echo "<tr><td>";
+			ticket_system_display($r[0]);
+			echo "</td><td>";
+			ticket_reason_display($r[1]);
+			echo "</td><td>";
+			ticket_level_display($r[2]);
+			echo "</td><td align=center>";
+			echo $r[3];
+			echo "</td></tr>\n";
+		}
+		echo "</table><p>";
 	}
 	exit(0);
 }
