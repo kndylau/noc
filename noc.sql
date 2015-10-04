@@ -113,7 +113,7 @@ CREATE TABLE `info` (
   `title` varchar(150) NOT NULL,
   `memo` varchar(65000) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -133,10 +133,13 @@ CREATE TABLE `ticket` (
   `id` int(11) NOT NULL auto_increment,
   `st` datetime NOT NULL,
   `et` datetime NOT NULL default '0000-00-00 00:00:00',
+  `system` varchar(10) NOT NULL,
+  `reason` varchar(10) NOT NULL,
+  `level` varchar(1) NOT NULL,
   `memo` varchar(255) character set latin1 collate latin1_bin NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -147,7 +150,7 @@ CREATE TABLE `ticketdetail` (
   `memo` varchar(255) character set latin1 collate latin1_bin NOT NULL,
   `op` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -252,3 +255,32 @@ CREATE TABLE `sysinfo` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO `sysinfo` VALUES ('version','20150930'),('title','USTC机房管理'),('lxr','james@ustc.edu.cn');
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ticket_system` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `sortid` int(5) NOT NULL default '0',
+  `desc` varchar(40) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO `ticket_system` VALUES (1,1,'服务器'),(2,2,'磁盘阵列'),(3,3,'网络设备'),(4,4,'互联网出口'),(5,5,'专线'),(6,5,'机房设施');
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ticket_reason` (
+  `id` int(5) unsigned NOT NULL auto_increment,
+  `sortid` int(5) NOT NULL default '0',
+  `desc` varchar(40) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO `ticket_reason` VALUES (1,1,'其他'),(2,2,'电源'),(3,3,'主板'),(4,4,'硬盘'),(5,5,'内存'),(6,6,'模块'),(7,7,'光缆');
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ticket_level` (
+  `id` int(2) NOT NULL auto_increment,
+  `desc` varchar(40) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO `ticket_level` VALUES (1,'未感'),(2,'轻微'),(3,'严重'),(4,'重大');

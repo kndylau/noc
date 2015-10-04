@@ -69,6 +69,101 @@ function lxr_display($lxrid) {
         } else echo "";
 }
 
+function ticket_system_select($systemid) {
+	echo "故障系统: <select name=system>";
+	if($systemid=="")
+		echo "<option value=\"\" selected=\"selected\"></option>";
+	else
+		echo "<option value=\"\"></option>";
+	$q="select id,`desc` from ticket_system order by sortid";
+	$rr=mysql_query($q);
+	while($r=mysql_fetch_row($rr)) {
+		echo "<option value=\"$r[0]\"";
+		if( $systemid == $r[0]) echo " selected=\"selected\"";
+		echo ">$r[1]</option>";
+	}       
+	echo "</select><br>";
+}
+
+function ticket_system_display($systemid) {
+	if($systemid<>"") {
+		$q="select `desc` from ticket_system where id='$systemid'";
+		$r=mysql_fetch_row(mysql_query($q));
+                if($r) {
+			echo $r[0];
+		} else 
+			echo $systemid.":未知系统";
+        } else echo "";
+}
+
+function ticket_reason_select($reasonid) {
+	echo "故障类型: <select name=reason>";
+	if($reasonid=="")
+		echo "<option value=\"\" selected=\"selected\"></option>";
+	else
+		echo "<option value=\"\"></option>";
+	$q="select id,`desc` from ticket_reason order by sortid";
+	$rr=mysql_query($q);
+	while($r=mysql_fetch_row($rr)) {
+		echo "<option value=\"$r[0]\"";
+		if( $reasonid == $r[0]) echo " selected=\"selected\"";
+		echo ">$r[1]</option>";
+	}       
+	echo "</select><br>";
+}
+
+function ticket_reason_display($reasonid) {
+	if($reasonid<>"") {
+		$q="select `desc` from ticket_reason where id='$reasonid'";
+		$r=mysql_fetch_row(mysql_query($q));
+                if($r) {
+			echo $r[0];
+		} else 
+			echo $reasonid.":未知类型";
+        } else echo "";
+}
+
+function ticket_level_select($levelid) {
+	echo "故障级别: <select name=level>";
+	if($levelid=="")
+		echo "<option value=\"\" selected=\"selected\"></option>";
+	else
+		echo "<option value=\"\"></option>";
+	$q="select id,`desc` from ticket_level";
+	$rr=mysql_query($q);
+	while($r=mysql_fetch_row($rr)) {
+		echo "<option value=\"$r[0]\"";
+		if( $levelid == $r[0]) echo " selected=\"selected\"";
+		echo ">$r[1]</option>";
+	}       
+	echo "</select><br>";
+}
+
+function ticket_level_display($levelid) {
+	if($levelid<>"") {
+		$q="select `desc` from ticket_level where id='$levelid'";
+		$r=mysql_fetch_row(mysql_query($q));
+                if($r) {
+			if($levelid==2) 
+				echo "<font color=green>$r[0]</font>";
+			else if($levelid>=3) 
+				echo "<font color=red>$r[0]</font>";
+			else 
+				echo $r[0];
+		} else 
+			echo $levelid.":未知";
+        } else echo "";
+}
+function op_display($op) {
+	if($op<>"") {
+		$q="select truename from user where email='$op'";
+		$r=mysql_fetch_row(mysql_query($q));
+                if($r) {
+			echo $r[0];
+		} else 
+			echo $op.":未知管理员";
+        } else echo "";
+}
 // 0 no right
 // 1 readonly right
 // 2 add right
@@ -274,9 +369,12 @@ if(getuserright("sysinfo")>0) {
 	echo "</dl></li>";
 }
 
+/*
 echo "<li><dl>";
 echo "<dt><a href=index.php?cmd=user_pref>个人设置</a></dt>";
 echo "</dl></li>";
+
+*/
 
 echo "<li><dl>";
 echo "<dt><a href=index.php?cmd=logout>退出</a></dt>";
@@ -354,9 +452,9 @@ if($cmd=="jifang_new") {
 if ( $cmd=="jifang") {
 	checkright("jifang",1);
 	if( safe_get("all") == "yes" )
-		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc";
+		$q="select id,tm,huanjing,server,msg,op from jifang_daily order by id desc";
 	else
-		$q="select id,tm,huanjing,server,msg,truename from jifang_daily,user where op=email order by id desc limit 30";
+		$q="select id,tm,huanjing,server,msg,op from jifang_daily order by id desc limit 30";
 	$rr=mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo "<tr><th>序号</th><th>时间</th><th>环境</th><th>服务器</th><th>事件描述</th><th>实施人</th></tr>";
@@ -378,7 +476,9 @@ if ( $cmd=="jifang") {
 		else echo "正常";
 		echo "</td>";
 		echo "<td>".$r[4]."</td>";
-		echo "<td>".$r[5]."</td>";
+		echo "<td>";
+		op_display($r[5]);
+		echo "</td>";
 		echo "</tr>";
 		echo "\n";
 	}
@@ -391,13 +491,16 @@ if ( $cmd=="jifang") {
 if($cmd=="ticket_new") {
 	checkright("ticket",2);
 	$st=safe_get("st");
+	$system=safe_get("system");
+	$reason=safe_get("reason");
+	$level=safe_get("level");
 	$memo=safe_get2("memo");
 	$memo2=safe_get2("memo2");
 	$isend=safe_get("isend");
 	if( $isend ) 
-		$q="insert into ticket (st,et,memo,op) values('$st','$st','$memo','".$_SESSION["user"]."')";
+		$q="insert into ticket (st,et,system,reason,level,memo,op) values('$st','$st','$system','$reason','$level','$memo','".$_SESSION["user"]."')";
 	else
-		$q="insert into ticket (st,et,memo,op) values('$st','0-0-0 00:00:00','$memo','".$_SESSION["user"]."')";
+		$q="insert into ticket (st,et,system,reason,level,memo,op) values('$st','0-0-0 00:00:00','$system','$level','$reason','$memo','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$q="SELECT LAST_INSERT_ID()";
 	$rr=mysql_query($q);
@@ -410,8 +513,11 @@ if($cmd=="ticket_new") {
 	$id=safe_get("id");
 	$st=safe_get("st");
 	$et=safe_get("et");
+	$system=safe_get("system");
+	$reason=safe_get("reason");
+	$level=safe_get("level");
 	$memo=safe_get2("memo");
-	$q="update ticket set st='$st',et='$et',memo='$memo' where id=$id";
+	$q="update ticket set st='$st',et='$et',system='$system',reason='$reason',level='$level',memo='$memo' where id=$id";
 	mysql_query($q);
 	$cmd="ticket";
 } else if($cmd=="ticketdetail_modi_do") {
@@ -446,11 +552,14 @@ if($cmd=="ticket_new") {
 	if(getuserright("ticket")>=2){
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ticket_new type=hidden>";
-		echo "开始时间:<input name=st value=\"";
+		echo "开始时间: <input name=st value=\"";
 		echo strftime("%Y-%m-%d %H:%M:00",time());
 		echo "\"><br>";
-		echo "事件描述:<input name=memo><br>";
-		echo "处理描述:<input name=memo2 size=100><br>";
+		ticket_system_select("");
+		ticket_reason_select("");
+		ticket_level_select("");
+		echo "事件描述: <input name=memo><br>";
+		echo "处理描述: <input name=memo2 size=100><br>";
 		echo "一次性事件，直接更新结束时间:<input type=checkbox name=isend value=1><p>";
 		echo "<input type=submit value=新增故障处理事件记录>";
 		echo "</form>";
@@ -474,7 +583,7 @@ if($cmd=="ticket_new") {
 		echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><p>";
     		echo "<input type=submit value=修改故障处理过程记录></form>";
 	} else if( $id ) {
-		$q="select id,st,et,memo from ticket where id=".$id;
+		$q="select id,st,et,system,reason,level,memo from ticket where id=".$id;
 		$rr=mysql_query($q);
 		$r=mysql_fetch_row($rr);
 		echo "<p>";
@@ -483,9 +592,12 @@ if($cmd=="ticket_new") {
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticket_modi_do type=hidden>";
 			echo "<input name=id value=".$r[0]." type=hidden>";
-    			echo "开始时间:<input name=st value=\"".$r[1]."\"><br>";
-    			echo "结束时间:<input name=et value=\"".$r[2]."\"><br>";
-    			echo "事件描述:<input name=memo value=\"".$r[3]."\"><p>";
+    			echo "开始时间: <input name=st value=\"".$r[1]."\"><br>";
+    			echo "结束时间: <input name=et value=\"".$r[2]."\"><br>";
+			ticket_system_select($r[3]);
+			ticket_reason_select($r[4]);
+			ticket_level_select($r[5]);
+    			echo "事件描述: <input name=memo value=\"".$r[6]."\"><p>";
     			echo "<input type=submit value=修改故障处理信息></form>";
 		}
 
@@ -494,10 +606,10 @@ if($cmd=="ticket_new") {
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticketdetail_new type=hidden>";
 			echo "<input name=tid value=".$r[0]." type=hidden>";
-			echo "时间:<input name=tm value=\"";
+			echo "时间: <input name=tm value=\"";
 			echo strftime("%Y-%m-%d %H:%M:00",time());
 			echo "\"><br>";
-			echo "处理描述:<input name=memo size=100><br>";
+			echo "处理描述: <input name=memo size=100><br>";
 			echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><p>";
 			echo "<input type=submit value=新增处理描述>";
 			echo "</form>";
@@ -511,61 +623,45 @@ if ($cmd=="ticket") {
 	$tdm = getticketdisplaymode();
 	
 	if( safe_get("all") == "yes" )
-		$q="select id,st,et,memo,truename,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket,user where op=email order by st desc";
+		$q="select id,st,et,system,reason,level,memo,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket order by st desc";
 	else
-		$q="select id,st,et,memo,truename,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket,user where op=email and ((year(st) = year(now())) or (year(et)=year(now())) or (year(et)=0)) order by st desc";
+		$q="select id,st,et,system,reason,level,memo,UNIX_TIMESTAMP(et)- UNIX_TIMESTAMP(st) from ticket where ((year(st) = year(now())) or (year(et)=year(now())) or (year(et)=0)) order by st desc";
 	$rr=mysql_query($q);
 
 	echo "<table border=1 cellspacing=0>";
-	if($tdm=="1")
-		echo "<tr><th>序号</th><th nowrap=\"nowrap\">开始时间</th><th nowrap=\"nowrap\">结束时间</th><th nowrap=\"nowrap\">故障时间</th><th>事件描述/处理</th><t nowrap=\"nowrap\"h>实施人</th> </tr>\n";
-	else 
-		echo "<tr><th>序号</th><th nowrap=\"nowrap\">开始时间</th><th nowrap=\"nowrap\">结束时间</th><th nowrap=\"nowrap\">故障时间</th><th>事件描述</th><th nowrap=\"nowrap\">时间</th><th>处理</th><th nowrap=\"nowrap\">实施人</th> </tr>\n";
+	echo "<tr><th>序号</th><th nowrap=\"nowrap\">故障时间</th><th nowrap=\"nowrap\">持续时间</th><th>相关系统</th><th>原因</th><th>级别</th><th>事件描述</th><th nowrap=\"nowrap\">时间</th><th>处理</th><th nowrap=\"nowrap\">实施人</th> </tr>\n";
 
 	$count=0;
 	while($r=mysql_fetch_row($rr)){
 		$count++;
 		echo "<tr>";
-		$q="select id,tm,memo,truename from ticketdetail,user where op=email and tid='".$r[0]."' order by tm";
+		$q="select id,tm,memo,op from ticketdetail where tid='".$r[0]."' order by tm";
 		$rr2=mysql_query($q);
 		$rows=mysql_num_rows($rr2); 
-		if($tdm=="1") {
-			echo "<td rowspan=";
-			echo $rows+1;
-			echo " align=center>".$count."</td>";
-		} else {
-			echo "<td rowspan=".$rows." align=center>".$count."</td>";
-		}
+		echo "<td rowspan=".$rows." align=center>".$count."</td>";
 		if(getuserright("ticket")>=2) 
-			if($tdm=="1") 
-				echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=".$r[0].">".$r[1]."</a></td>";
-			else
-				echo "<td rowspan=".$rows." nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=".$r[0].">".$r[1]."</a></td>";
+				echo "<td rowspan=$rows nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=$r[0]>$r[1]<br>$r[2]</a><br>";
 		else
-			if($tdm=="1") 
-				echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
-			else 
-				echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[1]."</td>";
-		if($tdm=="1")  {
-			echo "<td nowrap=\"nowrap\">".$r[2]."</td>";
-			echo "<td align=right nowrap=\"nowrap\">";
-		} else {
-			echo "<td rowspan=".$rows." nowrap=\"nowrap\">".$r[2]."</td>";
-			echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
-		}
+				echo "<td rowspan=$rows nowrap=\"nowrap\">$r[1]<br>$r[2]";
+
+
+		echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
 		if ( $r[2] == "0000-00-00 00:00:00" )
 			echo " ";
 		else 
-			echo round($r[5]/3600,1),"小时";
+			echo round($r[7]/3600,1),"小时";
+		echo "</td>";
+		echo "<td rowspan=".$rows." nowrap=\"nowrap\">";
+		ticket_system_display($r[3]);
+		echo "</td>";
+		echo "<td rowspan=".$rows." nowrap=\"nowrap\">";
+		ticket_reason_display($r[4]);
+		echo "</td>";
+		echo "<td rowspan=".$rows." nowrap=\"nowrap\">";
+		ticket_level_display($r[5]);
 		echo "</td>";
 	
-		if($tdm=="1")  {
-			echo "<td>".$r[3]."</td>";
-			echo "<td>".$r[4]."</td>";
-			echo "</tr>";
-		} else {
-			echo "<td rowspan=".$rows.">".$r[3]."</td>";
-		}
+		echo "<td rowspan=".$rows.">".$r[6]."</td>";
 		$firstrow=1;
 		while($r2=mysql_fetch_row($rr2)) {
 			if($firstrow==1) 
@@ -576,14 +672,14 @@ if ($cmd=="ticket") {
 				else
 					echo "<tr>";
 			}
-			if($tdm=="1") echo "<td></td>";
 			if(getuserright("ticket")>=3) 
 				echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&did=".$r2[0].">".$r2[1]."</a></td>";
 			else
 				echo "<td nowrap=\"nowrap\">".$r2[1]."</td>";
-			if($tdm=="1")echo "<td></td>";
 			echo "<td>".$r2[2]."</td>";
-			echo "<td>".$r2[3]."</td>";
+			echo "<td>";
+			op_display($r2[3]);
+			echo "</td>";
 			echo "</tr>\n";
 		}
 	}
@@ -2011,6 +2107,90 @@ if($cmd=="user") {
 
 // SYSINFO
 
+if($cmd=="ticket_system_new") {
+	checkright("sysinfo",2);
+	$desc=safe_get2("desc");
+	$q="insert into ticket_system(sortid,`desc`) values(10,'$desc')";
+	mysql_query($q);
+	$cmd="sysinfo";
+}  else if($cmd=="ticket_system_modi_do") {
+	checkright("sysinfo",3);
+	$id=safe_get("id");
+	$desc=safe_get2("desc");
+	$q="update ticket_system set `desc`='$desc' where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if ($cmd=="ticket_system_up") {
+	checkright("sysinfo",3);
+	$id=safe_get("id");
+	$q="update ticket_system set sortid=sortid-1 where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if ($cmd=="ticket_system_down") {
+	checkright("sysinfo",3);
+	$id=safe_get("id");
+	$q="update ticket_system set sortid=sortid+1 where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if($cmd=="ticket_system_del") {
+	$id=safe_get("id");
+	$q="delete from ticket_system where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if($cmd=="ticket_system_modi") {
+	$id=safe_get("id");
+	$q="select id, `desc` from ticket_system where id=$id";
+	$r=mysql_fetch_row(mysql_query($q));
+	echo "<p><form action=index.php method=get>";
+	echo "修改故障相关系统: <p>";
+	echo "<input name=cmd value=ticket_system_modi_do type=hidden>";
+	echo "<input name=id value=\"$r[0]\" type=hidden>";
+	echo "系统：<input name=desc value=\"$r[1]\"><p>";
+	echo "<input type=submit value=修改系统信息>";
+	exit(0);
+}
+if($cmd=="ticket_reason_new") {
+	checkright("sysinfo",2);
+	$desc=safe_get2("desc");
+	$q="insert into ticket_reason(sortid,`desc`) values(10,'$desc')";
+	mysql_query($q);
+	$cmd="sysinfo";
+}  else if($cmd=="ticket_reason_modi_do") {
+	checkright("sysinfo",3);
+	$id=safe_get("id");
+	$desc=safe_get2("desc");
+	$q="update ticket_reason set `desc`='$desc' where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if ($cmd=="ticket_reason_up") {
+	checkright("sysinfo",3);
+	$id=safe_get("id");
+	$q="update ticket_reason set sortid=sortid-1 where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if ($cmd=="ticket_reason_down") {
+	checkright("sysinfo",3);
+	$id=safe_get("id");
+	$q="update ticket_reason set sortid=sortid+1 where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if($cmd=="ticket_reason_del") {
+	$id=safe_get("id");
+	$q="delete from ticket_reason where id=$id";
+	mysql_query($q);
+	$cmd="sysinfo";
+} else if($cmd=="ticket_reason_modi") {
+	$id=safe_get("id");
+	$q="select id, `desc` from ticket_reason where id=$id";
+	$r=mysql_fetch_row(mysql_query($q));
+	echo "<p><form action=index.php method=get>";
+	echo "修改故障类型: <p>";
+	echo "<input name=cmd value=ticket_reason_modi_do type=hidden>";
+	echo "<input name=id value=\"$r[0]\" type=hidden>";
+	echo "系统：<input name=desc value=\"$r[1]\"><p>";
+	echo "<input type=submit value=修改故障类型>";
+	exit(0);
+}
 if($cmd=="sysinfo_modi") {
 	checkright("sysinfo",3);
 	$sysversion = safe_get2("version");
@@ -2038,9 +2218,72 @@ if($cmd=="sysinfo") {
 
 <?php 	if(getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=修改系统信息>";
+	echo "</form>";
+
+	echo "<p><form action=index.php method=get>";
+	echo "故障相关系统: ";
+	echo "<input name=cmd value=ticket_system_new type=hidden>";
+	echo "<input name=desc>";
+ 	if(getuserright("sysinfo")>=3) 
+		echo "<input type=submit value=新增系统>";
+	$q= "select id, `desc` from ticket_system order by sortid,id";
+	$rr=mysql_query($q);
+	echo "<table border=1 cellspacing=0>";
+	echo "<tr><th>序号</th><th>系统</th>";
+	if(getuserright("sysinfo")>=3)
+		echo "<th>命令</th>";
+	echo "</tr>";
+
+	$count=0;
+	while($r=mysql_fetch_row($rr)){
+		$count++;
+		echo "<tr><td align=center>".$count."</td>";
+		echo "<td>$r[1]</td>";
+		if(getuserright("sysinfo")>=3) {
+			echo "<td>";
+			echo "<a href=index.php?cmd=ticket_system_del&id=$r[0] onclick=\"return confirm('删除 $r[1] ?');\">删除<a/> ";
+			echo "<a href=index.php?cmd=ticket_system_modi&id=$r[0]>修改<a/> ";
+			echo "<a href=index.php?cmd=ticket_system_up&id=$r[0]>上移<a/> ";
+			echo "<a href=index.php?cmd=ticket_system_down&id=$r[0]>下移<a/> ";
+			echo "</td>";
+		}
+		echo "</tr>";
+	}
+	echo "</table>";
+
+
+	echo "<p><form action=index.php method=get>";
+	echo "故障类型: ";
+	echo "<input name=cmd value=ticket_reason_new type=hidden>";
+	echo "<input name=desc>";
+ 	if(getuserright("sysinfo")>=3) 
+		echo "<input type=submit value=新增类型>";
+	$q= "select id, `desc` from ticket_reason order by sortid,id";
+	$rr=mysql_query($q);
+	echo "<table border=1 cellspacing=0>";
+	echo "<tr><th>序号</th><th>类型</th>";
+	if(getuserright("sysinfo")>=3)
+		echo "<th>命令</th>";
+	echo "</tr>";
+
+	$count=0;
+	while($r=mysql_fetch_row($rr)){
+		$count++;
+		echo "<tr><td align=center>".$count."</td>";
+		echo "<td>$r[1]</td>";
+		if(getuserright("sysinfo")>=3) {
+			echo "<td>";
+			echo "<a href=index.php?cmd=ticket_reason_del&id=$r[0] onclick=\"return confirm('删除 $r[1] ?');\">删除<a/> ";
+			echo "<a href=index.php?cmd=ticket_reason_modi&id=$r[0]>修改<a/> ";
+			echo "<a href=index.php?cmd=ticket_reason_up&id=$r[0]>上移<a/> ";
+			echo "<a href=index.php?cmd=ticket_reason_down&id=$r[0]>下移<a/> ";
+			echo "</td>";
+		}
+		echo "</tr>";
+	}
+	echo "</table>";
 ?>
 
-</form>
 <?php
 	exit(0);
 }  // end cmd==sysinfo
