@@ -472,7 +472,7 @@ if ( $cmd=="jifang") {
 		if ($r[2] == 0) echo "<font color=red>异常</font>";
 		else echo "正常";
 		echo "</td>";
-		echo "<td>";
+		echo "<td align=center>";
 		if ($r[3] == 0) echo "<font color=red>异常</font>";
 		else echo "正常";
 		echo "</td>";
@@ -761,7 +761,7 @@ if($cmd=='cab_new') {
 	$rr=mysql_query($q);
 	if($row=mysql_fetch_row($rr)) {
 		echo "机柜编号: <input name=cabid value=$row[0]>唯一标识，字母或数字，可以包含-_<br>";
-		echo "机柜用途: <input name=cabuse value=$row[4]><br>";
+		echo "机柜用途: <input name=cabuse value='$row[4]'><br>";
 		echo "主用电源: <input name=ps1 value='$row[1]' size=80><br>";
 		echo "备用电源: <input name=ps2 value='$row[2]' size=80><br>";
 		echo "责 任 人: <input name=mgt value='$row[3]' size=80><p>";
@@ -803,7 +803,7 @@ if ($cmd=='cab_list') {
 		echo "</td><td>"; echo $row[3];
 		echo "</td><td>"; echo $row[1];
 		echo "</td><td>"; echo $row[2];
-		echo "</td><td>"; 
+		echo "</td><td align=center>"; 
 		$rr2=mysql_query("select count(*) from JF_Server where CABID='$row[0]'");
 		$r=mysql_fetch_row($rr2);
 		echo $r[0];
@@ -2098,7 +2098,7 @@ if($cmd=="user") {
 		echo "<td align=center>";
 		if($r[2]=="0")
 			echo "否";
-		else echo "是";
+		else echo "<font color=red>是</font>";
 		echo "</td>";
 		echo "<td>";
 		$q="select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='".$r[0]."' order by module.id";
@@ -2257,7 +2257,7 @@ if($cmd=="sysinfo") {
 	echo "<tr><th>序号</th><th>系统</th>";
 	if(getuserright("sysinfo")>=3)
 		echo "<th>命令</th>";
-	echo "</tr>";
+	echo "</tr>\n";
 
 	$count=0;
 	while($r=mysql_fetch_row($rr)){
@@ -2265,16 +2265,16 @@ if($cmd=="sysinfo") {
 		echo "<tr><td align=center>".$count."</td>";
 		echo "<td>$r[1]</td>";
 		if(getuserright("sysinfo")>=3) {
-			echo "<td>";
+			echo "<td>&nbsp;";
 			echo "<a href=index.php?cmd=ticket_system_del&id=$r[0] onclick=\"return confirm('删除 $r[1] ?');\">删除<a/> ";
 			echo "<a href=index.php?cmd=ticket_system_modi&id=$r[0]>修改<a/> ";
 			echo "<a href=index.php?cmd=ticket_system_up&id=$r[0]>上移<a/> ";
 			echo "<a href=index.php?cmd=ticket_system_down&id=$r[0]>下移<a/> ";
-			echo "</td>";
+			echo "&nbsp;</td>";
 		}
-		echo "</tr>";
+		echo "</tr>\n";
 	}
-	echo "</table>";
+	echo "</table>\n";
 
 
 	echo "<p><form action=index.php method=get>";
@@ -2289,7 +2289,7 @@ if($cmd=="sysinfo") {
 	echo "<tr><th>序号</th><th>类型</th>";
 	if(getuserright("sysinfo")>=3)
 		echo "<th>命令</th>";
-	echo "</tr>";
+	echo "</tr>\n";
 
 	$count=0;
 	while($r=mysql_fetch_row($rr)){
@@ -2297,14 +2297,14 @@ if($cmd=="sysinfo") {
 		echo "<tr><td align=center>".$count."</td>";
 		echo "<td>$r[1]</td>";
 		if(getuserright("sysinfo")>=3) {
-			echo "<td>";
+			echo "<td>&nbsp;";
 			echo "<a href=index.php?cmd=ticket_reason_del&id=$r[0] onclick=\"return confirm('删除 $r[1] ?');\">删除<a/> ";
 			echo "<a href=index.php?cmd=ticket_reason_modi&id=$r[0]>修改<a/> ";
 			echo "<a href=index.php?cmd=ticket_reason_up&id=$r[0]>上移<a/> ";
 			echo "<a href=index.php?cmd=ticket_reason_down&id=$r[0]>下移<a/> ";
-			echo "</td>";
+			echo "&nbsp;</td>";
 		}
-		echo "</tr>";
+		echo "</tr>\n";
 	}
 	echo "</table>";
 ?>
