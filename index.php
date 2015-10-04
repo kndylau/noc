@@ -639,16 +639,19 @@ if ($cmd=="ticket") {
 		$rr2=mysql_query($q);
 		$rows=mysql_num_rows($rr2); 
 		echo "<td rowspan=".$rows." align=center>".$count."</td>";
-		if(getuserright("ticket")>=2) 
-				echo "<td rowspan=$rows nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=$r[0]>$r[1]<br>$r[2]</a><br>";
-		else
-				echo "<td rowspan=$rows nowrap=\"nowrap\">$r[1]<br>$r[2]";
-
+		if(getuserright("ticket")>=2) {
+			echo "<td rowspan=$rows nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=$r[0]>$r[1]";
+			if($r[1]!=$r[2]) echo "<br>$r[2]";
+			echo "</a><br>";
+		} else {
+			echo "<td rowspan=$rows nowrap=\"nowrap\">$r[1]";
+			if($r[1]!=$r[2]) echo "<br>$r[2]";
+		}
 
 		echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
 		if ( $r[2] == "0000-00-00 00:00:00" )
 			echo " ";
-		else 
+		else  if($r[7]!=0)
 			echo round($r[7]/3600,1),"Сʱ";
 		echo "</td>";
 		echo "<td rowspan=".$rows." nowrap=\"nowrap\">";
