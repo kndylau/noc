@@ -18,7 +18,7 @@ function checkvalue($str) {
 	for ($i = 0; $i<strlen($str); $i++) {
         	if (ctype_alnum($str[$i]))  continue;
 		if (strchr("@-_ ./:", $str[$i])) continue;
-        	echo $str."中第 ".$i." 非法字符 ".$str[$i];
+        	echo "$str中第 $i 非法字符 $str[$i]";
 		exit(0);
 	}
 }
@@ -38,8 +38,8 @@ function changehist ($q) {
 	echo "修改日志<p><table border=1 cellspacing=0>";
         echo "<tr><th>时间</th><th>修改内容</th></tr>\n";
         $rr = mysql_query($q);
-        while ($row=mysql_fetch_row($rr)) 
-                echo "<tr><td>$row[1]</td><td>$row[3]<br>$row[4]</td></tr>\n";
+        while ($r=mysql_fetch_row($rr)) 
+                echo "<tr><td>$r[1]</td><td>$r[3]<br>$r[4]</td></tr>\n";
         echo "</table>";
 }
 
@@ -175,7 +175,7 @@ function op_display($op) {
 			echo $r[0];
 		} else 
 			echo $op.":未知管理员";
-        } else echo "";
+        }
 }
 
 // 0 no right
@@ -228,14 +228,14 @@ if ($cmd=="file_down") {
 	$r = mysql_fetch_row(mysql_query($q));
 	$file = $uploaddir."/".$fid;
 	if (file_exists($file)) {
-    		header('Content-Description: File Transfer');
-    		header('Content-Type: application/octet-stream');
+    		header("Content-Description: File Transfer");
+    		header("Content-Type: application/octet-stream");
 		$fn = iconv("gb2312","utf-8",$r[2]);
-    		header('Content-Disposition: attachment; filename="'.$fn.'"');
-    		header('Expires: 0');
-    		header('Cache-Control: must-revalidate');
-    		header('Pragma: public');
-    		header('Content-Length: ' . $r[3]);
+    		header("Content-Disposition: attachment; filename=$fn");
+    		header("Expires: 0");
+    		header("Cache-Control: must-revalidate");
+    		header("Pragma: public");
+    		header("Content-Length: $r[3]");
     		readfile($file);
     		exit(0);
 	}else  {
@@ -288,8 +288,8 @@ if ($cmd=="login") {
 if ($login<>1) {   // 用户没有登录
 	$login = 0;
 	$_SESSION["login"] = 0;
-	echo "<p>系统版本: ".$sysversion;
-	echo "<p>有任何问题请联系 ".$syslxr;
+	echo "<p>系统版本: $sysversion";
+	echo "<p>有任何问题请联系 $syslxr";
 	echo "<p>";
 	echo "请输入邮箱和密码登录<p>";
 	echo "系统会连接到邮件POP3服务器登录验证密码";
@@ -439,9 +439,9 @@ if ($cmd=="jifang_new") {
 		echo "<p>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=jifang_modi_do type=hidden>";
-		echo "<input name=id value=".$r[0]." type=hidden>";
+		echo "<input name=id value=$r[0] type=hidden>";
 		echo "<table width=100%>";
-    		echo "<tr><td width=100>时间:</td><td>".$r[1]."</td></tr>";
+    		echo "<tr><td width=100>时间:</td><td>$r[1]</td></tr>";
     		echo "<tr><td>环境状况:</td><td>正常<input type=radio name=huanjing value=1";
 		if ($r[2]=="1") echo " checked";
 		echo "> &nbsp; &nbsp; 异常<input type=radio name=huanjing value=0";
@@ -452,7 +452,7 @@ if ($cmd=="jifang_new") {
 		echo "> &nbsp; &nbsp; 异常<input type=radio name=server value=0";
 		if ($r[3]=="0") echo " checked";
 		echo "></td></tr>";
-		echo "<tr><td>存在问题:</td><td><input type=text size=200 name=msg value=\"".$r[4]."\"></td></tr>";
+		echo "<tr><td>存在问题:</td><td><input type=text size=200 name=msg value=\"$r[4]\"></td></tr>";
 		echo "</table>";
     		echo "<input type=submit value=修改机房巡检记录></form>";
 	}
@@ -472,9 +472,9 @@ if ($cmd=="jifang") {
 		$count++;
 		echo "<tr>";
 		if (getuserright("jifang")>=3) 
-			echo "<td align=center><a href=index.php?cmd=jifang_modi&id=".$r[0].">".$count."</a></td>";
+			echo "<td align=center><a href=index.php?cmd=jifang_modi&id=$r[0]>$count</a></td>";
 		else 
-			echo "<td align=center>".$count."</td>";
+			echo "<td align=center>$count</td>";
 		echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
 		echo "<td>";
 		if ($r[2]==0) echo "<font color=red>异常</font>";
@@ -484,7 +484,7 @@ if ($cmd=="jifang") {
 		if ($r[3]==0) echo "<font color=red>异常</font>";
 		else echo "正常";
 		echo "</td>";
-		echo "<td>".$r[4]."</td>";
+		echo "<td>$r[4]</td>";
 		echo "<td>";
 		op_display($r[5]);
 		echo "</td>";
@@ -583,10 +583,10 @@ if ($cmd=="ticket_new") {
 		echo "修改故障处理过程记录<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ticketdetail_modi_do type=hidden>";
-		echo "<input name=tid value=".$r[1]." type=hidden>";
-		echo "<input name=did value=".$r[0]." type=hidden>";
-    		echo "时间:<input name=tm value=\"".$r[2]."\"><br>";
-    		echo "描述:<input name=memo value=\"".$r[3]."\" size=100><br>";
+		echo "<input name=tid value=$r[1] type=hidden>";
+		echo "<input name=did value=$r[0] type=hidden>";
+    		echo "时间:<input name=tm value=\"$r[2]\"><br>";
+    		echo "描述:<input name=memo value=\"$r[3]\" size=100><br>";
 		echo "处理结束,更新结束时间:<input type=checkbox name=isend value=1><p>";
     		echo "<input type=submit value=修改故障处理过程记录></form>";
 	} else if ($id) {
@@ -597,20 +597,20 @@ if ($cmd=="ticket_new") {
 			echo "修改故障处理信息<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticket_modi_do type=hidden>";
-			echo "<input name=id value=".$r[0]." type=hidden>";
-    			echo "开始时间: <input name=st value=\"".$r[1]."\"><br>";
-    			echo "结束时间: <input name=et value=\"".$r[2]."\"><br>";
+			echo "<input name=id value=$r[0] type=hidden>";
+    			echo "开始时间: <input name=st value=\"$r[1]\"><br>";
+    			echo "结束时间: <input name=et value=\"$r[2]\"><br>";
 			ticket_system_select($r[3]);
 			ticket_reason_select($r[4]);
 			ticket_level_select($r[5]);
-    			echo "事件描述: <input name=memo value=\"".$r[6]."\"><p>";
+    			echo "事件描述: <input name=memo value=\"$r[6]\"><p>";
     			echo "<input type=submit value=修改故障处理信息></form>";
 		}
 		if (getuserright("ticket")>=2) {
 			echo "新增处理过程描述<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticketdetail_new type=hidden>";
-			echo "<input name=tid value=".$r[0]." type=hidden>";
+			echo "<input name=tid value=$r[0] type=hidden>";
 			echo "时间: <input name=tm value=\"";
 			echo strftime("%Y-%m-%d %H:%M:00",time());
 			echo "\"><br>";
@@ -659,10 +659,10 @@ if ($cmd=="ticket") {
 	while ($r=mysql_fetch_row($rr)){
 		$count++;
 		echo "<tr>";
-		$q = "select id,tm,memo,op from ticketdetail where tid='".$r[0]."' order by tm";
+		$q = "select id,tm,memo,op from ticketdetail where tid='$r[0]' order by tm";
 		$rr2 = mysql_query($q);
 		$rows = mysql_num_rows($rr2); 
-		echo "<td rowspan=".$rows." align=center>".$count."</td>";
+		echo "<td rowspan=$rows align=center>$count</td>";
 		if (getuserright("ticket")>=2) {
 			echo "<td rowspan=$rows nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&id=$r[0]>$r[1]";
 			if ($r[1]!=$r[2]) echo "<br>$r[2]";
@@ -672,23 +672,23 @@ if ($cmd=="ticket") {
 			if ($r[1]!=$r[2]) echo "<br>$r[2]";
 		}
 
-		echo "<td rowspan=".$rows." align=right nowrap=\"nowrap\">";
+		echo "<td rowspan=$rows align=right nowrap=\"nowrap\">";
 		if ($r[2]=="0000-00-00 00:00:00")
 			echo " ";
 		else  if ($r[7]!=0)
 			echo round($r[7]/3600,1),"小时";
 		echo "</td>";
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\">";
+		echo "<td rowspan=$rows nowrap=\"nowrap\">";
 		ticket_system_display($r[3]);
 		echo "</td>";
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\">";
+		echo "<td rowspan=$rows nowrap=\"nowrap\">";
 		ticket_reason_display($r[4]);
 		echo "</td>";
-		echo "<td rowspan=".$rows." nowrap=\"nowrap\">";
+		echo "<td rowspan=$rows nowrap=\"nowrap\">";
 		ticket_level_display($r[5]);
 		echo "</td>";
 	
-		echo "<td rowspan=".$rows.">".$r[6]."</td>";
+		echo "<td rowspan=$rows>$r[6]</td>";
 		$firstrow = 1;
 		while ($r2=mysql_fetch_row($rr2)) {
 			if ($firstrow==1) 
@@ -700,10 +700,10 @@ if ($cmd=="ticket") {
 					echo "<tr>";
 			}
 			if (getuserright("ticket")>=3) 
-				echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&did=".$r2[0].">".$r2[1]."</a></td>";
+				echo "<td nowrap=\"nowrap\"><a href=index.php?cmd=ticket_modi&did=$r2[0]>$r2[1]</a></td>";
 			else
-				echo "<td nowrap=\"nowrap\">".$r2[1]."</td>";
-			echo "<td>".$r2[2]."</td>";
+				echo "<td nowrap=\"nowrap\">$r2[1]</td>";
+			echo "<td>$r2[2]</td>";
 			echo "<td>";
 			op_display($r2[3]);
 			echo "</td>";
@@ -739,8 +739,8 @@ if ($cmd=='cab_new') {
 	$mgt = safe_get2("mgt");
 	$cabuse = safe_get2("cabuse");
 	$q = "select * from JF_CAB where CABID ='$oldcabid'";
-	$row = mysql_fetch_row(mysql_query($q));
-	$q = "insert into hist (tm,oid,old,new) values (now(),'CAB$row[0]','$row[0]/$row[1]/$row[2]/$row[3]/$row[4]','$cabid/$ps1/$ps2/$mgt/$cabuse')";
+	$r = mysql_fetch_row(mysql_query($q));
+	$q = "insert into hist (tm,oid,old,new) values (now(),'CAB$row[0]','$r[0]/$r[1]/$r[2]/$r[3]/$r[4]','$cabid/$ps1/$ps2/$mgt/$cabuse')";
 	mysql_query($q);
 	$q = "update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse'  where CABID='$oldcabid'";
 	mysql_query($q);
@@ -760,19 +760,19 @@ if ($cmd=='cab_new') {
 	echo "<input type=hidden name=oldcabid value=$cabid>";
 	$q = "select * from JF_CAB where CABID='$cabid'";
 	$rr = mysql_query($q);
-	if ($row=mysql_fetch_row($rr)) {
-		echo "机柜编号: <input name=cabid value=$row[0]>唯一标识，字母或数字，可以包含-_<br>";
-		echo "机柜用途: <input name=cabuse value='$row[4]'><br>";
-		echo "主用电源: <input name=ps1 value='$row[1]' size=80><br>";
-		echo "备用电源: <input name=ps2 value='$row[2]' size=80><br>";
-		echo "责 任 人: <input name=mgt value='$row[3]' size=80><p>";
+	if ($r=mysql_fetch_row($rr)) {
+		echo "机柜编号: <input name=cabid value=$r[0]>唯一标识，字母或数字，可以包含-_<br>";
+		echo "机柜用途: <input name=cabuse value='$r[4]'><br>";
+		echo "主用电源: <input name=ps1 value='$r[1]' size=80><br>";
+		echo "备用电源: <input name=ps2 value='$r[2]' size=80><br>";
+		echo "责 任 人: <input name=mgt value='$r[3]' size=80><p>";
 		echo "<input type=submit name=Submit value=修改机柜信息>";
 		echo "</form>";
 	}
 	changehist("select * from hist where oid like 'CAB$cabid%' order by tm desc");
 	echo "<p><hr width=250 align=left>";
 	if (getuserright("server")>=3) 
-		echo "<a href=index.php?cmd=cab_del&cabid=$row[0] onclick=\"return confirm('删除机柜 $row[1]/$row[2] ?');\">删除机柜: $row[1]/$row[2]</a></td>";
+		echo "<a href=index.php?cmd=cab_del&cabid=$r[0] onclick=\"return confirm('删除机柜 $r[1]/$r[2] ?');\">删除机柜: $r[1]/$r[2]</a></td>";
 	exit(0);
 } else if ($cmd=="cab_add") {
 	checkright("server",2);
@@ -798,19 +798,19 @@ if ($cmd=='cab_list') {
 
 	$q = "select * from JF_CAB order by CABID";
 	$rr = mysql_query($q);
-	while ($row=mysql_fetch_row($rr)) {
-		echo "<tr><td> "; echo "<a href=index.php?cmd=cabinfo_list&cabid=$row[0]>$row[0]</a>";
-		echo "</td><td>"; echo $row[4];
-		echo "</td><td>"; echo $row[3];
-		echo "</td><td>"; echo $row[1];
-		echo "</td><td>"; echo $row[2];
+	while ($r=mysql_fetch_row($rr)) {
+		echo "<tr><td> "; echo "<a href=index.php?cmd=cabinfo_list&cabid=$r[0]>$r[0]</a>";
+		echo "</td><td>"; echo $r[4];
+		echo "</td><td>"; echo $r[3];
+		echo "</td><td>"; echo $r[1];
+		echo "</td><td>"; echo $r[2];
 		echo "</td><td align=center>"; 
-		$q = "select count(*) from JF_Server where CABID='$row[0]'";
+		$q = "select count(*) from JF_Server where CABID='$r[0]'";
 		$r = mysql_fetch_row(mysql_query($q));
 		echo $r[0];
 		echo "</td><td>"; 
 		if (getuserright("server")>=3)
-			echo "<a href=index.php?cmd=cab_modi&cabid=$row[0]>修改</a>";
+			echo "<a href=index.php?cmd=cab_modi&cabid=$r[0]>修改</a>";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
@@ -866,8 +866,8 @@ if ($cmd=='server_add') {
         $connector = safe_get2("connector");
         $comment = safe_get2("comment");
 	$q = "select * from JF_Server where ServerID ='$oldserverid'";
-	$row = mysql_fetch_row(mysql_query($q));
-	$q = "insert into hist (tm,oid,old,new) values (now(),'SERVER$row[0]','$row[0]/$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]/$row[7]/$row[8]/$row[9]/$row[10]/$row[11]/$row[12]/$row[13]/$row[14]','$serverid/$startu/$endu/$kvm/$type/$name/$user/$mgt/$ip1/$ip2/$mac1/$mac2/$sn/$connector/$comment')";
+	$r = mysql_fetch_row(mysql_query($q));
+	$q = "insert into hist (tm,oid,old,new) values (now(),'SERVER$r[0]','$r[0]/$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]/$r[7]/$r[8]/$r[9]/$r[10]/$r[11]/$r[12]/$r[13]/$r[14]','$serverid/$startu/$endu/$kvm/$type/$name/$user/$mgt/$ip1/$ip2/$mac1/$mac2/$sn/$connector/$comment')";
 	mysql_query($q);
         $q = "update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
         mysql_query($q);
@@ -883,30 +883,30 @@ if ($cmd=='server_modi') {
         echo "<input type=hidden name=oldserverid value=$serverid>";
         $q = "select * from JF_Server where ServerID='$serverid'";
         $rr = mysql_query($q);
-        if ($row=mysql_fetch_row($rr)) {
-        	echo "Server编号: <input name=serverid value=\"$row[0]\"><br>";
-                echo "机柜编号: <input name=cabid value=\"$row[1]\"> <br>";
-                echo "开始U: <input name=startu value=\"$row[2]\"><br>";
-                echo "结束U: <input name=endu value=\"$row[3]\"><br>";
-                echo "KVM: <input name=kvm value=\"$row[4]\"><br>";
-                echo "型号: <input name=type value=\"$row[5]\"><br>";
-                echo "名称: <input name=name value=\"$row[6]\"><br>";
-                echo "用途: <input name=user value=\"$row[7]\"><br>";
-                echo "管理员: <input name=mgt value=\"$row[8]\"><br>";
-                echo "IP1: <input name=ip1 value=\"$row[9]\"><br>";
-                echo "IP2: <input name=ip2 value=\"$row[10]\"><br>";
-                echo "MAC1: <input name=mac1 value=\"$row[11]\"><br>";
-                echo "MAC2: <input name=mac2 value=\"$row[12]\"><br>";
-                echo "SN: <input name=sn value=\"$row[13]\"><br>";
-                echo "连接设备: <input name=connector value=\"$row[14]\"><br>";
-                echo "备注: <input name=comment value=\"$row[15]\"><br>";
+        if ($r=mysql_fetch_row($rr)) {
+        	echo "Server编号: <input name=serverid value=\"$r[0]\"><br>";
+                echo "机柜编号: <input name=cabid value=\"$r[1]\"> <br>";
+                echo "开始U: <input name=startu value=\"$r[2]\"><br>";
+                echo "结束U: <input name=endu value=\"$r[3]\"><br>";
+                echo "KVM: <input name=kvm value=\"$r[4]\"><br>";
+                echo "型号: <input name=type value=\"$r[5]\"><br>";
+                echo "名称: <input name=name value=\"$r[6]\"><br>";
+                echo "用途: <input name=user value=\"$r[7]\"><br>";
+                echo "管理员: <input name=mgt value=\"$r[8]\"><br>";
+                echo "IP1: <input name=ip1 value=\"$r[9]\"><br>";
+                echo "IP2: <input name=ip2 value=\"$r[10]\"><br>";
+                echo "MAC1: <input name=mac1 value=\"$r[11]\"><br>";
+                echo "MAC2: <input name=mac2 value=\"$r[12]\"><br>";
+                echo "SN: <input name=sn value=\"$r[13]\"><br>";
+                echo "连接设备: <input name=connector value=\"$r[14]\"><br>";
+                echo "备注: <input name=comment value=\"$r[15]\"><br>";
                 echo "<input type=submit name=Submit value=修改>";
                 echo "</form>";
         }
 	changehist("select * from hist where oid like 'SERVER$serverid%' order by tm desc");
 	echo "<p><hr width=250 align=left>";
 	if (getuserright("server")>=3) 
-		echo "<a href=index.php?cmd=server_del&cabid=$row[1]&serverid=$row[0] onclick=\"return confirm('删除服务器 $row[0]/$row[5]/$row[6] ?');\">删除服务器: $row[0]/$row[5]/$row[6]</a></td>";
+		echo "<a href=index.php?cmd=server_del&cabid=$r[1]&serverid=$r[0] onclick=\"return confirm('删除服务器 $r[0]/$r[5]/$r[6] ?');\">删除服务器: $r[0]/$r[5]/$r[6]</a></td>";
 	exit(0);
 }
 
@@ -914,35 +914,35 @@ if ($cmd=='cabinfo_list') {
 	checkright("server",1);
 	$cabid = safe_get("cabid");
 	$q = "select *,now() from JF_CAB where CABID='$cabid'";
-	$row=mysql_fetch_row(mysql_query($q));
+	$r=mysql_fetch_row(mysql_query($q));
 	echo "<table border=1 cellspacing=0 width=800>";
 	echo "<tr><td width=20%>";
 	echo "机柜编号:";
 	echo "</td><td>";
-	echo $row[0];
+	echo $r[0];
 	echo "</td><td width=20%>";
 	echo "机柜责任人:";
 	echo "</td><td>";
-	echo $row[3];
+	echo $r[3];
 	echo "</td></tr>";
 	echo "<tr><td>";
 	echo "电源1:";
 	echo "</td><td>";
-	echo $row[1];
+	echo $r[1];
 	echo "</td><td>";
 	echo "电源2:";
 	echo "</td><td>";
-	echo $row[2];
+	echo $r[2];
 	echo "</td></tr>";
 	echo "<tr><td>";
 	echo "用途:";
 	echo "</td><td colspan=3>";
-	echo $row[4];
+	echo $r[4];
 	echo "</td>";
 	echo "<tr><td>";
 	echo "打印时间:";
 	echo "</td><td colspan=3>";
-	echo $row[5];
+	echo $r[5];
 	echo "</td></tr>";
 	echo "</table>";
 	echo "\n";
@@ -954,31 +954,31 @@ if ($cmd=='cabinfo_list') {
 <?php
 	$q = "select EndU-StartU+1,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment,ServerID from JF_Server where CABID= '$cabid' order by EndU desc";
 	$rr = mysql_query($q);
-	while ($row=mysql_fetch_row($rr)) {
+	while ($r=mysql_fetch_row($rr)) {
 		echo "<tr><td>"; 
 		if (getuserright("server")>=3) 
-			echo "<a href=index.php?cmd=server_modi&serverid=$row[14]>$row[1]</a>";
+			echo "<a href=index.php?cmd=server_modi&serverid=$r[14]>$r[1]</a>";
 		else
-			echo "$row[1]";
-		echo "</td><td rowspan=".$row[0].">"; echo $row[2];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[3];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[4];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[5];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[6];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[7];
-		if ($row[8]!='') { 
+			echo "$r[1]";
+		echo "</td><td rowspan=$r[0]>$r[2]";
+		echo "</td><td rowspan=$r[0]>$r[3]";
+		echo "</td><td rowspan=$r[0]>$r[4]";
+		echo "</td><td rowspan=$r[0]>$r[5]";
+		echo "</td><td rowspan=$r[0]>$r[6]";
+		echo "</td><td rowspan=$r[0]>$r[7]";
+		if ($r[8]!='') { 
 			echo "<br>"; 
-			echo $row[8]; 
+			echo $r[8]; 
 		}
-		echo "</td><td rowspan=".$row[0].">"; echo $row[9];echo "<br>";echo $row[10];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[11];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[12];
-		echo "</td><td rowspan=".$row[0].">"; echo $row[13];
+		echo "</td><td rowspan=$r[0]>$r[9]<br>$r[10]";
+		echo "</td><td rowspan=$r[0]>$r[11]";
+		echo "</td><td rowspan=$r[0]>$r[12]";
+		echo "</td><td rowspan=$r[0]>$r[13]";
 		echo "</td></tr>\n";
-		if($row[0]>1) {
-			for($i=0;$i<$row[0]-1;$i++) {
+		if($r[0]>1) {
+			for($i=0;$i<$r[0]-1;$i++) {
 				echo "<tr><td>";
-				echo $row[1]-$i-1;
+				echo $r[1]-$i-1;
 			}
 		echo "</td></tr>\n";
 		
@@ -1015,55 +1015,54 @@ if ($cmd=='cabinfo_list') {
 
 // ODF
 
-if($cmd=='odf_new') {
+if ($cmd=='odf_new') {
 	checkright("odf",2);
 	$bh = safe_get2("bh");
-	$jf= safe_get2("jf");
-	$xin= safe_get("xin");
-	$use= safe_get2("use");
+	$jf = safe_get2("jf");
+	$xin = safe_get("xin");
+	$use = safe_get2("use");
 	$memo = safe_get2("memo");
-	$q="insert into ODF (JF,BH,`USE`,MEMO) values('$jf','$bh','$use','$memo')";
+	$q = "insert into ODF (JF,BH,`USE`,MEMO) values('$jf','$bh','$use','$memo')";
 	mysql_query($q);
 	for ($i=1; $i<=$xin; $i++) {
 		$q="insert into ODFPAN (BH,X) values('$bh',$i)";
 		mysql_query($q);
 	}
-	$cmd='odf_list';
-} else if($cmd=='odf_modi_do') {
+	$cmd = 'odf_list';
+} else if ($cmd=='odf_modi_do') {
 	checkright("odf",3);
 	$odfid = safe_get("odfid");
 	$bh = safe_get2("bh");
-	$jf= safe_get2("jf");
-	$use= safe_get2("use");
+	$jf = safe_get2("jf");
+	$use = safe_get2("use");
 	$memo = safe_get2("memo");
 
-	$q="select * from ODF where id ='$odfid'";
-	$rr=mysql_query($q);
-	$row=mysql_fetch_row($rr);
-	$q="insert into hist (tm,oid,old,new) values (now(),'ODF$row[0]','$row[1]/$row[2]/$row[3]/$row[4]','$jf/$bh/$use/$memo')";
+	$q = "select * from ODF where id ='$odfid'";
+	$r = mysql_fetch_row(mysql_query($q));
+	$q = "insert into hist (tm,oid,old,new) values (now(),'ODF$r[0]','$r[1]/$r[2]/$r[3]/$r[4]','$jf/$bh/$use/$memo')";
 	mysql_query($q);
 
-	$q="update ODF set JF='$jf',BH='$bh',`USE`='$use',MEMO='$memo' where id='$odfid'";
+	$q = "update ODF set JF='$jf',BH='$bh',`USE`='$use',MEMO='$memo' where id='$odfid'";
 	mysql_query($q);
-	$cmd='odf_list';
-} else if($cmd=='odf_modi') {
+	$cmd = 'odf_list';
+} else if ($cmd=='odf_modi') {
 	checkright("odf",3);
 	$odfid = safe_get("odfid");
 	echo "<form action=index.php method=post>";
 	echo "<input type=hidden name=cmd value=odf_modi_do>";
 	echo "<input type=hidden name=odfid value=$odfid>";
-	$q="select * from ODF where id ='$odfid'";
-	$rr=mysql_query($q);
-	if($row=mysql_fetch_row($rr)) {
-		echo "机房: <input name=jf value=$row[1]> <br>";
-		echo "ODF编号: <input name=bh value=$row[2]><br>";
-		echo "用途: <input name=use value='$row[3]' size=80> <br>";
-		echo "备注: <input name=memo value='$row[4]' size=80> <br>";
+	$q = "select * from ODF where id ='$odfid'";
+	$rr = mysql_query($q);
+	if ($r=mysql_fetch_row($rr)) {
+		echo "机房: <input name=jf value=$r[1]> <br>";
+		echo "ODF编号: <input name=bh value=$r[2]><br>";
+		echo "用途: <input name=use value='$r[3]' size=80> <br>";
+		echo "备注: <input name=memo value='$r[4]' size=80> <br>";
 		echo "<input type=submit name=Submit value=修改>";
 		echo "</form>";
 	}
 	exit(0);
-} else if($cmd=='odf_add') {
+} else if ($cmd=='odf_add') {
 	checkright("odf",2);
 ?>
 	<p>新增ODF:<p><form action=index.php method=post>
@@ -1084,103 +1083,98 @@ if ($cmd=='odf_list') {
 	echo "<p><table border=1 cellspacing=0>";
 	echo "<tr><th>机房</th><th>ODF编号</th><th>用途</th><th>备注</th><th>命令</th></tr>\n";
 
-	$q="select * from ODF order by JF,BH";
+	$q = "select * from ODF order by JF,BH";
 	$count = 0;
-	$rr=mysql_query($q);
-	while($row=mysql_fetch_row($rr)) {
+	$rr = mysql_query($q);
+	while ($r=mysql_fetch_row($rr)) {
 		$count++;
 		echo "<tr><td> "; 
-		echo $row[1];
+		echo $r[1];
 		echo "</td><td>"; 
-		echo "<a href=index.php?cmd=odfpan_list&bh=$row[2]>$row[2]</a>";
-		echo "</td><td>"; echo $row[3];
-		echo "</td><td>"; echo $row[4];
+		echo "<a href=index.php?cmd=odfpan_list&bh=$r[2]>$r[2]</a>";
+		echo "</td><td>"; echo $r[3];
+		echo "</td><td>"; echo $r[4];
 		echo "</td><td>"; 
-		if(getuserright("odf")>=3)
-			echo "<a href=index.php?cmd=odf_mod&odfid=$row[0]>修改</a>";
+		if (getuserright("odf")>=3)
+			echo "<a href=index.php?cmd=odf_mod&odfid=$r[0]>修改</a>";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
 	exit(0);
 } // end cmd = odf_list
 
-if($cmd=='odfpan_modi_do') {
+if ($cmd=='odfpan_modi_do') {
 	checkright("odf",3);
 	$id = safe_get("id");
 	$bh = safe_get2("bh");
 	$x = safe_get2("x");
 	$s = safe_get2("s");
 	$dx = safe_get2("dx");
-	$use= safe_get2("use");
+	$use = safe_get2("use");
 	$tx = safe_get2("tx");
 	$sb = safe_get2("sb");
 	$memo = safe_get2("memo");
-
-	$q="select * from ODFPAN where id ='$id'";
-	$rr=mysql_query($q);
-	$row=mysql_fetch_row($rr);
-	$q="insert into hist (tm,oid,old,new) values (now(),'PAN$row[0]','$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]/$row[7]/$row[8]','$bh/$x/$s/$dx/$use/$tx/$sb/$memo')";
+	$q = "select * from ODFPAN where id ='$id'";
+	$r = mysql_fetch_row(mysql_query($q));
+	$q = "insert into hist (tm,oid,old,new) values (now(),'PAN$r[0]','$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]/$r[7]/$r[8]','$bh/$x/$s/$dx/$use/$tx/$sb/$memo')";
 	mysql_query($q);
-	$q="update ODFPAN set BH='$bh',X='$x',S='$s',DX='$dx',`USE`='$use',TX='$tx',SB='$sb',MEMO='$memo' where id='$id'";
+	$q = "update ODFPAN set BH='$bh',X='$x',S='$s',DX='$dx',`USE`='$use',TX='$tx',SB='$sb',MEMO='$memo' where id='$id'";
 	mysql_query($q);
-	$cmd='odfpan_list';
-} else if($cmd=='odfpan_modi') {
+	$cmd = 'odfpan_list';
+} else if ($cmd=='odfpan_modi') {
 	checkright("odf",3);
 	$id = safe_get("id");
 	echo "<form action=index.php method=post>";
 	echo "<input type=hidden name=cmd value=odfpan_modi_do>";
 	echo "<input type=hidden name=id value=$id>";
-	$q="select * from ODFPAN where id ='$id'";
-	$rr=mysql_query($q);
-	if($row=mysql_fetch_row($rr)) {
-		echo "ODF编号: <input name=bh value=$row[1]><br>";
-		echo "芯号: <input name=x value=$row[2]><br>";
-		echo "颜色: <input name=s value=$row[3]><br>";
-		echo "对方芯号: <input name=dx value=$row[4]><br>";
-		echo "用途: <input name=use value='$row[5]' size=80> <br>";
-		echo "跳线: <input name=tx value=$row[6]><br>";
-		echo "设备: <input name=sb value=$row[7]><br>";
-		echo "备注: <input name=memo value='$row[8]' size=80> <br>";
+	$q = "select * from ODFPAN where id ='$id'";
+	$rr = mysql_query($q);
+	if ($r=mysql_fetch_row($rr)) {
+		echo "ODF编号: <input name=bh value=$r[1]><br>";
+		echo "芯号: <input name=x value=$r[2]><br>";
+		echo "颜色: <input name=s value=$r[3]><br>";
+		echo "对方芯号: <input name=dx value=$r[4]><br>";
+		echo "用途: <input name=use value='$r[5]' size=80> <br>";
+		echo "跳线: <input name=tx value=$r[6]><br>";
+		echo "设备: <input name=sb value=$r[7]><br>";
+		echo "备注: <input name=memo value='$r[8]' size=80> <br>";
 		echo "<input type=submit name=Submit value=修改>";
 		echo "</form>";
 	}
 	echo "<p>";
-	$cmd='odfpan_list';
+	$cmd = 'odfpan_list';
 	changehist("select * from hist where oid = 'PAN$id' order by tm desc");
 }
 if ($cmd=='odfpan_list') {
 	checkright("odf",1);
 	echo "ODF盘信息<p>";
 	$bh = safe_get2("bh");
-	$q="select * from ODF where BH='$bh'";
-    	$rr=mysql_query($q);
-    	$row=mysql_fetch_row($rr);
-	echo "机房: ".$row[1]."<br>";
-	echo "ODF编号: ".$row[2]."<br>";
-	echo "用途: ".$row[3]."<br>";
-	echo "备注: ".$row[4]."<p>";
-
+	$q = "select * from ODF where BH='$bh'";
+	$r = mysql_fetch_row(mysql_query($q));
+	echo "机房: ".$r[1]."<br>";
+	echo "ODF编号: ".$r[2]."<br>";
+	echo "用途: ".$r[3]."<br>";
+	echo "备注: ".$r[4]."<p>";
 	echo "<table border=1 cellspacing=0>";
 	echo "<tr><th>ODF编号</th><th>芯号</th><th>颜色</ht><th>对方芯号</th><th>用途</th><th>跳线</th>";
 	echo "<th>设备</th><th>备注</th></tr>\n";
-
-	$q="select * from ODFPAN where BH='$bh' order by X";
+	$q = "select * from ODFPAN where BH='$bh' order by X";
 	$count = 0;
-	$rr=mysql_query($q);
-	while($row=mysql_fetch_row($rr)) {
+	$rr = mysql_query($q);
+	while ($r=mysql_fetch_row($rr)) {
 		$count++;
-		echo "<tr><td>"; echo $row[1];
+		echo "<tr><td>"; echo $r[1];
 		echo "</td><td> "; 
-		if(getuserright("odf")>=3) 	
-			echo "<a href=index.php?cmd=odfpan_modi&id=$row[0]&bh=$row[1]>$row[2]</a>";
+		if (getuserright("odf")>=3) 	
+			echo "<a href=index.php?cmd=odfpan_modi&id=$r[0]&bh=$r[1]>$r[2]</a>";
 		else
-			echo "$row[2]";
-		echo "</td><td>"; echo $row[3];
-		echo "</td><td>"; echo $row[4];
-		echo "</td><td>"; echo $row[5];
-		echo "</td><td>"; echo $row[6];
-		echo "</td><td>"; echo $row[7];
-		echo "</td><td>"; echo $row[8];
+			echo "$r[2]";
+		echo "</td><td>$r[3]";
+		echo "</td><td>$r[4]";
+		echo "</td><td>$r[5]";
+		echo "</td><td>$r[6]";
+		echo "</td><td>$r[7]";
+		echo "</td><td>$r[8]";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
@@ -1189,42 +1183,42 @@ if ($cmd=='odfpan_list') {
 
 // IP
 
-if($cmd=="ip_new") {
+if ($cmd=="ip_new") {
 	checkright("ip",2);
-	$ip=safe_get("ip");
-	$mask=safe_get("mask");
-	$net=safe_get("net");
-	$use=safe_get2("use");
-	$lxr=safe_get2("lxr");
-	$memo=safe_get2("memo");
-	$q="insert into IP(IP,MASK,net,`use`,lxr,memo) values('$ip','$mask',$net,'$use','$lxr','$memo')";
+	$ip = safe_get("ip");
+	$mask = safe_get("mask");
+	$net = safe_get("net");
+	$use = safe_get2("use");
+	$lxr = safe_get2("lxr");
+	$memo = safe_get2("memo");
+	$q = "insert into IP(IP,MASK,net,`use`,lxr,memo) values('$ip','$mask',$net,'$use','$lxr','$memo')";
 	mysql_query($q);
-	$cmd="ip";
-}  else if($cmd=="ip_modi_do") {
+	$cmd = "ip";
+}  else if ($cmd=="ip_modi_do") {
 	checkright("ip",3);
-	$id=safe_get("id");
-	$ip=safe_get("ip");
-	$mask=safe_get("mask");
-	$net=safe_get("net");
-	$use=safe_get2("use");
-	$lxr=safe_get2("lxr");
-	$memo=safe_get2("memo");
-	$q="select * from IP where id ='$id'";
-        $rr=mysql_query($q);
-        $row=mysql_fetch_row($rr);
-        $q="insert into hist (tm,oid,old,new) values (now(),'IP$row[0]','$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]','$ip/$mask/$net/$use/$lxr/$memo')";
+	$id = safe_get("id");
+	$ip = safe_get("ip");
+	$mask = safe_get("mask");
+	$net = safe_get("net");
+	$use = safe_get2("use");
+	$lxr = safe_get2("lxr");
+	$memo = safe_get2("memo");
+	$q = "select * from IP where id='$id'";
+        $rr = mysql_query($q);
+        $r = mysql_fetch_row($rr);
+        $q = "insert into hist (tm,oid,old,new) values (now(),'IP$r[0]','$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]','$ip/$mask/$net/$use/$lxr/$memo')";
         mysql_query($q);
-	$q="update IP set IP='$ip',MASK='$mask',net=$net,`use`='$use',lxr='$lxr',memo='$memo' where id=$id";
+	$q = "update IP set IP='$ip',MASK='$mask',net=$net,`use`='$use',lxr='$lxr',memo='$memo' where id=$id";
 	mysql_query($q);
-	$cmd="ip";
-} else if($cmd=="ip_del") {
+	$cmd = "ip";
+} else if ($cmd=="ip_del") {
 	checkright("ip",3);
-	$id=safe_get("ipid");
-	$q="delete from IP where id=$id";
+	$id = safe_get("ipid");
+	$q = "delete from IP where id=$id";
 	mysql_query($q);
-	$cmd="ip";
-} else if($cmd=="ip_add") {
-	if(getuserright("ip")>=2) {
+	$cmd = "ip";
+} else if ($cmd=="ip_add") {
+	if (getuserright("ip")>=2) {
 		echo "<p>新增IP地址记录";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ip_new type=hidden>";
@@ -1238,144 +1232,138 @@ if($cmd=="ip_new") {
 		echo "</form>";
 	}
 	exit(0);
-} else if($cmd=="ip_modi") {
+} else if ($cmd=="ip_modi") {
 	checkright("ip",3);
 	$id = safe_get("id");
 	if( $id ) {
-		$q="select id,IP,MASK,net,`use`,lxr,memo from IP where id=".$id;
-		$rr=mysql_query($q);
-		$r=mysql_fetch_row($rr);
+		$q = "select id,IP,MASK,net,`use`,lxr,memo from IP where id=".$id;
+		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
 		echo "修改记录<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ip_modi_do type=hidden>";
-		echo "<input name=id value=".$r[0]." type=hidden>";
-    		echo "IP: <input name=ip value=\"".$r[1]."\"><br>";
-    		echo "MASK: <input name=mask value=\"".$r[2]."\"><br>";
-		if ( $r[3] == '0' )
+		echo "<input name=id value=$r[0] type=hidden>";
+    		echo "IP: <input name=ip value=\"$r[1]\"><br>";
+    		echo "MASK: <input name=mask value=\"$r[2]\"><br>";
+		if ($r[3]=='0')
     			echo "network? no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
 		else
     			echo "network? no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
 		echo "<br>";
-    		echo "用途: <input name=use value=\"".$r[4]."\"><br>";
+    		echo "用途: <input name=use value=\"$r[4]\"><br>";
 		lxr_select($r[5]);
-    		echo "备注: <input name=memo value=\"".$r[6]."\"><br>";
+    		echo "备注: <input name=memo value=\"r[6]\"><br>";
     		echo "<input type=submit name=修改记录></form>";
 		changehist("select * from hist where oid = 'IP$id' order by tm desc");
 		echo "<p>";
-		if(getuserright("vm")>=3) 
+		if (getuserright("vm")>=3) 
 			echo "<a href=index.php?cmd=ip_del&ipid=$r[0] onclick=\"return confirm('删除IP $r[1]/$r[2] ?');\">删除IP: $r[1]/$r[2]</a></td>";
-
 	}
 	exit(0);
 }
-if ( $cmd=="ip") {
+if ($cmd=="ip") {
 	checkright("ip",1);
-	$q="select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP)";
-	$rr=mysql_query($q);
+	$q = "select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP)";
+	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr><th>序号</th><th>IP</th><th>用途</th><th>联系人</th><th>备注</th>";
 	echo "</tr>";
-	$count=0;
-while($r=mysql_fetch_row($rr)){
-	$count++;
-	if( $r[3] == '1' )   // network 
-		echo "<tr style=\"background-color:#ffff00\">";
-	else 
-		echo "<tr>";
-	if(getuserright("ip")>=3) 
-		echo "<td align=center><a href=index.php?cmd=ip_modi&id=".$r[0].">".$count."</a></td>";
-	else 
-		echo "<td align=center>".$count."</td>";
-	if( $r[3] == '1' ) {  // network 
-		echo "<td>";
-		echo $r[1]."/".$r[2];
-	} else {
-		echo "<td align=right>";
-		if ( $r[2]=="255.255.255.255" ) 
-			echo $r[1];
+	$count = 0;
+	while ($r=mysql_fetch_row($rr)){
+		$count++;
+		if ($r[3]=='1')   // network 
+			echo "<tr style=\"background-color:#ffff00\">";
 		else 
-			echo $r[1]."/".$r[2];
+			echo "<tr>";
+		if (getuserright("ip")>=3) 
+			echo "<td align=center><a href=index.php?cmd=ip_modi&id=$r[0]>$count</a></td>";
+		else 
+			echo "<td align=center>$count</td>";
+		if ($r[3]=='1') {  // network 
+			echo "<td>";
+			echo "$r[1]/$r[2]";
+		} else {
+			echo "<td align=right>";
+			if ($r[2]=="255.255.255.255") 
+				echo $r[1];
+			else 
+				echo "$r[1]/$r[2]";
+		}
+		echo "</td>";
+		echo "<td>$r[4]</td>";
+		echo "<td>";
+		lxr_display($r[5]);
+		echo "</td>";
+		echo "<td>$r[6]</td>";
+		echo "</tr>\n";
 	}
-	echo "</td>";
-	echo "<td>".$r[4]."</td>";
-	echo "<td>";
-	lxr_display($r[5]);
-	echo "</td>";
-	echo "<td>".$r[6]."</td>";
-	echo "</tr>";
-	echo "\n";
-}
 	echo "</table>";
-	$cmd="ip";
+	exit(0);
 } // end cmd==ip
-
 
 // VM
 
-if($cmd=="vm_c_new") {
+if ($cmd=="vm_c_new") {
 	checkright("vm",2);
-	$name=safe_get2("name");
-	$ip=safe_get("ip");
-	$memo=safe_get2("memo");
-	$q="insert into vm_cluster(name,ip,memo) values('$name','$ip','$memo')";
+	$name = safe_get2("name");
+	$ip = safe_get("ip");
+	$memo = safe_get2("memo");
+	$q = "insert into vm_cluster(name,ip,memo) values('$name','$ip','$memo')";
 	mysql_query($q);
-	$cmd="vm_c";
-}  else if($cmd=="vm_c_modi") {
+	$cmd = "vm_c";
+}  else if ($cmd=="vm_c_modi") {
 	checkright("vm",3);
-	$id=safe_get("id");
-	$name=safe_get2("name");
-	$ip=safe_get("ip");
-	$memo=safe_get2("memo");
-	$q="select * from vm_cluster where id ='$id'";
-        $rr=mysql_query($q);
-        $row=mysql_fetch_row($rr);
-        $q="insert into hist (tm,oid,old,new) values (now(),'VMCLUSTER$row[0]','$row[1]/$row[2]/$row[3]','$name/$ip/$memo')";
+	$id = safe_get("id");
+	$name = safe_get2("name");
+	$ip = safe_get("ip");
+	$memo = safe_get2("memo");
+	$q = "select * from vm_cluster where id ='$id'";
+        $r = mysql_fetch_row(mysql_query($q));
+        $q = "insert into hist (tm,oid,old,new) values (now(),'VMCLUSTER$r[0]','$r[1]/$r[2]/$r[3]','$name/$ip/$memo')";
         mysql_query($q);
-	$q="update vm_cluster set name='$name', ip='$ip', memo='$memo' where id=$id";
+	$q = "update vm_cluster set name='$name', ip='$ip', memo='$memo' where id=$id";
 	mysql_query($q);
-	$cmd="vm_c";
-} else if($cmd=="vm_cluster_del") {
+	$cmd = "vm_c";
+} else if ($cmd=="vm_cluster_del") {
 	checkright("vm",3);
-	$id=safe_get("vmcid");
-	$q="delete from vm_cluster where id=$id";
+	$id = safe_get("vmcid");
+	$q = "delete from vm_cluster where id=$id";
 	mysql_query($q);
-	$cmd="vm_c";
+	$cmd = "vm_c";
 }
 
-if($cmd=="vm_s_new") {
+if ($cmd=="vm_s_new") {
 	checkright("vm",2);
-	$name=safe_get2("name");
-	$cid=safe_get2("cid");
-	$ip=safe_get("ip");
-	$memo=safe_get2("memo");
-	$q="insert into vm_server(name,cid,ip,memo) values('$name','$cid','$ip','$memo')";
+	$name = safe_get2("name");
+	$cid = safe_get2("cid");
+	$ip = safe_get("ip");
+	$memo = safe_get2("memo");
+	$q = "insert into vm_server(name,cid,ip,memo) values('$name','$cid','$ip','$memo')";
 	mysql_query($q);
-	$cmd="vm_c";
-}  else if($cmd=="vm_s_modi_do") {
+	$cmd = "vm_c";
+}  else if ($cmd=="vm_s_modi_do") {
 	checkright("vm",3);
-	$sid=safe_get("sid");
-	$name=safe_get2("name");
-	$cid=safe_get2("cid");
-	$ip=safe_get("ip");
-	$memo=safe_get2("memo");
-	$q="select * from vm_server where id ='$sid'";
-        $rr=mysql_query($q);
-        $row=mysql_fetch_row($rr);
-        $q="insert into hist (tm,oid,old,new) values (now(),'VMSERVER$row[0]','$row[1]/$row[2]/$row[3]/$row[4]','$name/$cid/$ip/$memo')";
+	$sid = safe_get("sid");
+	$name = safe_get2("name");
+	$cid = safe_get2("cid");
+	$ip = safe_get("ip");
+	$memo = safe_get2("memo");
+	$q = "select * from vm_server where id ='$sid'";
+        $r = mysql_fetch_row(mysql_query($q));
+        $q = "insert into hist (tm,oid,old,new) values (now(),'VMSERVER$r[0]','$r[1]/$r[2]/$r[3]/$r[4]','$name/$cid/$ip/$memo')";
         mysql_query($q);
-	$q="update vm_server set name='$name', cid='$cid', ip='$ip', memo='$memo' where id=$sid";
+	$q = "update vm_server set name='$name', cid='$cid', ip='$ip', memo='$memo' where id=$sid";
 	mysql_query($q);
-	$q="update vm_server set name='$name', cid='$cid', ip='$ip', memo='$memo' where id=$sid";
-	$cmd="vm_c";
-} else if($cmd=="vm_s_del") {
+	$q = "update vm_server set name='$name', cid='$cid', ip='$ip', memo='$memo' where id=$sid";
+	$cmd = "vm_c";
+} else if ($cmd=="vm_s_del") {
 	checkright("vm",3);
-	$cmd="vm_c";
-	$id=safe_get("vmsid");
-	$q="delete from vm_server where id=$id";
+	$id = safe_get("vmsid");
+	$q = "delete from vm_server where id=$id";
 	mysql_query($q);
-} else if( $cmd=="vm_c_add" ) {
-	if(getuserright("vm")>=2) {
+	$cmd = "vm_c";
+} else if ($cmd=="vm_c_add") {
+	if (getuserright("vm")>=2) {
 		echo "<p>新增VM集群";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=vm_c_new type=hidden>";
@@ -1387,48 +1375,47 @@ if($cmd=="vm_s_new") {
 	}
 	exit(0);
 }
-if ( $cmd=="vm_c") {
+if ($cmd=="vm_c") {
 	checkright("vm",1);
 	echo "<p>";
-	$q="select * from vm_cluster order by name";
-	$rr=mysql_query($q);
+	$q = "select * from vm_cluster order by name";
+	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr><th>序号</th><th>名称</th><th>管理IP</th><th>成员</th><th>备注</th>";
 	echo "</tr>";
-	$count=0;
-while($r=mysql_fetch_row($rr)){
-	$count++;
-	echo "<tr>";
-	if(getuserright("vm")>=3) 
-		echo "<td align=center><a href=index.php?cmd=vm_c&id=".$r[0].">".$count."</a></td>";
-	else 
-		echo "<td align=center>".$count."</td>";
-	echo "<td>".$r[1]."</td>";
-	echo "<td>".$r[2]."</td>";
-	echo "<td>";
-	$q="select * from vm_server where cid='$r[0]'";
-	$rr2=mysql_query($q);
-	while($r2=mysql_fetch_row($rr2)){
-		if(getuserright("vm")>=3) 
-			echo "<a href=index.php?cmd=vm_c&id=$r[0]&vmsid=$r2[0]>";
-		echo $r2[1]; echo "/"; echo $r2[3]; echo "/"; echo $r2[4]; 
-		if(getuserright("vm")>=3) 
-			echo "</a>";
-		echo "<br>";
+	$count = 0;
+	while ($r=mysql_fetch_row($rr)){
+		$count++;
+		echo "<tr>";
+		if (getuserright("vm")>=3) 
+			echo "<td align=center><a href=index.php?cmd=vm_c&id=$r[0]>$count</a></td>";
+		else 
+			echo "<td align=center>$count</td>";
+		echo "<td>$r[1]</td>";
+		echo "<td>$r[2]</td>";
+		echo "<td>";
+		$q = "select * from vm_server where cid='$r[0]'";
+		$rr2 = mysql_query($q);
+		while ($r2=mysql_fetch_row($rr2)){
+			if (getuserright("vm")>=3) 
+				echo "<a href=index.php?cmd=vm_c&id=$r[0]&vmsid=$r2[0]>";
+			echo "$r2[1]/$r2[3]/$r2[4]"; 
+			if (getuserright("vm")>=3) 
+				echo "</a>";
+			echo "<br>";
+		}
+		echo "</td>";
+		echo "<td>$r[3]</td>";
+		echo "</tr>";
+		echo "\n";
 	}
-	echo "</td>";
-	echo "<td>".$r[3]."</td>";
-	echo "</tr>";
-	echo "\n";
-}
 	echo "</table>";
 	$id = safe_get("id");
 	if( $id <>"" ) {
 		$vmsid = safe_get("vmsid");
 		if( $vmsid <> "") { // 选择了某个集群成员
-			$q="select * from vm_server where id=".$vmsid;
-			$rr=mysql_query($q);
-			$r=mysql_fetch_row($rr);
+			$q = "select * from vm_server where id=".$vmsid;
+			$r = mysql_fetch_row(mysql_query($q));
 			echo "<p>";
 			echo "修改/新增VM成员记录<br>";
 			echo "<form action=index.php method=post>";
@@ -1436,32 +1423,29 @@ while($r=mysql_fetch_row($rr)){
 			echo "&nbsp;&nbsp;&nbsp;新增一条记录<input name=cmd value=vm_s_new type=radio><br>";
 			echo "<input name=sid value=\"$r[0]\" type=hidden>";
 			echo "<input name=cid value=\"$r[2]\" type=hidden>";
-    			echo "名称: <input name=name value=\"".$r[1]."\"><br>";
-    			echo "IP: <input name=ip value=\"".$r[3]."\"><br>";
-    			echo "备注: <input name=memo value=\"".$r[4]."\"><br>";
+    			echo "名称: <input name=name value=\"$r[1]\"><br>";
+    			echo "IP: <input name=ip value=\"$r[3]\"><br>";
+    			echo "备注: <input name=memo value=\"$r[4]\"><br>";
     			echo "<input type=submit name=修改/新增记录></form>";
 			changehist("select * from hist where oid = 'VMSERVER$vmsid' order by tm desc");
-
 			echo "<p><form action=index.php method=post>";
 			echo "<input name=cmd value=vm_s_del type=hidden>";
-			echo "<input name=vmsid value=".$r[0]." type=hidden>";
+			echo "<input name=vmsid value=$r[0] type=hidden>";
 			echo "<input type=submit value=删除这条记录 onclick=\"return confirm('确信删除VM成员 $r[1] ?');\">";
 			echo "</form>";
 		} else {  // 未选择成员
-			$q="select * from vm_cluster where id=".$id;
-			$rr=mysql_query($q);
-			$r=mysql_fetch_row($rr);
+			$q = "select * from vm_cluster where id=".$id;
+			$r = mysql_fetch_row(mysql_query($q));
 			echo "<p>";
 			echo "修改记录<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=vm_c_modi type=hidden>";
 			echo "<input name=id value=\"$r[0]\" type=hidden>";
-    			echo "名称: <input name=name value=\"".$r[1]."\"><br>";
-    			echo "IP: <input name=ip value=\"".$r[2]."\"><br>";
-    			echo "备注: <input name=memo value=\"".$r[3]."\"><br>";
+    			echo "名称: <input name=name value=\"$r[1]\"><br>";
+    			echo "IP: <input name=ip value=\"$r[2]\"><br>";
+    			echo "备注: <input name=memo value=\"$r[3]\"><br>";
     			echo "<input type=submit name=修改记录></form>";
 			changehist("select * from hist where oid = 'VMCLUSTER$id' order by tm desc");
-
 			echo "<p><form action=index.php method=post>";
 			echo "<input name=cmd value=vm_s_new type=hidden>";
 			echo "<input name=cid value=\"$r[0]\" type=hidden>";
@@ -1476,65 +1460,63 @@ while($r=mysql_fetch_row($rr)){
 } // end cmd==vm_c
 
 
-if($cmd=="vm_host_new") {
+if ($cmd=="vm_host_new") {
 	checkright("vm",2);
-	$name=safe_get2("name");
+	$name = safe_get2("name");
 	$inuse = safe_get("inuse");
-	if($inuse<>1) $inuse = 0;
+	if ($inuse<>1) $inuse = 0;
 	else $inuse = 1;
-	$cid=safe_get2("cid");
-	$ip=safe_get2("ip");
-	$use=safe_get2("use");
-	$st=safe_get2("st");
-	$et=safe_get2("et");
-	$lxr=safe_get("lxr");
-	$cpu=safe_get2("cpu"); 
-	$mem=safe_get2("mem");
-	$disk=safe_get2("disk");
-	$disk2=safe_get2("disk2");
-	$memo=safe_get2("memo");
-	$q="insert into vm_host(name,inuse,cid,ip,`use`,st,et,lxr,cpu,mem,disk,disk2,memo) values('$name',$inuse,'$cid','$ip','$use','$st','$et','$lxr','$cpu','$mem','$disk','$disk2','$memo')";
+	$cid = safe_get2("cid");
+	$ip = safe_get2("ip");
+	$use = safe_get2("use");
+	$st = safe_get2("st");
+	$et = safe_get2("et");
+	$lxr = safe_get("lxr");
+	$cpu = safe_get2("cpu"); 
+	$mem = safe_get2("mem");
+	$disk = safe_get2("disk");
+	$disk2 = safe_get2("disk2");
+	$memo = safe_get2("memo");
+	$q = "insert into vm_host(name,inuse,cid,ip,`use`,st,et,lxr,cpu,mem,disk,disk2,memo) values('$name',$inuse,'$cid','$ip','$use','$st','$et','$lxr','$cpu','$mem','$disk','$disk2','$memo')";
 	mysql_query($q);
-	$cmd="vm";
-}  else if($cmd=="vm_host_modi_do") {
+	$cmd = "vm";
+}  else if ($cmd=="vm_host_modi_do") {
 	checkright("vm",3);
-	$id=safe_get("id");
-	$name=safe_get2("name");
+	$id = safe_get("id");
+	$name = safe_get2("name");
 	$inuse = safe_get("inuse");
-	if($inuse<>1) $inuse = 0;
+	if ($inuse<>1) $inuse = 0;
 	else $inuse = 1;
-	$cid=safe_get2("cid");
-	$ip=safe_get2("ip");
-	$use=safe_get2("use");
-	$st=safe_get2("st");
-	$et=safe_get2("et");
-	$lxr=safe_get("lxr");
-	$cpu=safe_get2("cpu"); 
-	$mem=safe_get2("mem");
-	$disk=safe_get2("disk");
-	$disk2=safe_get2("disk2");
-	$memo=safe_get2("memo");
-	$q="select * from vm_host where id ='$id'";
-        $rr=mysql_query($q);
-        $row=mysql_fetch_row($rr);
-        $q="insert into hist (tm,oid,old,new) values (now(),'VMHOST$row[0]','$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]/$row[7]/$row[8]/$row[9]/$row[10]/$row[11]/$row[12]/$row[13]','$name/$inuse/$cid/$ip/$use/$st/$et/$lxr/$cpu/$mem/$disk/$disk2/$memo')";
+	$cid = safe_get2("cid");
+	$ip = safe_get2("ip");
+	$use = safe_get2("use");
+	$st = safe_get2("st");
+	$et = safe_get2("et");
+	$lxr = safe_get("lxr");
+	$cpu = safe_get2("cpu"); 
+	$mem = safe_get2("mem");
+	$disk = safe_get2("disk");
+	$disk2 = safe_get2("disk2");
+	$memo = safe_get2("memo");
+	$q = "select * from vm_host where id ='$id'";
+        $r = mysql_fetch_row(mysql_query($q));
+        $q = "insert into hist (tm,oid,old,new) values (now(),'VMHOST$r[0]','$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]/$r[7]/$r[8]/$r[9]/$r[10]/$r[11]/$r[12]/$r[13]','$name/$inuse/$cid/$ip/$use/$st/$et/$lxr/$cpu/$mem/$disk/$disk2/$memo')";
         mysql_query($q);
-	$q="update vm_host set name='$name', inuse=$inuse, cid='$cid', ip='$ip', `use`='$use', st='$st', et='$et', lxr='$lxr', cpu='$cpu', mem='$mem', disk='$disk', disk2='$disk2', memo='$memo' where id=$id";
+	$q = "update vm_host set name='$name', inuse=$inuse, cid='$cid', ip='$ip', `use`='$use', st='$st', et='$et', lxr='$lxr', cpu='$cpu', mem='$mem', disk='$disk', disk2='$disk2', memo='$memo' where id=$id";
 	mysql_query($q);
-	$cmd="vm";
-} else if($cmd=="vm_host_del") {
+	$cmd = "vm";
+} else if ($cmd=="vm_host_del") {
 	checkright("vm",3);
-	$id=safe_get("hostid");
-	$q="delete from vm_host where id=$id";
+	$id = safe_get("hostid");
+	$q = "delete from vm_host where id=$id";
 	mysql_query($q);
-	$cmd="vm";
-} else if ( $cmd=="vm_host_modi") {
+	$cmd = "vm";
+} else if ($cmd=="vm_host_modi") {
 	checkright("vm",2);
 	$id = safe_get("id");
-	if( ($id <>"") && (getuserright("vm")>=3) ) {
-		$q="select * from vm_host where id=".$id;
-		$rr=mysql_query($q);
-		$r=mysql_fetch_row($rr);
+	if (($id <>"") && (getuserright("vm")>=3)) {
+		$q = "select * from vm_host where id=".$id;
+		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
 		echo "修改/新增VM记录<br>";
 		echo "<form action=index.php method=post>";
@@ -1543,16 +1525,16 @@ if($cmd=="vm_host_new") {
 		echo "&nbsp;&nbsp;&nbsp;新增一条记录<input name=cmd value=vm_host_new type=radio><br>";
     		echo "名称: <input name=name value=\"$r[1]\"><br>";
     		echo "在用<input type=radio name=inuse value=1";
-		if($r[2]=="1") echo " checked";
+		if ($r[2]=="1") echo " checked";
 		echo ">  不在用<input type=radio name=inuse value=0";
-		if($r[2]=="0") echo " checked";
+		if ($r[2]=="0") echo " checked";
 		echo "><br>";
     		echo "集群: <select name=cid>";
-		$q="select * from vm_cluster";
-		$rr2=mysql_query($q);
-		while($r2=mysql_fetch_row($rr2)) {
+		$q = "select * from vm_cluster";
+		$rr2 = mysql_query($q);
+		while ($r2=mysql_fetch_row($rr2)) {
 			echo "<option value=\"$r2[0]\"";
-			if( $r[3] == $r2[0]) echo " selected=\"selected\"";
+			if ($r[3]==$r2[0]) echo " selected=\"selected\"";
 			echo ">$r2[1]/$r2[2]</option>";
 		}
 		echo "</select><br>";
@@ -1571,20 +1553,20 @@ if($cmd=="vm_host_new") {
 		changehist("select * from hist where oid = 'VMHOST$id' order by tm desc");
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=vm_host_del type=hidden>";
-		echo "<input name=hostid value=".$r[0]." type=hidden>";
+		echo "<input name=hostid value=$r[0] type=hidden>";
 		echo "<input type=submit value=删除VM记录 onclick=\"return confirm('确信删除VM $r[1] ?');\">";
 		echo "</form>";
 	
-	}  else if(getuserright("vm")>=2) {
+	}  else if (getuserright("vm")>=2) {
 		echo "<p>";
 		echo "新增VM记录<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=vm_host_new type=hidden>";
     		echo "名称: <input name=name><br>";
     		echo "集群: <select name=cid>";
-		$q="select * from vm_cluster";
-		$rr=mysql_query($q);
-		while($r=mysql_fetch_row($rr)) {
+		$q = "select * from vm_cluster";
+		$rr = mysql_query($q);
+		while ($r=mysql_fetch_row($rr)) {
 			echo "<option value=\"$r[0]\">$r[1]/$r[2]</option>";
 		}
 		echo "</select><br>";
@@ -1606,19 +1588,19 @@ if($cmd=="vm_host_new") {
 	}
 	exit(0);
 }
-if ( $cmd=="vm") {
+if ($cmd=="vm") {
 	checkright("vm",1);
 	$s = safe_get("s");
-	if( $s == "name") $sortby = "name";
-	else if( $s=="cluster") $sortby ="cid";
-	else if( $s=="inuse") $sortby ="inuse";
-	else if( $s=="ip") $sortby ="ip";
-	else if( $s=="use") $sortby ="`use`";
-	else if( $s=="lxr") $sortby ="lxr";
-	else if( $s=="et") $sortby ="et";
+	if ($s == "name") $sortby = "name";
+	else if ($s=="cluster") $sortby = "cid";
+	else if ($s=="inuse") $sortby = "inuse";
+	else if ($s=="ip") $sortby = "ip";
+	else if ($s=="use") $sortby = "use`";
+	else if ($s=="lxr") $sortby = "lxr";
+	else if ($s=="et") $sortby = "et";
 	else $sortby = "id";
-	$q="select * from vm_host order by ".$sortby;
-	$rr=mysql_query($q);
+	$q = "select * from vm_host order by $sortby";
+	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo "<tr><td>序号</td><td align=center><a href=index.php?cmd=vm&s=name>名称</a></td>";
 	echo "<td><a href=index.php?cmd=vm&s=inuse>在用</a></td>";
@@ -1628,85 +1610,83 @@ if ( $cmd=="vm") {
 	echo "<td align=center><a href=index.php?cmd=vm&s=et>结束时间</a></td>";
 	echo "<td align=center><a href=index.php?cmd=vm&s=lxr>联系人</a></td><td>CPU</td><td>MEM</td><td>DISK</td><td>DISK2</td><td>备注</td>";
 	echo "</tr>";
-	$count=0;
-while($r=mysql_fetch_row($rr)){
-	$count++;
-	echo "<tr>";
-	if(getuserright("vm")>=3) 
-		echo "<td align=center><a href=index.php?cmd=vm_host_modi&id=".$r[0].">".$count."</a></td>";
-	else 
-		echo "<td align=center>".$count."</td>";
-	echo "<td>".$r[1]."</td>";
-	echo "<td>";
-	if($r[2]=="1") echo "在用";
-	else echo "关机";
-	echo "</td>";
-	echo "<td>";
-	$q="select * from vm_cluster where id='$r[3]'";
-	$r2=mysql_fetch_row(mysql_query($q));
-	if( $r2 ) echo $r2[1]."/".$r2[2];
-	else echo $r[3]."未知集群ID";
-	echo "</td>";
-	echo "<td>".$r[4]."</td>"; // IP
-	echo "<td>".$r[5]."</td>"; // use
-	echo "<td>".$r[6]."</td>"; // st
-	echo "<td>".$r[7]."</td>"; //et 
-	echo "<td>";
-	lxr_display($r[8]);
-	echo "</td>";
-	echo "<td>".$r[9]."</td>";
-	echo "<td>".$r[10]."</td>";
-	echo "<td>".$r[11]."</td>";
-	echo "<td>".$r[12]."</td>";
-	echo "<td>".$r[13]."</td>";
-	echo "</tr>";
-	echo "\n";
-}
+	$count = 0;
+	while ($r=mysql_fetch_row($rr)){
+		$count++;
+		echo "<tr>";
+		if (getuserright("vm")>=3) 
+			echo "<td align=center><a href=index.php?cmd=vm_host_modi&id=$r[0]>$count</a></td>";
+		else 
+			echo "<td align=center>$count</td>";
+		echo "<td>$r[1]</td>";
+		echo "<td>";
+		if ($r[2]=="1") echo "在用";
+		else echo "关机";
+		echo "</td>";
+		echo "<td>";
+		$q = "select * from vm_cluster where id='$r[3]'";
+		$r2 = mysql_fetch_row(mysql_query($q));
+		if ($r2) echo $r2[1]."/".$r2[2];
+		else echo $r[3]."未知集群ID";
+		echo "</td>";
+		echo "<td>$r[4]</td>"; // IP
+		echo "<td>$r[5]</td>"; // use
+		echo "<td>$r[6]</td>"; // st
+		echo "<td>$r[7]</td>"; //et 
+		echo "<td>";
+		lxr_display($r[8]);
+		echo "</td>";
+		echo "<td>$r[9]</td>";
+		echo "<td>$r[10]</td>";
+		echo "<td>$r[11]</td>";
+		echo "<td>$r[12]</td>";
+		echo "<td>$r[13]</td>";
+		echo "</tr>\n";
+	}
 	echo "</table>";
 	exit(0);
 } // end cmd==vm
 
 // LXR
 
-if($cmd=="lxr_new") {
+if ($cmd=="lxr_new") {
 	checkright("lxr",2);
-	$dept=safe_get2("dept");
-	$name=safe_get2("name");
-	$dh=safe_get2("dh");
-	$sj=safe_get2("sj");
-	$email=safe_get2("email");
-	$qq=safe_get2("qq");
-	$memo=safe_get2("memo");
-	$q="insert into lxr(dept,name,dh,sj,email,qq,memo) values('$dept','$name','$dh','$sj','$email','$qq','$memo')";
+	$dept = safe_get2("dept");
+	$name = safe_get2("name");
+	$dh = safe_get2("dh");
+	$sj = safe_get2("sj");
+	$email = safe_get2("email");
+	$qq = safe_get2("qq");
+	$memo = safe_get2("memo");
+	$q = "insert into lxr(dept,name,dh,sj,email,qq,memo) values('$dept','$name','$dh','$sj','$email','$qq','$memo')";
 	mysql_query($q);
-	$cmd="lxr";
-}  else if($cmd=="lxr_modi_do") {
+	$cmd = "lxr";
+}  else if ($cmd=="lxr_modi_do") {
 	checkright("lxr",3);
-	$id=safe_get("id");
-	$dept=safe_get2("dept");
-	$name=safe_get2("name");
-	$dh=safe_get2("dh");
-	$sj=safe_get2("sj");
-	$email=safe_get2("email");
-	$qq=safe_get2("qq");
-	$memo=safe_get2("memo");
-	$q="select * from lxr where id ='$id'";
-        $rr=mysql_query($q);
-        $row=mysql_fetch_row($rr);
-        $q="insert into hist (tm,oid,old,new) values (now(),'VMLXR$row[0]','$row[1]/$row[2]/$row[3]/$row[4]/$row[5]/$row[6]/$row[7]','$dept/$name/$dh/$sj/$email/$qq/$memo')";
+	$id = safe_get("id");
+	$dept = safe_get2("dept");
+	$name = safe_get2("name");
+	$dh = safe_get2("dh");
+	$sj = safe_get2("sj");
+	$email = safe_get2("email");
+	$qq = safe_get2("qq");
+	$memo = safe_get2("memo");
+	$q = "select * from lxr where id ='$id'";
+        $r = mysql_fetch_row(mysql_query($q));
+        $q = "insert into hist (tm,oid,old,new) values (now(),'VMLXR$r[0]','$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]/$r[7]','$dept/$name/$dh/$sj/$email/$qq/$memo')";
         mysql_query($q);
-	$q="update lxr set dept='$dept', name='$name', dh='$dh', sj='$sj', email='$email', qq='$qq', memo='$memo' where id=$id";
+	$q = "update lxr set dept='$dept', name='$name', dh='$dh', sj='$sj', email='$email', qq='$qq', memo='$memo' where id=$id";
 	mysql_query($q);
-	$cmd="lxr";
-} else if($cmd=="lxr_del") {
+	$cmd = "lxr";
+} else if ($cmd=="lxr_del") {
 	checkright("lxr",3);
-	$id=safe_get("lxrid");
-	$q="delete from lxr where id=$id";
+	$id = safe_get("lxrid");
+	$q = "delete from lxr where id=$id";
 	mysql_query($q);
-	$cmd="lxr";
-} else if($cmd=="lxr_add") {
+	$cmd = "lxr";
+} else if ($cmd=="lxr_add") {
 	echo "<p>新增联系人<p>";
-	if(getuserright("lxr")>=2) {
+	if (getuserright("lxr")>=2) {
 		echo "<p><form action=index.php method=post>";
 		echo "<input name=cmd value=lxr_new type=hidden>";
     		echo "部门: <input name=dept><br>";
@@ -1720,39 +1700,37 @@ if($cmd=="lxr_new") {
 		echo "</form>";
 	}
 	exit(0);
-} else if($cmd=="lxr_modi") { $id = safe_get("id");
+} else if ($cmd=="lxr_modi") { $id = safe_get("id");
 	checkright("lxr",3);
-	if( $id <>"" ) {
-		$q="select * from lxr where id=".$id;
-		$rr=mysql_query($q);
-		$r=mysql_fetch_row($rr);
+	if ($id<>"") {
+		$q = "select * from lxr where id=".$id;
+		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
 		echo "修改/新增联系人记录<br>";
 		echo "<form action=index.php method=post>";
-		echo "<input name=id value=".$r[0]." type=hidden>";
+		echo "<input name=id value=$r[0] type=hidden>";
 		echo "操作: 修改本条记录<input name=cmd value=lxr_modi_do type=radio checked>";
 		echo "&nbsp;&nbsp;&nbsp;新增一条记录<input name=cmd value=lxr_new type=radio><br>";
-    		echo "部门: <input name=dept value=\"".$r[1]."\"><br>";
-    		echo "姓名: <input name=name value=\"".$r[2]."\"><br>";
-    		echo "电话: <input name=dh   value=\"".$r[3]."\"><br>";
-    		echo "手机: <input name=sj   value=\"".$r[4]."\"><br>";
-    		echo "邮箱: <input name=email value=\"".$r[5]."\"><br>";
-    		echo "QQ  : <input name=qq   value=\"".$r[6]."\"><br>";
-    		echo "备注: <input name=memo value=\"".$r[7]."\"><br>";
+    		echo "部门: <input name=dept value=\"$r[1]\"><br>";
+    		echo "姓名: <input name=name value=\"$r[2]\"><br>";
+    		echo "电话: <input name=dh   value=\"$r[3]\"><br>";
+    		echo "手机: <input name=sj   value=\"$r[4]\"><br>";
+    		echo "邮箱: <input name=email value=\"$r[5]\"><br>";
+    		echo "QQ  : <input name=qq   value=\"$r[6]\"><br>";
+    		echo "备注: <input name=memo value=\"$r[7]\"><br>";
     		echo "<input type=submit name=修改/新增记录></form>";
 		changehist("select * from hist where oid = 'VMLXR$id' order by tm desc");
 		echo "<p>";
-		if(getuserright("lxr")>=3) 
+		if (getuserright("lxr")>=3) 
 			echo "<a href=index.php?cmd=lxr_del&lxrid=$r[0] onclick=\"return confirm('删除联系人 $r[1]/$r[2] ?');\">删除联系人： $r[1]/$r[2]</a></td>";
 	}
 	exit(0);
-} else if($cmd=="lxr_detail") {
+} else if ($cmd=="lxr_detail") {
 	$id = safe_get("id");
 	checkright("lxr",1);
-	if( $id <>"" ) {
-		$q="select * from lxr where id=".$id;
-		$rr=mysql_query($q);
-		$r=mysql_fetch_row($rr);
+	if ($id<>"") {
+		$q = "select * from lxr where id=".$id;
+		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
 		echo "联系人详细信息<p>";
     		echo "部门: $r[1]<br>";
@@ -1767,65 +1745,64 @@ if($cmd=="lxr_new") {
 	}
 	exit(0);
 }
-if ( $cmd=="lxr") {
+if ($cmd=="lxr") {
 	checkright("lxr",1);
-	$q="select * from lxr order by dept, name";
-	$rr=mysql_query($q);
+	$q = "select * from lxr order by dept, name";
+	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr><th>序号</th><th>部门</th><th>姓名</th><th>电话</th><th>手机</th><th>email</th><th>QQ</th><th>备注</th>";
 	echo "</tr>";
-	$count=0;
-while($r=mysql_fetch_row($rr)){
-	$count++;
-	echo "<tr>";
-	if(getuserright("lxr")>=3) 
-		echo "<td align=center><a href=index.php?cmd=lxr_modi&id=".$r[0].">".$count."</a></td>";
-	else 
-		echo "<td align=center>".$count."</td>";
-	echo "<td>".$r[1]."</td>";
-	echo "<td>".$r[2]."</td>";
-	echo "<td>".$r[3]."</td>";
-	echo "<td>".$r[4]."</td>";
-	echo "<td>".$r[5]."</td>";
-	echo "<td>".$r[6]."</td>";
-	echo "<td>".$r[7]."</td>";
-	echo "</tr>";
-	echo "\n";
-}
+	$count = 0;
+	while ($r=mysql_fetch_row($rr)){
+		$count ++;
+		echo "<tr>";
+		if (getuserright("lxr")>=3) 
+			echo "<td align=center><a href=index.php?cmd=lxr_modi&id=$r[0]>$count</a></td>";
+		else 
+			echo "<td align=center>$count</td>";
+		echo "<td>$r[1]</td>";
+		echo "<td>$r[2]</td>";
+		echo "<td>$r[3]</td>";
+		echo "<td>$r[4]</td>";
+		echo "<td>$r[5]</td>";
+		echo "<td>$r[6]</td>";
+		echo "<td>$r[7]</td>";
+		echo "</tr>\n";
+	}
 	echo "</table>";
 	exit(0);
 } // end cmd==lxr
 
 // INFO
 
-if($cmd=="info_new") {
+if ($cmd=="info_new") {
 	checkright("info",2);
-	$title=safe_get2("title");
-	$memo=safe_get2("memo");
-	$q="insert into info (title,memo) values('$title','$memo')";
+	$title = safe_get2("title");
+	$memo = safe_get2("memo");
+	$q = "insert into info (title,memo) values('$title','$memo')";
 	mysql_query($q);
-	$cmd="info";
-}  else if($cmd=="info_modi_do") {
+	$cmd = "info";
+}  else if ($cmd=="info_modi_do") {
 	checkright("info",3);
-	$id=safe_get("id");
-	$title=safe_get2("title");
-	$memo=safe_get2("memo");
-	$q="update info set title='$title',memo='$memo' where id=$id";
+	$id = safe_get("id");
+	$title = safe_get2("title");
+	$memo = safe_get2("memo");
+	$q = "update info set title='$title',memo='$memo' where id=$id";
 	mysql_query($q);
-	$cmd="info";
+	$cmd = "info";
 } else if ($cmd=="info_up") {
 	checkright("info",3);
-	$id=safe_get("id");
-	$q="update info set sortid=sortid-1 where id=$id";
+	$id = safe_get("id");
+	$q = "update info set sortid=sortid-1 where id=$id";
 	mysql_query($q);
-	$cmd="info";
+	$cmd = "info";
 } else if ($cmd=="info_down") {
 	checkright("info",3);
-	$id=safe_get("id");
-	$q="update info set sortid=sortid+1 where id=$id";
+	$id = safe_get("id");
+	$q = "update info set sortid=sortid+1 where id=$id";
 	mysql_query($q);
-	$cmd="info";
-} else if($cmd=="info_add") {
+	$cmd = "info";
+} else if ($cmd=="info_add") {
 	checkright("info",2);
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd value=info_new type=hidden>";
@@ -1834,24 +1811,23 @@ if($cmd=="info_new") {
 	echo " <input type=submit value=新增常用信息> </form>";
  	exit(0);
 }
-
 if ($cmd=="info") { 
 	checkright("info",1);
-	$q= "select id,title,left(memo,100) from info order by sortid,id";
-	$rr=mysql_query($q);
+	$q = "select id,title,left(memo,100) from info order by sortid,id";
+	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr> <th>序号</th> <th>标题</th> <th>内容摘要</th> <th>命令</th> </tr>";
+	echo " <tr><th>序号</th><th>标题</th><th>内容摘要</th><th>命令</th></tr>";
 
-	$count=0;
-	while($r=mysql_fetch_row($rr)){
-		$count++;
+	$count = 0;
+	while ($r=mysql_fetch_row($rr)){
+		$count ++;
 		echo "<tr><td align=center>".$count."</td>";
-		echo "<td><a class=\"info\" href=index.php?cmd=info_detail&id=$r[0]>".$r[1]."<a/></td>";
-		echo "<td><a class=\"info\" href=index.php?cmd=info_detail&id=$r[0]>".$r[2]."<a/></td>";
+		echo "<td><a class=\"info\" href=index.php?cmd=info_detail&id=$r[0]>$r[1]<a/></td>";
+		echo "<td><a class=\"info\" href=index.php?cmd=info_detail&id=$r[0]>$r[2]<a/></td>";
 		echo "<td>";
-		if(getuserright("info")>=2) 
+		if (getuserright("info")>=2) 
 			echo "<a href=index.php?cmd=info_modi&id=$r[0]>修改<a/> ";
-		if(getuserright("info")>=3) {
+		if (getuserright("info")>=3) {
 			echo "<a href=index.php?cmd=info_up&id=$r[0]>上移<a/> ";
 			echo "<a href=index.php?cmd=info_down&id=$r[0]>下移<a/> ";
 		}
@@ -1866,28 +1842,26 @@ if ($cmd=="info") {
 if ($cmd=="info_detail") {
 	checkright("info",1);
 	$id = safe_get("id");
-	$q="select id,title,memo from info where id=".$id;
-	$rr=mysql_query($q);
-	$r=mysql_fetch_row($rr);
-	echo "<p>";
-	echo $r[1];
+	$q = "select id,title,memo from info where id=$id";
+	$r = mysql_fetch_row(mysql_query($q));
+	echo "<p>$r[1]";
 	echo "<hr><pre>";
 	echo $r[2];
 	echo "</pre>";
 	echo "<hr>";
-        $q="select * from file where infoid=".$id;
-        $rr=mysql_query($q);
+        $q = "select * from file where infoid=$id";
+        $rr = mysql_query($q);
         echo "附件信息<table>";
         echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
         $count = 0;
-        while($r=mysql_fetch_row($rr)) {
+        while ($r=mysql_fetch_row($rr)) {
                 $count++;
-                echo "<tr><td>";echo $count;"</td>";
-                echo "<td>".$r[5]."</td>";
-                echo "<td>".$r[2]."</td>";
-                echo "<td>".$r[3]."</td>";
-                echo "<td>".$r[4]."</td>";
-                echo "<td><a href=index.php?cmd=file_down&id=".$id."&fid=".$r[0]." target=_blank>下载</a></td>";
+                echo "<tr><td>$count</td>";
+                echo "<td>$r[5]</td>";
+                echo "<td>$r[2]</td>";
+                echo "<td>$r[3]</td>";
+                echo "<td>$r[4]</td>";
+                echo "<td><a href=index.php?cmd=file_down&id=$id&fid=$r[0] target=_blank>下载</a></td>";
                 echo "</tr>\n";
         }
         echo "</table><p>";
@@ -1896,10 +1870,10 @@ if ($cmd=="info_detail") {
 
 if ($cmd=="file_upload") {
 	checkright("info",2);
-	if($_FILES['userfile']['error']<>0) { 
+	if ($_FILES['userfile']['error']<>0) { 
 		echo "文件上载错误<p>";
 		echo "错误代码:".$_FILES['userfile']['error'];
-		$cmd="info_modi";
+		$cmd = "info_modi";
 	} else {
 		$infoid = safe_get("id");
 		echo $infoid;
@@ -1925,43 +1899,39 @@ if ($cmd=="file_del") {
 	$q = "delete from file where id=$fid";
 	mysql_query($q);
 	rename($uploaddir."/".$fid, $uploaddir."_del/".$fid);
-	$cmd="info_modi";
-}
-
+	$cmd = "info_modi";
+} 
 if ($cmd=="info_modi") {
 	checkright("info",2);
 	$id = safe_get("id");
-	$q ="select id,title,memo from info where id=".$id;
-	$rr=mysql_query($q);
-	$r=mysql_fetch_row($rr);
-
+	$q = "select id,title,memo from info where id=$id";
+	$r = mysql_fetch_row(mysql_query($q));
 	echo "修改信息<br>";
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd value=info_modi_do type=hidden>";
-	echo "<input name=id value=".$r[0]." type=hidden>";
-    	echo "标题:<br><input name=title value=\"".$r[1]."\" size=75><p>";
+	echo "<input name=id value=$r[0] type=hidden>";
+    	echo "标题:<br><input name=title value=\"$r[1]\" size=75><p>";
    	echo "内容:<br><textarea name=memo cols=100 rows=40>";
 	echo $r[2];
 	echo "</textarea><p>";
-	if(getuserright("info")>=3) 
+	if (getuserright("info")>=3) 
    		echo "<input type=submit value=修改></form><p>";
 	else echo "</form><p>";
 	echo "<hr>";
-
-	$q="select * from file where infoid=".$id;
-	$rr=mysql_query($q);
+	$q = "select * from file where infoid=".$id;
+	$rr = mysql_query($q);
 	echo "附件信息<table>";
 	echo "<tr><th>序号</th><th>时间</th><th>文件名</th><th>大小</th><th>类型</th><th>命令</th></tr>\n";
 	$count = 0;
-	while($r=mysql_fetch_row($rr)) {
+	while ($r=mysql_fetch_row($rr)) {
 		$count++;
-		echo "<tr><td>";echo $count;"</td>";
-		echo "<td>".$r[5]."</td>";
-		echo "<td>".$r[2]."</td>";
-		echo "<td>".$r[3]."</td>";
-		echo "<td>".$r[4]."</td>";
-		if(getuserright("info")>=3) 
-			echo "<td><a href=index.php?cmd=file_del&id=".$id."&fid=".$r[0].">删除(移到回收站)</a></td>";
+		echo "<tr><td>$count</td>";
+		echo "<td>$r[5]</td>";
+		echo "<td>$r[2]</td>";
+		echo "<td>$r[3]</td>";
+		echo "<td>$r[4]</td>";
+		if (getuserright("info")>=3) 
+			echo "<td><a href=index.php?cmd=file_del&id=$id&fid=$r[0]>删除(移到回收站)</a></td>";
 		else
 			echo "<td></td>";
 		echo "</tr>\n";
@@ -1978,45 +1948,43 @@ if ($cmd=="info_modi") {
 	exit(0);
 } // end cmd==info_detail
 
-
 // USER 
 
-if($cmd=="user_new") {
+if ($cmd=="user_new") {
 	checkright("user",3);
 	$email = safe_get("email");
 	$pop3server = safe_get("pop3server");
 	@$fullname = safe_get2("fullname");
 	$super = safe_get("super");
-	$q="delete from user where email='$email'";
+	$q = "delete from user where email='$email'";
 	mysql_query($q);
-	if($super=="1") 
-		$q="insert into user values('$email','$pop3server',1,'$fullname')";
-	else 
-		$q="insert into user values('$email','$pop3server',0,'$fullname')";
+	if ($super!="1") 
+		$super="0";
+	$q = "insert into user values('$email','$pop3server',$super,'$fullname')";
 	mysql_query($q);
-	$cmd="user";
-} else if($cmd=="user_del") {
+	$cmd = "user";
+} else if ($cmd=="user_del") {
 	checkright("user",3);
 	$email = safe_get("email");
-	if($email==$_SESSION["user"]) {
+	if ($email==$_SESSION["user"]) {
 		echo "<font color=red>不能删除自己</font><p>";
 	} else {
-		$q="delete from user where email='$email'";
+		$q = "delete from user where email='$email'";
 		mysql_query($q);
 	}
-	$cmd="user";
-} else if($cmd=="user_right") {
+	$cmd = "user";
+} else if ($cmd=="user_right") {
 	checkright("user",3);
 	$user = safe_get("user");
 	$module = safe_get("module");
 	$right = safe_get("right");
-	$q="delete from userright where user='$user' and module='$module'";
+	$q = "delete from userright where user='$user' and module='$module'";
 	mysql_query($q);
-	if($right<>"0") 
-		$q="insert into userright (user,module,`right`) values('$user','$module',$right)";
+	if ($right<>"0") 
+		$q = "insert into userright (user,module,`right`) values('$user','$module',$right)";
 	mysql_query($q);
-	$cmd="user";
-} else if($cmd=="user_add") {
+	$cmd = "user";
+} else if ($cmd=="user_add") {
 	checkright("user",2);
 ?>
 <p>新增用户<p>
@@ -2031,12 +1999,11 @@ POP3邮件服务器：<input name=pop3server><br>
 </form>
 <?php 
 	exit(0);
-} else if($cmd=="user_modi") {
+} else if ($cmd=="user_modi") {
 	checkright("user",3);
-	$email=safe_get("email");
-	$q="select email,pop3server,truename,isadmin from user where email='$email'";
-	$rr=mysql_query($q);
-	$r=mysql_fetch_row($rr);
+	$email = safe_get("email");
+	$q = "select email,pop3server,truename,isadmin from user where email='$email'";
+	$r = mysql_fetch_row(mysql_query($q));
 ?>
 <p>修改用户<p>
 登录时，利用登录名和密码连接到POP3邮件服务器上验证用户身份<br>
@@ -2055,18 +2022,18 @@ POP3邮件服务器：<input name=pop3server value="<?php echo $r[1]; ?>"><br>
 <input name=cmd value=user_right type=hidden>
 用户登录名：<select name=user>
 <?php
-	$q="select email from user";
-	$rr=mysql_query($q);
-	while($r=mysql_fetch_row($rr)) {
+	$q = "select email from user";
+	$rr = mysql_query($q);
+	while ($r=mysql_fetch_row($rr)) {
 		echo "<option value=\"$r[0]\">$r[0]</option>\n";
 	}
 ?>
 </select>
 模块: <select name=module>
 <?php
-	$q="select module,memo from module order by id";
-	$rr=mysql_query($q);
-	while($r=mysql_fetch_row($rr)) {
+	$q = "select module,memo from module order by id";
+	$rr = mysql_query($q);
+	while ($r=mysql_fetch_row($rr)) {
 		echo "<option value=\"$r[0]\">$r[0]/$r[1]</option>\n";
 	}
 ?>
@@ -2081,49 +2048,49 @@ POP3邮件服务器：<input name=pop3server value="<?php echo $r[1]; ?>"><br>
 <?php
 	exit(0);
 }
-if($cmd=="user") {
+if ($cmd=="user") {
 	checkright("user",1);
-	$q="select * from user order by email";
-	$rr=mysql_query($q);
+	$q = "select * from user order by email";
+	$rr = mysql_query($q);
 	$count = 0;
 	echo "<p><table border=1 cellspacing=0>";
 	echo "<tr><th>序号</th><th>登录名</th><th>POP3服务器</th><th>全名</th><th>超级管理员</th><th>分模块权限</th>";
-	if(getuserright("user")>=3) 
+	if (getuserright("user")>=3) 
 		echo "<th>命令</th>";
 	echo "</tr>\n";
-	while($r=mysql_fetch_row($rr)) {
+	while ($r=mysql_fetch_row($rr)) {
 		$count++;
-		echo "<tr><td align=center>";echo $count;"</td>";
-		echo "<td>".$r[0]."</td>";
-		echo "<td>".$r[1]."</td>";
-		echo "<td>".$r[3]."</td>";
+		echo "<tr><td align=center>$count</td>";
+		echo "<td>$r[0]</td>";
+		echo "<td>$r[1]</td>";
+		echo "<td>$r[3]</td>";
 		echo "<td align=center>";
 		if($r[2]=="0")
 			echo "否";
 		else echo "<font color=red>是</font>";
 		echo "</td>";
 		echo "<td>";
-		$q="select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='".$r[0]."' order by module.id";
+		$q = "select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='$r[0]' order by module.id";
 		
-		$rr2=mysql_query($q);
+		$rr2 = mysql_query($q);
 		echo "<table width=300>";
-		while($r2=mysql_fetch_row($rr2)) {
+		while ($r2=mysql_fetch_row($rr2)) {
 			echo "<tr>";
-			echo "<td width=30%>".$r2[0]."</td>";
-			echo "<td width=50%>".$r2[1]."</td>";
+			echo "<td width=30%>$r2[0]</td>";
+			echo "<td width=50%>$r2[1]</td>";
 			echo "<td width=20%>";
 			if($r2[2]=="1") echo "只读";
 			else if($r2[2]=="2") echo "新增";
 			else if($r2[2]=="3") echo "所有";
 			echo "</td>";
-			echo "</tr>";
+			echo "</tr>\n";
 		}
 		echo "</table>";
-		echo "</td>";
-		if(getuserright("user")>=3)  {
+		echo "</td>\n";
+		if (getuserright("user")>=3)  {
 			echo "<td>";
-			echo "<a href=index.php?cmd=user_modi&email=".$r[0].">修改</a> &nbsp;&nbsp;";
-			echo "<a href=index.php?cmd=user_del&email=".$r[0]." onclick=\"return confirm('确信删除 $r[0] ?');\">删除</a>";
+			echo "<a href=index.php?cmd=user_modi&email=$r[0]>修改</a> &nbsp;&nbsp;";
+			echo "<a href=index.php?cmd=user_del&email=$r[0] onclick=\"return confirm('确信删除 $r[0] ?');\">删除</a>";
 			echo "</td>";
 		}
 		echo "</tr>";
@@ -2134,40 +2101,40 @@ if($cmd=="user") {
 
 // SYSINFO
 
-if($cmd=="ticket_system_new") {
+if ($cmd=="ticket_system_new") {
 	checkright("sysinfo",2);
-	$desc=safe_get2("desc");
-	$q="insert into ticket_system(sortid,`desc`) values(10,'$desc')";
+	$desc = safe_get2("desc");
+	$q = "insert into ticket_system(sortid,`desc`) values(10,'$desc')";
 	mysql_query($q);
-	$cmd="sysinfo";
-}  else if($cmd=="ticket_system_modi_do") {
+	$cmd = "sysinfo";
+}  else if ($cmd=="ticket_system_modi_do") {
 	checkright("sysinfo",3);
-	$id=safe_get("id");
-	$desc=safe_get2("desc");
-	$q="update ticket_system set `desc`='$desc' where id=$id";
+	$id = safe_get("id");
+	$desc = safe_get2("desc");
+	$q = "update ticket_system set `desc`='$desc' where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
+	$cmd = "sysinfo";
 } else if ($cmd=="ticket_system_up") {
 	checkright("sysinfo",3);
-	$id=safe_get("id");
-	$q="update ticket_system set sortid=sortid-1 where id=$id";
+	$id = safe_get("id");
+	$q = "update ticket_system set sortid=sortid-1 where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
+	$cmd = "sysinfo";
 } else if ($cmd=="ticket_system_down") {
 	checkright("sysinfo",3);
-	$id=safe_get("id");
-	$q="update ticket_system set sortid=sortid+1 where id=$id";
+	$id = safe_get("id");
+	$q = "update ticket_system set sortid=sortid+1 where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
-} else if($cmd=="ticket_system_del") {
-	$id=safe_get("id");
-	$q="delete from ticket_system where id=$id";
+	$cmd = "sysinfo";
+} else if ($cmd=="ticket_system_del") {
+	$id = safe_get("id");
+	$q = "delete from ticket_system where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
-} else if($cmd=="ticket_system_modi") {
-	$id=safe_get("id");
-	$q="select id, `desc` from ticket_system where id=$id";
-	$r=mysql_fetch_row(mysql_query($q));
+	$cmd = "sysinfo";
+} else if ($cmd=="ticket_system_modi") {
+	$id = safe_get("id");
+	$q = "select id, `desc` from ticket_system where id=$id";
+	$r = mysql_fetch_row(mysql_query($q));
 	echo "<p><form action=index.php method=get>";
 	echo "修改故障相关系统: <p>";
 	echo "<input name=cmd value=ticket_system_modi_do type=hidden>";
@@ -2176,40 +2143,40 @@ if($cmd=="ticket_system_new") {
 	echo "<input type=submit value=修改系统信息>";
 	exit(0);
 }
-if($cmd=="ticket_reason_new") {
+if ($cmd=="ticket_reason_new") {
 	checkright("sysinfo",2);
-	$desc=safe_get2("desc");
-	$q="insert into ticket_reason(sortid,`desc`) values(10,'$desc')";
+	$desc = safe_get2("desc");
+	$q = "insert into ticket_reason(sortid,`desc`) values(10,'$desc')";
 	mysql_query($q);
-	$cmd="sysinfo";
-}  else if($cmd=="ticket_reason_modi_do") {
+	$cmd = "sysinfo";
+}  else if ($cmd=="ticket_reason_modi_do") {
 	checkright("sysinfo",3);
-	$id=safe_get("id");
-	$desc=safe_get2("desc");
-	$q="update ticket_reason set `desc`='$desc' where id=$id";
+	$id = safe_get("id");
+	$desc = safe_get2("desc");
+	$q = "update ticket_reason set `desc`='$desc' where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
+	$cmd = "sysinfo";
 } else if ($cmd=="ticket_reason_up") {
 	checkright("sysinfo",3);
-	$id=safe_get("id");
-	$q="update ticket_reason set sortid=sortid-1 where id=$id";
+	$id = safe_get("id");
+	$q = "update ticket_reason set sortid=sortid-1 where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
+	$cmd = "sysinfo";
 } else if ($cmd=="ticket_reason_down") {
 	checkright("sysinfo",3);
-	$id=safe_get("id");
-	$q="update ticket_reason set sortid=sortid+1 where id=$id";
+	$id = safe_get("id");
+	$q = "update ticket_reason set sortid=sortid+1 where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
-} else if($cmd=="ticket_reason_del") {
-	$id=safe_get("id");
-	$q="delete from ticket_reason where id=$id";
+	$cmd = "sysinfo";
+} else if ($cmd=="ticket_reason_del") {
+	$id = safe_get("id");
+	$q = "delete from ticket_reason where id=$id";
 	mysql_query($q);
-	$cmd="sysinfo";
-} else if($cmd=="ticket_reason_modi") {
-	$id=safe_get("id");
-	$q="select id, `desc` from ticket_reason where id=$id";
-	$r=mysql_fetch_row(mysql_query($q));
+	$cmd = "sysinfo";
+} else if ($cmd=="ticket_reason_modi") {
+	$id = safe_get("id");
+	$q = "select id, `desc` from ticket_reason where id=$id";
+	$r = mysql_fetch_row(mysql_query($q));
 	echo "<p><form action=index.php method=get>";
 	echo "修改故障类型: <p>";
 	echo "<input name=cmd value=ticket_reason_modi_do type=hidden>";
@@ -2218,32 +2185,29 @@ if($cmd=="ticket_reason_new") {
 	echo "<input type=submit value=修改故障类型>";
 	exit(0);
 }
-if($cmd=="sysinfo_modi") {
+if ($cmd=="sysinfo_modi") {
 	checkright("sysinfo",3);
 	$sysversion = safe_get2("version");
 	$systitle = safe_get2("title");
 	$syslxr = safe_get2("lxr");
-	$q="replace into sysinfo values('version','$sysversion')";
+	$q = "replace into sysinfo values('version','$sysversion')";
 	mysql_query($q);
-	$q="replace into sysinfo values('title','$systitle')";
+	$q = "replace into sysinfo values('title','$systitle')";
 	mysql_query($q);
-	$q="replace into sysinfo values('lxr','$syslxr')";
+	$q = "replace into sysinfo values('lxr','$syslxr')";
 	mysql_query($q);
-	$cmd="sysinfo";
+	$cmd = "sysinfo";
 }
-
 if($cmd=="sysinfo") {
 	checkright("sysinfo",1);
 ?>
-
 系统信息设置<p>
 <form action=index.php method=get>
 <input name=cmd value=sysinfo_modi type=hidden>
 系统版本：<input name=version value="<?php echo $sysversion;?>"><br>
 网页标题：<input name=title value="<?php echo $systitle;?>"><br>
 联系信息：<input name=lxr value="<?php echo $syslxr;?>"><p>
-
-<?php 	if(getuserright("sysinfo")>=3) 
+<?php 	if (getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=修改系统信息>";
 	echo "</form>";
 
@@ -2253,20 +2217,20 @@ if($cmd=="sysinfo") {
 	echo "<input name=desc>";
  	if(getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=新增系统>";
-	$q= "select id, `desc` from ticket_system order by sortid,id";
-	$rr=mysql_query($q);
+	$q = "select id, `desc` from ticket_system order by sortid,id";
+	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo "<tr><th>序号</th><th>系统</th>";
-	if(getuserright("sysinfo")>=3)
+	if (getuserright("sysinfo")>=3)
 		echo "<th>命令</th>";
 	echo "</tr>\n";
 
-	$count=0;
-	while($r=mysql_fetch_row($rr)){
-		$count++;
-		echo "<tr><td align=center>".$count."</td>";
+	$count = 0;
+	while ($r=mysql_fetch_row($rr)){
+		$count ++;
+		echo "<tr><td align=center>$count</td>";
 		echo "<td>$r[1]</td>";
-		if(getuserright("sysinfo")>=3) {
+		if (getuserright("sysinfo")>=3) {
 			echo "<td>&nbsp;";
 			echo "<a href=index.php?cmd=ticket_system_del&id=$r[0] onclick=\"return confirm('删除 $r[1] ?');\">删除<a/> ";
 			echo "<a href=index.php?cmd=ticket_system_modi&id=$r[0]>修改<a/> ";
@@ -2283,22 +2247,22 @@ if($cmd=="sysinfo") {
 	echo "故障类型: ";
 	echo "<input name=cmd value=ticket_reason_new type=hidden>";
 	echo "<input name=desc>";
- 	if(getuserright("sysinfo")>=3) 
+ 	if (getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=新增类型>";
-	$q= "select id, `desc` from ticket_reason order by sortid,id";
-	$rr=mysql_query($q);
+	$q = "select id, `desc` from ticket_reason order by sortid,id";
+	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo "<tr><th>序号</th><th>类型</th>";
-	if(getuserright("sysinfo")>=3)
+	if (getuserright("sysinfo")>=3)
 		echo "<th>命令</th>";
 	echo "</tr>\n";
 
-	$count=0;
-	while($r=mysql_fetch_row($rr)){
-		$count++;
+	$count = 0;
+	while ($r=mysql_fetch_row($rr)){
+		$count ++;
 		echo "<tr><td align=center>".$count."</td>";
 		echo "<td>$r[1]</td>";
-		if(getuserright("sysinfo")>=3) {
+		if (getuserright("sysinfo")>=3) {
 			echo "<td>&nbsp;";
 			echo "<a href=index.php?cmd=ticket_reason_del&id=$r[0] onclick=\"return confirm('删除 $r[1] ?');\">删除<a/> ";
 			echo "<a href=index.php?cmd=ticket_reason_modi&id=$r[0]>修改<a/> ";
@@ -2318,15 +2282,15 @@ if($cmd=="sysinfo") {
 
 // USER_PREF
 
-if($cmd=="user_pref_tdm") {
-	$tdm=safe_get("tdm");
+if ($cmd=="user_pref_tdm") {
+	$tdm = safe_get("tdm");
 	$user = $_SESSION["user"];
-	if( $tdm <> "1" ) $tdm = "0";
+	if ($tdm<>"1") $tdm = "0";
 	$q = "replace into userpref values('$user','ticketdisplaymode','$tdm')";
 	mysql_query($q);
-	$cmd="user_pref";
+	$cmd = "user_pref";
 }
-if($cmd=="user_pref") {
+if ($cmd=="user_pref") {
 	echo $_SESSION["truename"];
 	echo " From: ";
 	echo  $_SERVER["REMOTE_ADDR"]; 
