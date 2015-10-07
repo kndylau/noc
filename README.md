@@ -43,115 +43,13 @@ git pull
 4.5 2015.09.26 增加 INSTALL.txt 
 4.6 2015.09.26 增加虚拟机镜像
 4.7 2015.09.28 增加故障处理显示的宽屏/窄屏选择
-注：需使用以下命令增加 userpref table
-CREATE TABLE `userpref` (
-  `user` varchar(50) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `value` varchar(200) NOT NULL,
-  PRIMARY KEY  (`user`,`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+注：请参照 20150928.sql 修改表结构
 
 4.8 2015.09.30 增加联系人/VM管理
-注：需使用以下命令修改表结构         
-
-ALTER TABLE  JF_Server CHANGE USER USER VARCHAR( 50 ) ;
-
-update module set id=97 where id=7;
-update module set id=98 where id=8;
-
-insert into module values(7,'vm','VM管理模块');
-insert into module values(8,'lxr','联系人管理模块');
-
-CREATE TABLE `lxr` (
-  `id` int(5) unsigned NOT NULL auto_increment,
-  `dept` varchar(40) NOT NULL,
-  `name` varchar(20) NOT NULL,
-  `dh` varchar(20) NOT NULL,
-  `sj` varchar(20) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `qq` varchar(20) NOT NULL,
-  `memo` varchar(200) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-CREATE TABLE `vm_cluster` (
-  `id` int(5) unsigned NOT NULL auto_increment,
-  `name` varchar(100) NOT NULL,
-  `ip` varchar(100) NOT NULL,
-  `memo` varchar(200) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-CREATE TABLE `vm_server` (
-  `id` int(5) unsigned NOT NULL auto_increment,
-  `name` varchar(50) NOT NULL,
-  `cid` int(8) NOT NULL,
-  `ip` varchar(50) NOT NULL,
-  `memo` varchar(200) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-CREATE TABLE `vm_host` (
-  `id` int(6) unsigned NOT NULL auto_increment,
-  `name` varchar(50) NOT NULL,
-  `inuse` int(1) NOT NULL,
-  `cid` varchar(50) NOT NULL,
-  `ip` varchar(100) NOT NULL,
-  `use` varchar(100) NOT NULL,
-  `st` date NOT NULL,
-  `et` date NOT NULL,
-  `lxr` varchar(20) NOT NULL,
-  `cpu` varchar(3) NOT NULL,
-  `mem` varchar(3) NOT NULL,
-  `disk` varchar(8) NOT NULL,
-  `disk2` varchar(8) NOT NULL,
-  `memo` varchar(100) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+注：请参照 20150930.sql 修改表结构
 
 4.9 2015.10.04 增加故障处理中系统/原因/级别信息
-注：需使用以下命令修改表结构         
-
-CREATE TABLE `ticket_system` (
-  `id` int(5) unsigned NOT NULL auto_increment,
-  `sortid` int(5) NOT NULL default '0',
-  `desc` varchar(40) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
-
-insert into ticket_system values (1,1,'服务器');
-insert into ticket_system values (2,2,'磁盘阵列');
-insert into ticket_system values (3,3,'网络设备');
-insert into ticket_system values (4,4,'互联网出口');
-insert into ticket_system values (5,5,'专线');
-insert into ticket_system values (6,6,'机房设施');
-
-CREATE TABLE `ticket_reason` (
-  `id` int(5) unsigned NOT NULL auto_increment,
-  `sortid` int(5) NOT NULL default '0',
-  `desc` varchar(40) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
-
-insert into ticket_reason values (1,1,'其他');
-insert into ticket_reason values (2,2,'电源');
-insert into ticket_reason values (3,3,'主板');
-insert into ticket_reason values (4,4,'硬盘');
-insert into ticket_reason values (5,5,'内存');
-insert into ticket_reason values (6,6,'模块');
-insert into ticket_reason values (7,7,'光缆');
-
-ALTER TABLE  `ticket` ADD  `system` VARCHAR( 10 ) NOT NULL AFTER  `et`;
-ALTER TABLE  `ticket` ADD  `reason` VARCHAR( 10 ) NOT NULL AFTER  `system` ;
-ALTER TABLE  `ticket` ADD  `level` VARCHAR( 1 ) NOT NULL AFTER  `reason` ;
-
-CREATE TABLE `ticket_level` (
-  `id` int(2) NOT NULL auto_increment,
-  `desc` varchar(40) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
-
-insert into ticket_level values (1,'未感');
-insert into ticket_level values (2,'轻微');
-insert into ticket_level values (3,'严重');
-insert into ticket_level values (4,'重大');
+注：请参照 20151004.sql 修改表结构
 
 5. 致谢
 感谢如下老师提出的意见和建议：
