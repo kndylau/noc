@@ -323,8 +323,14 @@ if (getuserright("ticket")>0) {
 if (getuserright("server")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=cab_list>服务器管理</a></dt>";
-	if (getuserright("server")>=2)
+	if (getuserright("server")>=2) {
 		echo "<dd><a href=index.php?cmd=cab_add>新增机柜</a></dd>";
+		if ($cmd=='cabinfo_list')  {
+			echo "<dd><a href=index.php?cmd=server_add&cabid=";
+			echo safe_get("cabid");
+			echo ">新增服务器</a></dd>";
+		}
+	}
 	echo "</dl></li>\n";
 }
 if (getuserright("odf")>0) {
@@ -806,8 +812,8 @@ if ($cmd=='cab_list') {
 		echo "</td><td>"; echo $r[2];
 		echo "</td><td align=center>"; 
 		$q = "select count(*) from JF_Server where CABID='$r[0]'";
-		$r = mysql_fetch_row(mysql_query($q));
-		echo $r[0];
+		$r2 = mysql_fetch_row(mysql_query($q));
+		echo $r2[0];
 		echo "</td><td>"; 
 		if (getuserright("server")>=3)
 			echo "<a href=index.php?cmd=cab_modi&cabid=$r[0]>修改</a>";
@@ -817,7 +823,7 @@ if ($cmd=='cab_list') {
 } // end cmd = cab_list
 
 
-if ($cmd=='server_add') {
+if ($cmd=='server_new') {
 	checkright("server",2);
 	$serverid = safe_get("serverid");
         $cabid = safe_get("cabid");
@@ -867,15 +873,13 @@ if ($cmd=='server_add') {
         $comment = safe_get2("comment");
 	$q = "select * from JF_Server where ServerID ='$oldserverid'";
 	$r = mysql_fetch_row(mysql_query($q));
-	$q = "insert into hist (tm,oid,old,new) values (now(),'SERVER$r[0]','$r[0]/$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]/$r[7]/$r[8]/$r[9]/$r[10]/$r[11]/$r[12]/$r[13]/$r[14]','$serverid/$startu/$endu/$kvm/$type/$name/$user/$mgt/$ip1/$ip2/$mac1/$mac2/$sn/$connector/$comment')";
+	$q = "insert into hist (tm,oid,old,new) values (now(),'SERVER$r[0]','$r[0]/$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]/$r[7]/$r[8]/$r[9]/$r[10]/$r[11]/$r[12]/$r[13]/$r[14]/$r[15]','$serverid/$cabid/$startu/$endu/$kvm/$type/$name/$user/$mgt/$ip1/$ip2/$mac1/$mac2/$sn/$connector/$comment')";
 	mysql_query($q);
         $q = "update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
         mysql_query($q);
         echo "修改完成<p>";
         $cmd = 'cabinfo_list';
-}
-
-if ($cmd=='server_modi') {
+} else if ($cmd=='server_modi') {
 	checkright("server",3);
         $serverid = safe_get("serverid");
         echo "<form action=index.php method=post>";
@@ -883,23 +887,26 @@ if ($cmd=='server_modi') {
         echo "<input type=hidden name=oldserverid value=$serverid>";
         $q = "select * from JF_Server where ServerID='$serverid'";
         $rr = mysql_query($q);
+	echo "<table>";
         if ($r=mysql_fetch_row($rr)) {
-        	echo "Server编号: <input name=serverid value=\"$r[0]\"><br>";
-                echo "机柜编号: <input name=cabid value=\"$r[1]\"> <br>";
-                echo "开始U: <input name=startu value=\"$r[2]\"><br>";
-                echo "结束U: <input name=endu value=\"$r[3]\"><br>";
-                echo "KVM: <input name=kvm value=\"$r[4]\"><br>";
-                echo "型号: <input name=type value=\"$r[5]\"><br>";
-                echo "名称: <input name=name value=\"$r[6]\"><br>";
-                echo "用途: <input name=user value=\"$r[7]\"><br>";
-                echo "管理员: <input name=mgt value=\"$r[8]\"><br>";
-                echo "IP1: <input name=ip1 value=\"$r[9]\"><br>";
-                echo "IP2: <input name=ip2 value=\"$r[10]\"><br>";
-                echo "MAC1: <input name=mac1 value=\"$r[11]\"><br>";
-                echo "MAC2: <input name=mac2 value=\"$r[12]\"><br>";
-                echo "SN: <input name=sn value=\"$r[13]\"><br>";
-                echo "连接设备: <input name=connector value=\"$r[14]\"><br>";
-                echo "备注: <input name=comment value=\"$r[15]\"><br>";
+		echo "<tr>";
+        	echo "<td>服务器编号</td><td><input name=serverid value=\"$r[0]\"></td></tr>";
+                echo "<td>机柜编号</td><td><input name=cabid value=\"$r[1]\"> </td></tr>";
+                echo "<td>开始U</td><td><input name=startu value=\"$r[2]\"></td></tr>";
+                echo "<td>结束U</td><td><input name=endu value=\"$r[3]\"></td></tr>";
+                echo "<td>KVM</td><td><input name=kvm value=\"$r[4]\"></td></tr>";
+                echo "<td>型号</td><td><input name=type value=\"$r[5]\"></td></tr>";
+                echo "<td>名称</td><td><input name=name value=\"$r[6]\"></td></tr>";
+                echo "<td>用途</td><td><input name=user value=\"$r[7]\"></td></tr>";
+                echo "<td>管理员</td><td><input name=mgt value=\"$r[8]\"></td></tr>";
+                echo "<td>IP1</td><td><input name=ip1 value=\"$r[9]\"></td></tr>";
+                echo "<td>IP2</td><td><input name=ip2 value=\"$r[10]\"></td></tr>";
+                echo "<td>MAC1</td><td><input name=mac1 value=\"$r[11]\"></td></tr>";
+                echo "<td>MAC2</td><td><input name=mac2 value=\"$r[12]\"></td></tr>";
+                echo "<td>SN</td><td><input name=sn value=\"$r[13]\"></td></tr>";
+                echo "<td>连接设备</td><td><input name=connector value=\"$r[14]\"></td></tr>";
+                echo "<td>备注</td><td><input name=comment value=\"$r[15]\"></td></tr>";
+		echo "</table>";
                 echo "<input type=submit name=Submit value=修改>";
                 echo "</form>";
         }
@@ -908,8 +915,33 @@ if ($cmd=='server_modi') {
 	if (getuserright("server")>=3) 
 		echo "<a href=index.php?cmd=server_del&cabid=$r[1]&serverid=$r[0] onclick=\"return confirm('删除服务器 $r[0]/$r[5]/$r[6] ?');\">删除服务器: $r[0]/$r[5]/$r[6]</a></td>";
 	exit(0);
+} else if ($cmd=='server_add') {
+	$cabid = safe_get("cabid");
+	checkright("server",2);
+       	echo "<form action=index.php method=post>";
+       	echo "<input type=hidden name=cmd value=server_new>";
+	echo "<table>";
+       	echo "<tr><td>服务器编号</td><td><input name=serverid>必须唯一，不能为空</td></tr>";
+       	echo "<tr><td>机柜编号</td><td><input name=cabid value=\"$cabid\"></td></tr>";
+       	echo "<tr><td>开始U</td><td><input name=startu value=1>数字</td></tr>";
+       	echo "<tr><td>结束U</td><td><input name=endu value=1>数字</td></tr>";
+       	echo "<tr><td>KVM</td><td><input name=kvm></td></tr>";
+       	echo "<tr><td>型号</td><td><input name=type></td></tr>";
+       	echo "<tr><td>名称</td><td><input name=name></td></tr>";
+       	echo "<tr><td>用途</td><td><input name=user></td></tr>";
+       	echo "<tr><td>管理员</td><td><input name=mgt></td></tr>";
+       	echo "<tr><td>IP1</td><td><input name=ip1></td></tr>";
+       	echo "<tr><td>IP2</td><td><input name=ip2></td></tr>";
+       	echo "<tr><td>MAC1</td><td><input name=mac1></td></tr>";
+       	echo "<tr><td>MAC2</td><td><input name=mac2></td></tr>";
+       	echo "<tr><td>SN</td><td><input name=sn></td></tr>";
+       	echo "<tr><td>连接设备</td><td><input name=connector></td></tr>";
+       	echo "<tr><td>备注</td><td><input name=comment></td></tr>";
+	echo "</table>";
+       	echo "<input type=submit name=Submit value=新增服务器>";
+       	echo "</form>";
+	exit(0);
 }
-
 if ($cmd=='cabinfo_list') {
 	checkright("server",1);
 	$cabid = safe_get("cabid");
@@ -987,30 +1019,6 @@ if ($cmd=='cabinfo_list') {
 	}
 	echo "</table>";
 
-	if (getuserright("server")>=2) {
-        	echo "<form action=index.php method=post>";
-        	echo "<input type=hidden name=cmd value=server_add>";
-		echo "<table class=no>";
-        	echo "<tr><td>Server编号</td><td><input name=serverid>必须唯一，不能为空</td></tr>";
-        	echo "<tr><td>机柜编号</td><td><input name=cabid value=\"$cabid\"></td></tr>";
-        	echo "<tr><td>开始U</td><td><input name=startu>数字</td></tr>";
-        	echo "<tr><td>结束U</td><td><input name=endu>数字</td></tr>";
-        	echo "<tr><td>KVM</td><td><input name=kvm></td></tr>";
-        	echo "<tr><td>型号</td><td><input name=type></td></tr>";
-        	echo "<tr><td>名称</td><td><input name=name></td></tr>";
-        	echo "<tr><td>用途</td><td><input name=user></td></tr>";
-        	echo "<tr><td>管理员</td><td><input name=mgt></td></tr>";
-        	echo "<tr><td>IP1</td><td><input name=ip1></td></tr>";
-        	echo "<tr><td>IP2</td><td><input name=ip2></td></tr>";
-        	echo "<tr><td>MAC1</td><td><input name=mac1></td></tr>";
-        	echo "<tr><td>MAC2</td><td><input name=mac2></td></tr>";
-        	echo "<tr><td>SN</td><td><input name=sn></td></tr>";
-        	echo "<tr><td>连接设备</td><td><input name=connector></td></tr>";
-        	echo "<tr><td>备注</td><td><input name=comment></td></tr>";
-		echo "</table>";
-        	echo "<input type=submit name=Submit value=新增服务器>";
-        	echo "</form>";
-	}
 } // end cmd = 'cabinfo_list'
 
 // ODF
