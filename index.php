@@ -748,14 +748,14 @@ if ($cmd=='cab_new') {
 	$r = mysql_fetch_row(mysql_query($q));
 	$q = "insert into hist (tm,oid,old,new) values (now(),'CAB$row[0]','$r[0]/$r[1]/$r[2]/$r[3]/$r[4]','$cabid/$ps1/$ps2/$mgt/$cabuse')";
 	mysql_query($q);
-	$q = "update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse'  where CABID='$oldcabid'";
+	$q = "update JF_CAB set CABID='$cabid',PS1='$ps1',PS2='$ps2',MGT='$mgt',CABUSE='$cabuse' where CABID='$oldcabid'";
 	mysql_query($q);
 	$cmd = 'cab_list';
 } else if ($cmd=="cab_del") {
-        checkright("server",3);
-        $id = safe_get("cabid"); 
-        $q = "delete from JF_CAB where id=$id";
-        mysql_query($q);
+	checkright("server",3);
+	$cabid = safe_get("cabid"); 
+	$q = "delete from JF_CAB where CABID='$cabid'";
+	mysql_query($q);
 	$cmd = 'cab_list';
 } else if ($cmd=='cab_modi') {
 	checkright("server",3);
@@ -778,7 +778,7 @@ if ($cmd=='cab_new') {
 	changehist("select * from hist where oid like 'CAB$cabid%' order by tm desc");
 	echo "<p><hr width=250 align=left>";
 	if (getuserright("server")>=3) 
-		echo "<a href=index.php?cmd=cab_del&cabid=$r[0] onclick=\"return confirm('删除机柜 $r[1]/$r[2] ?');\">删除机柜: $r[1]/$r[2]</a></td>";
+		echo "<a href=index.php?cmd=cab_del&cabid=$r[0] onclick=\"return confirm('删除机柜 $r[0]/$r[4] ?');\">删除机柜: $r[0]/$r[4]</a></td>";
 	exit(0);
 } else if ($cmd=="cab_add") {
 	checkright("server",2);
@@ -796,7 +796,6 @@ if ($cmd=='cab_new') {
 <?php
 	exit(0);
 }
-
 if ($cmd=='cab_list') {
 	checkright("server",1);
 	echo "<p><table border=1 cellspacing=0>";
@@ -826,65 +825,65 @@ if ($cmd=='cab_list') {
 if ($cmd=='server_new') {
 	checkright("server",2);
 	$serverid = safe_get("serverid");
-        $cabid = safe_get("cabid");
-        $startu = safe_get("startu");
-        $endu = safe_get("endu");
-        $kvm = safe_get2("kvm");
-        $type = safe_get2("type");
-        $name = safe_get2("name");
-        $user = safe_get2("user");
-        $mgt = safe_get2("mgt");
-        $ip1 = safe_get2("ip1");
-        $ip2 = safe_get2("ip2");
-        $mac1 = safe_get2("mac1");
-        $mac2 = safe_get2("mac2");
-        $sn = safe_get2("sn");
-        $connector = safe_get2("connector");
-        $comment = safe_get2("comment");
-        $q = "insert into JF_Server values('$serverid','$cabid',$startu,$endu,'$kvm','$type','$name','$user','$mgt','$ip1','$ip2','$mac1','$mac2','$sn','$connector','$comment')";
-        mysql_query($q);
-        $cmd = 'cabinfo_list';
+	$cabid = safe_get("cabid");
+	$startu = safe_get("startu");
+	$endu = safe_get("endu");
+	$kvm = safe_get2("kvm");
+	$type = safe_get2("type");
+	$name = safe_get2("name");
+	$user = safe_get2("user");
+	$mgt = safe_get2("mgt");
+	$ip1 = safe_get2("ip1");
+	$ip2 = safe_get2("ip2");
+	$mac1 = safe_get2("mac1");
+	$mac2 = safe_get2("mac2");
+	$sn = safe_get2("sn");
+	$connector = safe_get2("connector");
+	$comment = safe_get2("comment");
+	$q = "insert into JF_Server values('$serverid','$cabid',$startu,$endu,'$kvm','$type','$name','$user','$mgt','$ip1','$ip2','$mac1','$mac2','$sn','$connector','$comment')";
+	mysql_query($q);
+	$cmd = 'cabinfo_list';
 } else if ($cmd=='server_del') {
 	checkright("server",3);
-        $id = safe_get("serverid"); 
-        $q = "delete from JF_Server where ServerID='$id'";
-        mysql_query($q);
-        $cmd = 'cabinfo_list';
+	$id = safe_get("serverid"); 
+	$q = "delete from JF_Server where ServerID='$id'";
+	mysql_query($q);
+	$cmd = 'cabinfo_list';
 } else if ($cmd=='server_modi_do') {
 	checkright("server",3);
-        $oldserverid = safe_get("oldserverid");
-        $serverid = safe_get("serverid");
-        $cabid = safe_get("cabid");
-        $startu = safe_get("startu");
-        $endu = safe_get("endu");
+	$oldserverid = safe_get("oldserverid");
+	$serverid = safe_get("serverid");
+	$cabid = safe_get("cabid");
+	$startu = safe_get("startu");
+	$endu = safe_get("endu");
 	if ($startu=="") $startu="1";
 	if ($endu=="") $endu="1";
-        $kvm = safe_get2("kvm");
-        $type = safe_get2("type");
-        $name = safe_get2("name");
-        $user = safe_get2("user");
-        $mgt = safe_get2("mgt");
-        $ip1 = safe_get2("ip1");
-        $ip2 = safe_get2("ip2");
-        $mac1 = safe_get2("mac1");
-        $mac2 = safe_get2("mac2");
-        $sn = safe_get2("sn");
-        $connector = safe_get2("connector");
-        $comment = safe_get2("comment");
+	$kvm = safe_get2("kvm");
+	$type = safe_get2("type");
+	$name = safe_get2("name");
+	$user = safe_get2("user");
+	$mgt = safe_get2("mgt");
+	$ip1 = safe_get2("ip1");
+	$ip2 = safe_get2("ip2");
+	$mac1 = safe_get2("mac1");
+	$mac2 = safe_get2("mac2");
+	$sn = safe_get2("sn");
+	$connector = safe_get2("connector");
+	$comment = safe_get2("comment");
 	$q = "select * from JF_Server where ServerID ='$oldserverid'";
 	$r = mysql_fetch_row(mysql_query($q));
 	$q = "insert into hist (tm,oid,old,new) values (now(),'SERVER$r[0]','$r[0]/$r[1]/$r[2]/$r[3]/$r[4]/$r[5]/$r[6]/$r[7]/$r[8]/$r[9]/$r[10]/$r[11]/$r[12]/$r[13]/$r[14]/$r[15]','$serverid/$cabid/$startu/$endu/$kvm/$type/$name/$user/$mgt/$ip1/$ip2/$mac1/$mac2/$sn/$connector/$comment')";
 	mysql_query($q);
-        $q = "update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
-        mysql_query($q);
-        echo "修改完成<p>";
-        $cmd = 'cabinfo_list';
+	$q = "update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
+	mysql_query($q);
+	echo "修改完成<p>";
+	$cmd = 'cabinfo_list';
 } else if ($cmd=='server_modi') {
 	checkright("server",3);
-        $serverid = safe_get("serverid");
-        echo "<form action=index.php method=post>";
-        echo "<input type=hidden name=cmd value=server_modi_do>";
-        echo "<input type=hidden name=oldserverid value=$serverid>";
+	$serverid = safe_get("serverid");
+	echo "<form action=index.php method=post>";
+	echo "<input type=hidden name=cmd value=server_modi_do>";
+	echo "<input type=hidden name=oldserverid value=$serverid>";
         $q = "select * from JF_Server where ServerID='$serverid'";
         $rr = mysql_query($q);
 	echo "<table>";
