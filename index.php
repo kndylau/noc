@@ -44,7 +44,7 @@ function changehist ($q) {
 }
 
 function lxr_select($lxrid) {
-	echo "联系人: <select name=lxr>";
+	echo "<select name=lxr>";
 	if ($lxrid=="")
 		echo "<option value=\"\" selected=\"selected\"></option>";
 	else
@@ -56,24 +56,7 @@ function lxr_select($lxrid) {
 		if ($lxrid ==$r[0]) echo " selected=\"selected\"";
 		echo ">$r[1]/$r[2]</option>";
 	}       
-	echo "</select><br>";
-}
-
-
-function lxr_select2($lxrid) {
-	echo "联系人</td><td><select name=lxr>";
-	if ($lxrid=="")
-		echo "<option value=\"\" selected=\"selected\"></option>";
-	else
-		echo "<option value=\"\"></option>";
-	$q = "select * from lxr";
-	$rr = mysql_query($q);
-	while ($r=mysql_fetch_row($rr)) {
-		echo "<option value=\"$r[0]\"";
-		if ($lxrid ==$r[0]) echo " selected=\"selected\"";
-		echo ">$r[1]/$r[2]</option>";
-	}       
-	echo "</select></td>";
+	echo "</select>";
 }
 
 function lxr_display($lxrid) {
@@ -1251,9 +1234,9 @@ if ($cmd=="ip_new") {
     		echo "<tr><td>MASK</td><td><input name=mask></td></tr>";
     		echo "<tr><td>子网?</td><td>否<input type=radio name=net value=0 checked>  是<input type=radio name=net value=1></td></tr>";
     		echo "<tr><td>用途</td><td><input name=use size=50></td></tr>";
-		echo "<tr><td>";
-		lxr_select2("");
-		echo "</tr>";
+		echo "<tr><td>联系人</td><td>";
+		lxr_select("");
+		echo "</td></tr>";
     		echo "<tr><td>备注</td><td><input name=memo size=100></td></tr>";
 		echo "</table>";
 		echo "<input type=submit value=新增IP记录>";
@@ -1280,8 +1263,8 @@ if ($cmd=="ip_new") {
     			echo "<tr><td>子网? </td><td>no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
 		echo "</td></tr>";
     		echo "<tr><td>用途</td><td><input name=use size=50 value=\"$r[4]\"></td></tr>";
-		echo "<tr><td>";
-		lxr_select2($r[5]);
+		echo "<tr><td>联系人</td><td>";
+		lxr_select($r[5]);
 		echo "</td></tr>";
     		echo "<tr><td>备注</td><td><input size=100 name=memo value=\"$r[6]\"></td></tr>";
 		echo "</table>";
@@ -1550,18 +1533,19 @@ if ($cmd=="vm_host_new") {
 		$q = "select * from vm_host where id=".$id;
 		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
-		echo "修改/新增VM记录<br>";
+		echo "修改/新增VM记录";
+		echo "<table>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=id value=".$r[0]." type=hidden>";
-		echo "操作: 修改本条记录<input name=cmd value=vm_host_modi_do type=radio checked>";
-		echo "&nbsp;&nbsp;&nbsp;新增一条记录<input name=cmd value=vm_host_new type=radio><br>";
-    		echo "名称: <input name=name value=\"$r[1]\"><br>";
-    		echo "在用<input type=radio name=inuse value=1";
+		echo "<tr><td>操作</td><td>修改本条记录<input name=cmd value=vm_host_modi_do type=radio checked>";
+		echo "&nbsp;&nbsp;&nbsp;新增一条记录<input name=cmd value=vm_host_new type=radio></td></tr>";
+    		echo "<tr><td>名称</td><td><input name=name value=\"$r[1]\"></td></tr>";
+    		echo "<tr><td>在用</td><td>在用<input type=radio name=inuse value=1";
 		if ($r[2]=="1") echo " checked";
 		echo ">  不在用<input type=radio name=inuse value=0";
 		if ($r[2]=="0") echo " checked";
-		echo "><br>";
-    		echo "集群: <select name=cid>";
+		echo "></td></tr>";
+    		echo "<tr><td>集群</td><td><select name=cid>";
 		$q = "select * from vm_cluster";
 		$rr2 = mysql_query($q);
 		while ($r2=mysql_fetch_row($rr2)) {
@@ -1569,17 +1553,20 @@ if ($cmd=="vm_host_new") {
 			if ($r[3]==$r2[0]) echo " selected=\"selected\"";
 			echo ">$r2[1]/$r2[2]</option>";
 		}
-		echo "</select><br>";
-    		echo "I P: <input name=ip value=\"$r[4]\"><br>";
-    		echo "用途: <input name=use value=\"$r[5]\"><br>";
-		echo "开始时间: <input name=st value=\"$r[6]\"><br>";
-		echo "结束时间: <input name=et value=\"$r[7]\"><br>";
+		echo "</select></td></tr>";
+    		echo "<tr><td>IP</td><td><input name=ip value=\"$r[4]\"></td></tr>";
+    		echo "<tr><td>用途</td><td><input name=use value=\"$r[5]\"></td></tr>";
+		echo "<tr><td>开始时间</td><td><input name=st value=\"$r[6]\"></td></tr>";
+		echo "<tr><td>结束时间</td><td><input name=et value=\"$r[7]\"></td></tr>";
+		echo "<tr><td>联系人</td><td>";
 		lxr_select($r[8]);
-		echo "CPU: <input name=cpu value=\"$r[9]\"><br>";	
-		echo "MEM: <input name=mem value=\"$r[10]\"><br>";	
-		echo "DISK: <input name=disk value=\"$r[11]\"><br>";	
-		echo "DISK2: <input name=disk2 value=\"$r[12]\"><br>";	
-    		echo "备注: <input name=memo value=\"$r[13]\"><br>";
+		echo "</td></tr>";
+		echo "<tr><td>CPU</td><td><input name=cpu value=\"$r[9]\"></td></tr>";	
+		echo "<tr><td>MEM</td><td><input name=mem value=\"$r[10]\"></td></tr>";	
+		echo "<tr><td>DISK</td><td><input name=disk value=\"$r[11]\"></td></tr>";	
+		echo "<tr><td>DISK2</td><td><input name=disk2 value=\"$r[12]\"></td></tr>";	
+    		echo "<tr><td>备注</td><td><input name=memo value=\"$r[13]\"></td></tr>";
+		echo "</table>";
 		echo "<input type=submit value=修改/新增VM记录>";
 		echo "</form>";
 		changehist("select * from hist where oid = 'VMHOST$id' order by tm desc");
@@ -1592,29 +1579,33 @@ if ($cmd=="vm_host_new") {
 	}  else if (getuserright("vm")>=2) {
 		echo "<p>";
 		echo "新增VM记录<br>";
+		echo "<table>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=vm_host_new type=hidden>";
-    		echo "名称: <input name=name><br>";
-    		echo "集群: <select name=cid>";
+    		echo "<tr><td>名称</td><td><input name=name></td></tr>";
+    		echo "<tr><td>集群</td><td><select name=cid>";
 		$q = "select * from vm_cluster";
 		$rr = mysql_query($q);
 		while ($r=mysql_fetch_row($rr)) {
 			echo "<option value=\"$r[0]\">$r[1]/$r[2]</option>";
 		}
-		echo "</select><br>";
-    		echo "I P: <input name=ip><br>";
-    		echo "在用<input type=radio name=inuse value=1 checked>  不在用<input type=radio name=inuse value=0><br>";
-    		echo "用途: <input name=use><br>";
-		echo "开始时间: <input name=st value=\"";
+		echo "</select></td></tr>";
+    		echo "<tr><td>IP</td><td><input name=ip></td></tr>";
+    		echo "<tr><td>在用</td><td>在用<input type=radio name=inuse value=1 checked>  不在用<input type=radio name=inuse value=0></td></tr>";
+    		echo "<tr><td>用途</td><td><input name=use></td></tr>";
+		echo "<tr><td>开始时间</td><td><input name=st value=\"";
 		echo strftime("%Y-%m-%d",time());
-		echo "\"><br>";
-		echo "结束时间: <input name=et value=\"0000-00-00\"><br>";
+		echo "\"></td></tr>";
+		echo "<tr><td>结束时间</td><td><input name=et value=\"0000-00-00\"></td></tr>";
+		echo "<tr><td>联系人</td><td>";
 		lxr_select("");
-		echo "CPU: <input name=cpu><br>";	
-		echo "MEM: <input name=mem><br>";	
-		echo "DISK: <input name=disk><br>";	
-		echo "DISK2: <input name=disk2><br>";	
-    		echo "备注: <input name=memo><br>";
+		echo "</td></tr>";
+		echo "<tr><td>CPU</td><td><input name=cpu></td></tr>";	
+		echo "<tr><td>MEM</td><td><input name=mem></td></tr>";	
+		echo "<tr><td>DISK</td><td><input name=disk></td></tr>";	
+		echo "<tr><td>DISK2</td><td><input name=disk2></td></tr>";	
+    		echo "<tr><td>备注</td><td><input name=memo></td></tr>";
+		echo "</table>";
 		echo "<input type=submit value=新增VM记录>";
 		echo "</form>";
 	}
