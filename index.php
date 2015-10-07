@@ -59,6 +59,23 @@ function lxr_select($lxrid) {
 	echo "</select><br>";
 }
 
+
+function lxr_select2($lxrid) {
+	echo "联系人</td><td><select name=lxr>";
+	if ($lxrid=="")
+		echo "<option value=\"\" selected=\"selected\"></option>";
+	else
+		echo "<option value=\"\"></option>";
+	$q = "select * from lxr";
+	$rr = mysql_query($q);
+	while ($r=mysql_fetch_row($rr)) {
+		echo "<option value=\"$r[0]\"";
+		if ($lxrid ==$r[0]) echo " selected=\"selected\"";
+		echo ">$r[1]/$r[2]</option>";
+	}       
+	echo "</select></td>";
+}
+
 function lxr_display($lxrid) {
 	if ($lxrid=="") 
 		echo "";
@@ -1229,12 +1246,16 @@ if ($cmd=="ip_new") {
 		echo "<p>新增IP地址记录";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ip_new type=hidden>";
-    		echo "IP: <input name=ip><br>";
-    		echo "MASK: <input name=mask><br>";
-    		echo "子网? 否<input type=radio name=net value=0 checked>  是<input type=radio name=net value=1><br>";
-    		echo "用途: <input name=use><br>";
-		lxr_select("");
-    		echo "备注: <input name=memo><br>";
+		echo "<table>";
+    		echo "<tr><td>IP</td><td><input name=ip></td></tr>";
+    		echo "<tr><td>MASK</td><td><input name=mask></td></tr>";
+    		echo "<tr><td>子网?</td><td>否<input type=radio name=net value=0 checked>  是<input type=radio name=net value=1></td></tr>";
+    		echo "<tr><td>用途</td><td><input name=use size=50></td></tr>";
+		echo "<tr><td>";
+		lxr_select2("");
+		echo "</tr>";
+    		echo "<tr><td>备注</td><td><input name=memo size=100></td></tr>";
+		echo "</table>";
 		echo "<input type=submit value=新增IP记录>";
 		echo "</form>";
 	}
@@ -1250,16 +1271,20 @@ if ($cmd=="ip_new") {
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ip_modi_do type=hidden>";
 		echo "<input name=id value=$r[0] type=hidden>";
-    		echo "IP: <input name=ip value=\"$r[1]\"><br>";
-    		echo "MASK: <input name=mask value=\"$r[2]\"><br>";
+		echo "<table>";
+    		echo "<tr><td>IP</td><td><input name=ip value=\"$r[1]\"></td></tr>";
+    		echo "<tr><td>MASK</td><td><input name=mask value=\"$r[2]\"></td></tr>";
 		if ($r[3]=='0')
-    			echo "network? no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
+    			echo "<tr><td>子网? </td><td>no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
 		else
-    			echo "network? no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
-		echo "<br>";
-    		echo "用途: <input name=use value=\"$r[4]\"><br>";
-		lxr_select($r[5]);
-    		echo "备注: <input name=memo value=\"r[6]\"><br>";
+    			echo "<tr><td>子网? </td><td>no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
+		echo "</td></tr>";
+    		echo "<tr><td>用途</td><td><input name=use size=50 value=\"$r[4]\"></td></tr>";
+		echo "<tr><td>";
+		lxr_select2($r[5]);
+		echo "</td></tr>";
+    		echo "<tr><td>备注</td><td><input size=100 name=memo value=\"$r[6]\"></td></tr>";
+		echo "</table>";
     		echo "<input type=submit name=修改记录></form>";
 		changehist("select * from hist where oid = 'IP$id' order by tm desc");
 		echo "<p>";
@@ -2218,13 +2243,15 @@ if($cmd=="sysinfo") {
 		echo "<input type=submit value=修改系统信息>";
 	echo "</form>";
 
+	echo "<hr width=400 align=left>故障处理中参数设置<p>";
 	echo "<p><form action=index.php method=get>";
-	echo "故障相关系统: ";
+	echo "相关系统: ";
 	echo "<input name=cmd value=ticket_system_new type=hidden>";
 	echo "<input name=desc>";
  	if(getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=新增系统>";
 	$q = "select id, `desc` from ticket_system order by sortid,id";
+	echo "</form>";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo "<tr><th>序号</th><th>系统</th>";
@@ -2256,6 +2283,7 @@ if($cmd=="sysinfo") {
 	echo "<input name=desc>";
  	if (getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=新增类型>";
+	echo "</form>";
 	$q = "select id, `desc` from ticket_reason order by sortid,id";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
