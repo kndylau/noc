@@ -632,7 +632,7 @@ if ($cmd=="ticket_new") {
 		echo "<table>\n";
 		echo "<tr><td colspan=4 align=center>".$year."年故障统计</td></tr>\n";
 		echo "<tr><th>相关系统</th><th>故障原因</th><th>故障级别</th><th>出现次数</th></tr>\n";
-		$q = "select system,reason,level,count(*) from ticket where year(st)=$year group by system,reason";
+		$q = "select system,reason,level,count(*) from ticket where year(st)=$year group by system,reason,level";
 		$rr = mysql_query($q);
 		while ($r=mysql_fetch_row($rr)){
 			echo "<tr><td>";
