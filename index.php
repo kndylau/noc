@@ -211,6 +211,16 @@ function getticketdisplaymode(){
        	return "0";  
 }
 
+
+// "0" or "1"
+function getdisplayopip(){
+        $q = "select info from sysinfo where name='displayopip'";
+	$r = mysql_fetch_row(mysql_query($q));
+	if( $r[0]=="1" ) 
+               	return "1";  
+       	return "0";  
+}
+
 $cmd = safe_get("cmd");
 
 if ($cmd=="file_down") {
@@ -405,10 +415,15 @@ if ($cmd=="" )
 
 if ($cmd=="jifang_new") {
 	checkright("jifang",2);
+	$displayopip = getdisplayopip();
 	$huanjing = safe_get("huanjing");
 	$server = safe_get("server");
 	$msg = safe_get2("msg");
-	$q = "insert into jifang_daily(tm,huanjing,server,msg,op) values(now(),$huanjing,$server,'$msg','".$_SESSION["user"]."')";
+	$ip = $_SERVER['REMOTE_ADDR'];
+	if ($displayopip)
+		$ip = $_SERVER['REMOTE_ADDR'];
+	else $ip="";
+	$q = "insert into jifang_daily(tm,huanjing,server,msg,op,ip) values(now(),$huanjing,$server,'$msg','".$_SESSION["user"]."','$ip')";
 	mysql_query($q);
 	$cmd = "jifang";
 }  else if ($cmd=="jifang_modi_do") {
@@ -466,13 +481,17 @@ if ($cmd=="jifang_new") {
 }
 if ($cmd=="jifang") {
 	checkright("jifang",1);
+	$displayopip = getdisplayopip();
 	if (safe_get("all")=="yes")
-		$q = "select id,tm,huanjing,server,msg,op from jifang_daily order by id desc";
+		$q = "select id,tm,huanjing,server,msg,op,ip from jifang_daily order by id desc";
 	else
-		$q = "select id,tm,huanjing,server,msg,op from jifang_daily order by id desc limit 30";
+		$q = "select id,tm,huanjing,server,msg,op,ip from jifang_daily order by id desc limit 30";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><th>序号</th><th>时间</th><th>环境</th><th>服务器</th><th>事件描述</th><th>实施人</th></tr>";
+	echo "<tr><th>序号</th><th>时间</th><th>环境</th><th>服务器</th><th>事件描述</th><th>实施人</th>";
+	if ($displayopip) 
+		echo "<th>IP</th>";
+	echo "</tr>";
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)){
 		$count++;
@@ -494,6 +513,8 @@ if ($cmd=="jifang") {
 		echo "<td>";
 		op_display($r[5]);
 		echo "</td>";
+		if ($displayopip) 
+			echo "<td>$r[6]</td>";
 		echo "</tr>";
 		echo "\n";
 	}
@@ -2213,16 +2234,21 @@ if ($cmd=="sysinfo_modi") {
 	$sysversion = safe_get2("version");
 	$systitle = safe_get2("title");
 	$syslxr = safe_get2("lxr");
+	$displayopip = safe_get("displayopip");
 	$q = "replace into sysinfo values('version','$sysversion')";
 	mysql_query($q);
 	$q = "replace into sysinfo values('title','$systitle')";
 	mysql_query($q);
 	$q = "replace into sysinfo values('lxr','$syslxr')";
 	mysql_query($q);
+	$q = "replace into sysinfo values('displayopip','$displayopip')";
+	mysql_query($q);
 	$cmd = "sysinfo";
 }
 if($cmd=="sysinfo") {
 	checkright("sysinfo",1);
+	$displayopip = getdisplayopip();
+	echo $displayopip;
 ?>
 系统信息设置<p>
 <form action=index.php method=get>
@@ -2230,6 +2256,10 @@ if($cmd=="sysinfo") {
 系统版本：<input name=version value="<?php echo $sysversion;?>"><br>
 网页标题：<input name=title value="<?php echo $systitle;?>"><br>
 联系信息：<input name=lxr value="<?php echo $syslxr;?>"><p>
+记录管理员IP: 
+<input type=radio name=displayopip value=0<?php if($displayopip=="0") echo " checked";?>>否</input>
+<input type=radio name=displayopip value=1<?php if($displayopip=="1") echo " checked";?>>是</input><p>
+
 <?php 	if (getuserright("sysinfo")>=3) 
 		echo "<input type=submit value=修改系统信息>";
 	echo "</form>";
