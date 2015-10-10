@@ -49,7 +49,7 @@ function lxr_select($lxrid) {
 		echo "<option value=\"\" selected=\"selected\"></option>";
 	else
 		echo "<option value=\"\"></option>";
-	$q = "select * from lxr";
+	$q = "select * from lxr order by dept, name";
 	$rr = mysql_query($q);
 	while ($r=mysql_fetch_row($rr)) {
 		echo "<option value=\"$r[0]\"";
