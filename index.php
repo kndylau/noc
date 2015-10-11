@@ -1,5 +1,8 @@
 <?php
-
+//
+// by james@ustc.edu.cn 2015
+// https://github.com/bg6cq/noc
+//
 include("db.php");
 
 $q = "select info from sysinfo where name='version'";
@@ -1124,7 +1127,7 @@ if ($cmd=='odf_list') {
 		echo "</td><td>"; echo $r[4];
 		echo "</td><td>"; 
 		if (getuserright("odf")>=3)
-			echo "<a href=index.php?cmd=odf_mod&odfid=$r[0]>ÐÞ¸Ä</a>";
+			echo "<a href=index.php?cmd=odf_modi&odfid=$r[0]>ÐÞ¸Ä</a>";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
