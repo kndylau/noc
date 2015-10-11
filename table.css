@@ -10,6 +10,7 @@ body{
 	padding:0;
 	list-style-type:none;
 	float:left;
+	z-index:9999;
 }
 .nav li {
 	float:left;
