@@ -1214,6 +1214,21 @@ if ($cmd=='odfpan_list') {
 
 // IP
 
+function mask_select($selmask) {
+        echo "<select name=mask>";
+        if ($selmask=="")
+                echo "<option value=\"\" selected=\"selected\"></option>";
+        else
+                echo "<option value=\"\"></option>";
+	for ($mask=32;$mask>0;$mask--) {
+		$maskstr = long2ip(-1 << (32 - (int)$mask));
+		echo "<option value=\"$maskstr\"";
+		if ($selmask==$maskstr) echo " selected=\"selected\"";
+		echo ">$maskstr/$mask</option>";
+	}
+	echo "</select>";
+}
+
 if ($cmd=="ip_new") {
 	checkright("ip",2);
 	$ip = safe_get("ip");
@@ -1255,7 +1270,9 @@ if ($cmd=="ip_new") {
 		echo "<input name=cmd value=ip_new type=hidden>";
 		echo "<table>";
     		echo "<tr><td>IP</td><td><input name=ip></td></tr>";
-    		echo "<tr><td>MASK</td><td><input name=mask></td></tr>";
+    		echo "<tr><td>MASK</td><td>";
+		mask_select("");
+		echo "</td></tr>";
     		echo "<tr><td>子网?</td><td>否<input type=radio name=net value=0 checked>  是<input type=radio name=net value=1></td></tr>";
     		echo "<tr><td>用途</td><td><input name=use size=50></td></tr>";
 		echo "<tr><td>联系人</td><td>";
@@ -1280,7 +1297,9 @@ if ($cmd=="ip_new") {
 		echo "<input name=id value=$r[0] type=hidden>";
 		echo "<table>";
     		echo "<tr><td>IP</td><td><input name=ip value=\"$r[1]\"></td></tr>";
-    		echo "<tr><td>MASK</td><td><input name=mask value=\"$r[2]\"></td></tr>";
+    		echo "<tr><td>MASK</td><td>";
+		mask_select($r[2]);
+		echo "</td></tr>";
 		if ($r[3]=='0')
     			echo "<tr><td>子网? </td><td>no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
 		else
@@ -1302,7 +1321,7 @@ if ($cmd=="ip_new") {
 }
 if ($cmd=="ip") {
 	checkright("ip",1);
-	$q = "select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP)";
+	$q = "select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP), inet_aton(MASK)";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr><th>序号</th><th>IP</th><th>用途</th><th>联系人</th><th>备注</th>";
