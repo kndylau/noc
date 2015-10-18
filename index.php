@@ -270,6 +270,7 @@ if ($cmd=="file_down") {
 if ($cmd=="logout") {
 	$_SESSION["login"] = 0;
 	$_SESSION["isadmin"] = 0;
+	$_SESSION["ipfilter"] = "";
 	echo "<p>已经退出登录";
 }
 
@@ -282,6 +283,7 @@ if ($cmd=="login") {
 		if($r) {
 			$_SESSION["isadmin"] = $r[0];
 			$_SESSION["truename"] = $r[1];
+			$_SESSION["ipfilter"] = "";
 			$r = imap_open("{".$r[2].":110/pop3/novalidate-cert}INBOX",$id,$pass,0,1);
 			if ($r) {
 				$_SESSION["login"] = 1;
@@ -356,6 +358,7 @@ if (getuserright("odf")>0) {
 if (getuserright("ip")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=ip>IP管理</a></dt>";
+	echo "<dd><a href=index.php?cmd=ip_filter>IP显示筛选</a></dd>";
 	if (getuserright("ip")>=2) 
 	echo "<dd><a href=index.php?cmd=ip_add>新增IP地址</a></dd>";
 	echo "</dl></li>\n";
@@ -1263,6 +1266,24 @@ if ($cmd=="ip_new") {
 	$q = "delete from IP where id=$id";
 	mysql_query($q);
 	$cmd = "ip";
+} else if ($cmd=="ip_filter_set") {
+	checkright("ip",1);
+	$ipfilter = safe_get("ipfilter");
+	$_SESSION["ipfilter"] = $ipfilter;
+	$cmd = "ip";
+} else if ($cmd=="ip_filter") {
+	checkright("ip",1);
+	echo "<p>IP地址显示筛选";
+	echo "<form action=index.php method=post>";
+	echo "<input name=cmd value=ip_filter_set type=hidden>";
+   	echo "IP地址筛选字符串: <input name=ipfilter value=\"";
+	echo $_SESSION["ipfilter"];
+	echo "\"><p>";
+	echo "<input type=submit value=设置IP地址显示筛选>";
+	echo "</form>";
+	echo "注：设置后，仅仅显示包含以上字符串的IP地址，为空则全部显示";
+	exit(0);
+
 } else if ($cmd=="ip_add") {
 	if (getuserright("ip")>=2) {
 		echo "<p>新增IP地址记录";
@@ -1321,7 +1342,13 @@ if ($cmd=="ip_new") {
 }
 if ($cmd=="ip") {
 	checkright("ip",1);
-	$q = "select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP), inet_aton(MASK)";
+	if ($_SESSION["ipfilter"]!="") {
+		echo "仅显示 ";
+		echo $_SESSION["ipfilter"];
+		echo " 相关IP, <a href=index.php?cmd=ip_filter>重设筛选</a><p>";
+		$q = "select id,IP,MASK,net,`use`,lxr,memo from IP where IP like '%".$_SESSION["ipfilter"]."%'order by inet_aton(IP), inet_aton(MASK)";
+	} else
+		$q = "select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP), inet_aton(MASK)";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
 	echo " <tr><th>序号</th><th>IP</th><th>用途</th><th>联系人</th><th>备注</th>";
