@@ -271,6 +271,7 @@ if ($cmd=="logout") {
 	$_SESSION["login"] = 0;
 	$_SESSION["isadmin"] = 0;
 	$_SESSION["ipfilter"] = "";
+	$_SESSION["serverfilter"] = "";
 	echo "<p>已经退出登录";
 }
 
@@ -284,6 +285,7 @@ if ($cmd=="login") {
 			$_SESSION["isadmin"] = $r[0];
 			$_SESSION["truename"] = $r[1];
 			$_SESSION["ipfilter"] = "";
+			$_SESSION["serverfilter"] = "";
 			$r = imap_open("{".$r[2].":110/pop3/novalidate-cert}INBOX",$id,$pass,0,1);
 			if ($r) {
 				$_SESSION["login"] = 1;
@@ -338,6 +340,8 @@ if (getuserright("ticket")>0) {
 if (getuserright("server")>0) {
 	echo "<li><dl>";
 	echo "<dt><a href=index.php?cmd=cab_list>服务器管理</a></dt>";
+	echo "<dd><a href=index.php?cmd=cab_server_list>服务器</a></dd>";
+	echo "<dd><a href=index.php?cmd=server_filter>服务器显示筛选</a></dd>";
 	if (getuserright("server")>=2) {
 		echo "<dd><a href=index.php?cmd=cab_add>新增机柜</a></dd>";
 		if ($cmd=='cabinfo_list')  {
@@ -967,7 +971,69 @@ if ($cmd=='server_new') {
        	echo "<input type=submit name=Submit value=新增服务器>";
        	echo "</form>";
 	exit(0);
-}
+} else if ($cmd=="server_filter_set") {
+	checkright("server",1);
+	$serverfilter = safe_get("serverfilter");
+	$_SESSION["serverfilter"] = $serverfilter;
+	$cmd = "cab_server_list";
+} else if ($cmd=="server_filter") {
+	checkright("server",1);
+	echo "<p>服务器显示筛选";
+	echo "<form action=index.php method=post>";
+	echo "<input name=cmd value=server_filter_set type=hidden>";
+   	echo "服务器筛选字符串: <input name=serverfilter value=\"";
+	echo $_SESSION["serverfilter"];
+	echo "\"><p>";
+	echo "<input type=submit value=设置服务器显示筛选>";
+	echo "</form>";
+	echo "注：设置后，仅仅显示包含以上字符串的服务器，为空则全部显示";
+	exit(0);
+} 
+if ($cmd=='cab_server_list') {
+	checkright("server",1);
+	if ($_SESSION["serverfilter"]!="") {
+		$str = $_SESSION["serverfilter"];
+		echo "仅显示 ";
+		echo $str;
+		echo " 相关服务器, <a href=index.php?cmd=server_filter>重设筛选</a><p>";
+		$q = "select CABID,ServerID,StartU,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment from JF_Server where CABID like '%$str%' or Type like '%$str%' or ServerID like '%$str%' or `NAME` like '%$str%' or `USER` like '%$str%' or MGT like '%$str%' or IP1 like '%$str%' or IP2 like '%$str%' or SN like '%$str%' or Comment like '%$str%' order by CABID,StartU";
+	} else 
+		$q = "select CABID,ServerID,StartU,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment from JF_Server order by CABID,StartU";
+?>		
+<p><font size=1>
+	<table border=1 cellspacing=0>
+	<tr><th>机柜</th><th>U</th><th>KVM</th><th>服务器型号</th><th>服务器描述</th><th>服务器用途</th>
+	<th>责任人</th><th>IP地址</th><th>MAC地址</th><th>SN</th><th>网络连接</th><th>备注</th></tr>
+<?php
+	$rr = mysql_query($q);
+	while ($r=mysql_fetch_row($rr)) {
+		echo "<tr><td>"; 
+		echo $r[0];
+		echo "</td><td>";
+		if (getuserright("server")>=3) 
+			echo "<a href=index.php?cmd=server_modi&serverid=$r[1]>$r[2]</a>";
+		else
+			echo "$r[2]";
+		if ($r[3]!= $r[2]) echo "-".$r[3];
+		echo "</td><td rowspan=$r[0]>$r[4]";
+		echo "</td><td rowspan=$r[0]>$r[5]";
+		echo "</td><td rowspan=$r[0]>$r[6]";
+		echo "</td><td rowspan=$r[0]>$r[7]";
+		echo "</td><td rowspan=$r[0]>$r[8]";
+		echo "</td><td rowspan=$r[0]>$r[9]";
+		if ($r[10]!='') { 
+			echo "<br>"; 
+			echo $r[10]; 
+		}
+		echo "</td><td rowspan=$r[0]>$r[11]<br>$r[12]";
+		echo "</td><td rowspan=$r[0]>$r[13]";
+		echo "</td><td rowspan=$r[0]>$r[14]";
+		echo "</td><td rowspan=$r[0]>$r[15]";
+		echo "</td></tr>\n";
+	}
+	echo "</table>";
+	exit(0);
+} // end cmd = 'cab_server_list'
 if ($cmd=='cabinfo_list') {
 	checkright("server",1);
 	$cabid = safe_get("cabid");
@@ -1283,7 +1349,6 @@ if ($cmd=="ip_new") {
 	echo "</form>";
 	echo "注：设置后，仅仅显示包含以上字符串的IP地址，为空则全部显示";
 	exit(0);
-
 } else if ($cmd=="ip_add") {
 	if (getuserright("ip")>=2) {
 		echo "<p>新增IP地址记录";
