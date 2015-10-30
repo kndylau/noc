@@ -546,7 +546,7 @@ if ($cmd=="ticket_new") {
 	if ($isend ) 
 		$q = "insert into ticket (st,et,system,reason,level,memo,op) values('$st','$st','$system','$reason','$level','$memo','".$_SESSION["user"]."')";
 	else
-		$q = "insert into ticket (st,et,system,reason,level,memo,op) values('$st','0-0-0 00:00:00','$system','$level','$reason','$memo','".$_SESSION["user"]."')";
+		$q = "insert into ticket (st,et,system,reason,level,memo,op) values('$st','0-0-0 00:00:00','$system','$reason','$level','$memo','".$_SESSION["user"]."')";
 	mysql_query($q);
 	$q = "SELECT LAST_INSERT_ID()";
 	$r = mysql_fetch_row(mysql_query($q));	
