@@ -21,7 +21,7 @@ function checkvalue($str) {
 	for ($i = 0; $i<strlen($str); $i++) {
         	if (ctype_alnum($str[$i]))  continue;
 		if (strchr("@-_ ./:", $str[$i])) continue;
-        	echo "$strÖĞµÚ $i ·Ç·¨×Ö·û $str[$i]";
+        	echo "$strä¸­ç¬¬ $i éæ³•å­—ç¬¦ $str[$i]";
 		exit(0);
 	}
 }
@@ -38,8 +38,8 @@ function safe_get2($str) {
 }
 
 function changehist ($q) {
-	echo "ĞŞ¸ÄÈÕÖ¾<p><table border=1 cellspacing=0>";
-        echo "<tr><th>Ê±¼ä</th><th>ĞŞ¸ÄÄÚÈİ</th></tr>\n";
+	echo "ä¿®æ”¹æ—¥å¿—<p><table border=1 cellspacing=0>";
+        echo "<tr><th>æ—¶é—´</th><th>ä¿®æ”¹å†…å®¹</th></tr>\n";
         $rr = mysql_query($q);
         while ($r=mysql_fetch_row($rr)) 
                 echo "<tr><td>$r[1]</td><td>$r[3]<br>$r[4]</td></tr>\n";
@@ -70,14 +70,14 @@ function lxr_display($lxrid) {
 		$r = mysql_fetch_row(mysql_query($q));
                 if ($r) {
 			echo "<a class =\"lxrtips\" href=index.php?cmd=lxr_detail&id=$r[0] target=_blank>$r[1]/$r[2]";
-			echo "<span>²¿ÃÅ:$r[1]<br>ĞÕÃû:$r[2]<br>µç»°:$r[3]<br>ÊÖ»ú:$r[4]<br>ÓÊÏä:$r[5]<br>Q Q :$r[6]<br>±¸×¢:$r[7]</span></a>";
+			echo "<span>éƒ¨é—¨:$r[1]<br>å§“å:$r[2]<br>ç”µè¯:$r[3]<br>æ‰‹æœº:$r[4]<br>é‚®ç®±:$r[5]<br>Q Q :$r[6]<br>å¤‡æ³¨:$r[7]</span></a>";
 		} else 
-			echo $lxrid.":Î´ÖªÁªÏµÈË";
+			echo $lxrid.":æœªçŸ¥è”ç³»äºº";
         } 
 }
 
 function ticket_system_select($systemid) {
-	echo "¹ÊÕÏÏµÍ³: <select name=system>";
+	echo "æ•…éšœç³»ç»Ÿ: <select name=system>";
 	if ($systemid=="")
 		echo "<option value=\"\" selected=\"selected\"></option>";
 	else
@@ -101,12 +101,12 @@ function ticket_system_display($systemid) {
                 if ($r) {
 			echo $r[0];
 		} else 
-			echo $systemid.":Î´ÖªÏµÍ³";
+			echo $systemid.":æœªçŸ¥ç³»ç»Ÿ";
         } 
 }
 
 function ticket_reason_select($reasonid) {
-	echo "¹ÊÕÏÀàĞÍ: <select name=reason>";
+	echo "æ•…éšœç±»å‹: <select name=reason>";
 	if ($reasonid=="")
 		echo "<option value=\"\" selected=\"selected\"></option>";
 	else
@@ -130,12 +130,12 @@ function ticket_reason_display($reasonid) {
                 if ($r) {
 			echo $r[0];
 		} else 
-			echo $reasonid.":Î´ÖªÀàĞÍ";
+			echo $reasonid.":æœªçŸ¥ç±»å‹";
         }
 }
 
 function ticket_level_select($levelid) {
-	echo "¹ÊÕÏ¼¶±ğ: <select name=level>";
+	echo "æ•…éšœçº§åˆ«: <select name=level>";
 	if ($levelid=="")
 		echo "<option value=\"\" selected=\"selected\"></option>";
 	else
@@ -164,7 +164,7 @@ function ticket_level_display($levelid) {
 			else 
 				echo $r[0];
 		} else 
-			echo $levelid.":Î´Öª";
+			echo $levelid.":æœªçŸ¥";
         }
 }
 
@@ -177,7 +177,7 @@ function op_display($op) {
                 if ($r) {
 			echo $r[0];
 		} else 
-			echo $op.":Î´Öª¹ÜÀíÔ±";
+			echo $op.":æœªçŸ¥ç®¡ç†å‘˜";
         }
 }
 
@@ -199,7 +199,7 @@ function getuserright($module) {
 
 function checkright($module, $right) {
 	if (getuserright($module)<$right) {
-		echo "ÎŞÈ¨ÏŞ";
+		echo "æ— æƒé™";
 		exit(0);
 	}
 }
@@ -228,12 +228,12 @@ $cmd = safe_get("cmd");
 
 if ($cmd=="file_down") {
 	$login = $_SESSION["login"];
-	if ($login<>1) {   // ÓÃ»§Ã»ÓĞµÇÂ¼
-		echo "ÇëµÇÂ¼ºóÏÂÔØ";
+	if ($login<>1) {   // ç”¨æˆ·æ²¡æœ‰ç™»å½•
+		echo "è¯·ç™»å½•åä¸‹è½½";
 		exit(0);
 	}
 	if (getuserright("info")<1) {
-		echo "ÎŞÈ¨ÏŞÏÂÔØ";
+		echo "æ— æƒé™ä¸‹è½½";
 		exit(0);
 	}
 	$fid = safe_get("fid");
@@ -252,7 +252,7 @@ if ($cmd=="file_down") {
     		readfile($file);
     		exit(0);
 	}else  {
-		echo "ÎÄ¼ş²»´æÔÚ<p>";
+		echo "æ–‡ä»¶ä¸å­˜åœ¨<p>";
 		exit(0);
 	}
 }
@@ -272,7 +272,7 @@ if ($cmd=="logout") {
 	$_SESSION["isadmin"] = 0;
 	$_SESSION["ipfilter"] = "";
 	$_SESSION["serverfilter"] = "";
-	echo "<p>ÒÑ¾­ÍË³öµÇÂ¼";
+	echo "<p>å·²ç»é€€å‡ºç™»å½•";
 }
 
 if ($cmd=="login") {
@@ -290,31 +290,31 @@ if ($cmd=="login") {
 			if ($r) {
 				$_SESSION["login"] = 1;
 				$_SESSION["user"] = $id;
-				echo "µÇÂ¼Õı³£,ÇëÑ¡ÔñÉÏÃæµÄ¸÷Ïî²Ëµ¥";
+				echo "ç™»å½•æ­£å¸¸,è¯·é€‰æ‹©ä¸Šé¢çš„å„é¡¹èœå•";
 				echo "<script language=JavaScript>parent.location='index.php?cmd=jifang';</script>";
 				exit(0);
 			}
-			echo "<font color=red>ÃÜÂë´íÎó£¬Çë¼ì²é</font>";
+			echo "<font color=red>å¯†ç é”™è¯¯ï¼Œè¯·æ£€æŸ¥</font>";
 		} else
-			echo "<font color=red>ÓÃ»§Ãû²»´æÔÚ£¬ÇëÁªÏµ¹ÜÀíÔ±</font>";
+			echo "<font color=red>ç”¨æˆ·åä¸å­˜åœ¨ï¼Œè¯·è”ç³»ç®¡ç†å‘˜</font>";
 	}
 } // end cmd==login
 
 @$login = $_SESSION["login"];
 @$isadmin = $_SESSION["isadmin"];
-if ($login<>1) {   // ÓÃ»§Ã»ÓĞµÇÂ¼
+if ($login<>1) {   // ç”¨æˆ·æ²¡æœ‰ç™»å½•
 	$login = 0;
 	$_SESSION["login"] = 0;
-	echo "<p>ÏµÍ³°æ±¾: $sysversion";
-	echo "<p>ÓĞÈÎºÎÎÊÌâÇëÁªÏµ $syslxr";
+	echo "<p>ç³»ç»Ÿç‰ˆæœ¬: $sysversion";
+	echo "<p>æœ‰ä»»ä½•é—®é¢˜è¯·è”ç³» $syslxr";
 	echo "<p>";
-	echo "ÇëÊäÈëÓÊÏäºÍÃÜÂëµÇÂ¼<p>";
-	echo "ÏµÍ³»áÁ¬½Óµ½ÓÊ¼şPOP3·şÎñÆ÷µÇÂ¼ÑéÖ¤ÃÜÂë";
+	echo "è¯·è¾“å…¥é‚®ç®±å’Œå¯†ç ç™»å½•<p>";
+	echo "ç³»ç»Ÿä¼šè¿æ¥åˆ°é‚®ä»¶POP3æœåŠ¡å™¨ç™»å½•éªŒè¯å¯†ç ";
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd type=hidden value=login>";
-	echo "ÓÃ»§ÓÊÏä:<input name=id><br>";
-	echo "ÓÊÏäÃÜÂë:<input name=pass type=password><p>";
-	echo "<input type=submit value=\"µÇ Â¼\"></form>\n";
+	echo "ç”¨æˆ·é‚®ç®±:<input name=id><br>";
+	echo "é‚®ç®±å¯†ç :<input name=pass type=password><p>";
+	echo "<input type=submit value=\"ç™» å½•\"></form>\n";
 	exit(0);
 } // login <> 1
 
@@ -322,97 +322,97 @@ echo "<ul class=\"nav\">\n";
 
 if (getuserright("jifang")>0)  {
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=jifang>»ú·¿Ñ²¼ì</a></dt>";
-	echo "<dd><a href=index.php?cmd=jifang&all=yes>ËùÓĞ¼ÇÂ¼</a></dd>";
+	echo "<dt><a href=index.php?cmd=jifang>æœºæˆ¿å·¡æ£€</a></dt>";
+	echo "<dd><a href=index.php?cmd=jifang&all=yes>æ‰€æœ‰è®°å½•</a></dd>";
 	if (getuserright("jifang")>=2) 
-		echo "<dd><a href=index.php?cmd=jifang_add>ĞÂÔö¼ÇÂ¼</a></dd>";
+		echo "<dd><a href=index.php?cmd=jifang_add>æ–°å¢è®°å½•</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("ticket")>0) {
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=ticket>¹ÊÕÏ´¦Àí</a></dt>";
-	echo "<dd><a href=index.php?cmd=ticket&all=yes>ËùÓĞ¼ÇÂ¼</a></dd>";
-	echo "<dd><a href=index.php?cmd=ticket_stat>¹ÊÕÏÍ³¼Æ</a></dd>";
+	echo "<dt><a href=index.php?cmd=ticket>æ•…éšœå¤„ç†</a></dt>";
+	echo "<dd><a href=index.php?cmd=ticket&all=yes>æ‰€æœ‰è®°å½•</a></dd>";
+	echo "<dd><a href=index.php?cmd=ticket_stat>æ•…éšœç»Ÿè®¡</a></dd>";
 	if (getuserright("ticket")>=2) 
-	  	echo "<dd><a href=index.php?cmd=ticket_add>ĞÂÔö¼ÇÂ¼</a></dd>";
+	  	echo "<dd><a href=index.php?cmd=ticket_add>æ–°å¢è®°å½•</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("server")>0) {
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=cab_list>·şÎñÆ÷¹ÜÀí</a></dt>";
-	echo "<dd><a href=index.php?cmd=cab_server_list>·şÎñÆ÷</a></dd>";
-	echo "<dd><a href=index.php?cmd=server_filter>·şÎñÆ÷ÏÔÊ¾É¸Ñ¡</a></dd>";
+	echo "<dt><a href=index.php?cmd=cab_list>æœåŠ¡å™¨ç®¡ç†</a></dt>";
+	echo "<dd><a href=index.php?cmd=cab_server_list>æœåŠ¡å™¨</a></dd>";
+	echo "<dd><a href=index.php?cmd=server_filter>æœåŠ¡å™¨æ˜¾ç¤ºç­›é€‰</a></dd>";
 	if (getuserright("server")>=2) {
-		echo "<dd><a href=index.php?cmd=cab_add>ĞÂÔö»ú¹ñ</a></dd>";
+		echo "<dd><a href=index.php?cmd=cab_add>æ–°å¢æœºæŸœ</a></dd>";
 		if ($cmd=='cabinfo_list')  {
 			echo "<dd><a href=index.php?cmd=server_add&cabid=";
 			echo safe_get("cabid");
-			echo ">ĞÂÔö·şÎñÆ÷</a></dd>";
+			echo ">æ–°å¢æœåŠ¡å™¨</a></dd>";
 		}
 	}
 	echo "</dl></li>\n";
 }
 if (getuserright("odf")>0) {
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=odf_list>ODF¹ÜÀí</a></dt>";
+	echo "<dt><a href=index.php?cmd=odf_list>ODFç®¡ç†</a></dt>";
 	if (getuserright("odf")>=2) 
-		echo "<dd><a href=index.php?cmd=odf_add>ĞÂÔöODF</a></dd>";
+		echo "<dd><a href=index.php?cmd=odf_add>æ–°å¢ODF</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("ip")>0) {
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=ip>IP¹ÜÀí</a></dt>";
-	echo "<dd><a href=index.php?cmd=ip_filter>IPÏÔÊ¾É¸Ñ¡</a></dd>";
+	echo "<dt><a href=index.php?cmd=ip>IPç®¡ç†</a></dt>";
+	echo "<dd><a href=index.php?cmd=ip_filter>IPæ˜¾ç¤ºç­›é€‰</a></dd>";
 	if (getuserright("ip")>=2) 
-	echo "<dd><a href=index.php?cmd=ip_add>ĞÂÔöIPµØÖ·</a></dd>";
+	echo "<dd><a href=index.php?cmd=ip_add>æ–°å¢IPåœ°å€</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("vm")>0) {
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=vm>VM¹ÜÀí</a></dt>";
+	echo "<dt><a href=index.php?cmd=vm>VMç®¡ç†</a></dt>";
 	if (getuserright("vm")>=2)
-		echo "<dd><a href=index.php?cmd=vm_host_modi>ĞÂÔöVM</a></dd>";
-	echo "<dd><a href=index.php?cmd=vm_c>VM¼¯Èº¹ÜÀí</a></dd>";
+		echo "<dd><a href=index.php?cmd=vm_host_modi>æ–°å¢VM</a></dd>";
+	echo "<dd><a href=index.php?cmd=vm_c>VMé›†ç¾¤ç®¡ç†</a></dd>";
 	if (getuserright("vm")>=2) 
-		echo "<dd><a href=index.php?cmd=vm_c_add>ĞÂÔöVM¼¯Èº</a></dd>";
+		echo "<dd><a href=index.php?cmd=vm_c_add>æ–°å¢VMé›†ç¾¤</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("lxr")>0){
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=lxr>ÁªÏµÈË</a></dt>";
+	echo "<dt><a href=index.php?cmd=lxr>è”ç³»äºº</a></dt>";
 	if (getuserright("lxr")>=2) 
-		echo "<dd><a href=index.php?cmd=lxr_add>ĞÂÔöÁªÏµÈË</a></dd>";
+		echo "<dd><a href=index.php?cmd=lxr_add>æ–°å¢è”ç³»äºº</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("info")>0){
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=info>³£ÓÃĞÅÏ¢</a></dt>";
+	echo "<dt><a href=index.php?cmd=info>å¸¸ç”¨ä¿¡æ¯</a></dt>";
 	if (getuserright("info")>=2) 
-		echo "<dd><a href=index.php?cmd=info_add>ĞÂÔö³£ÓÃĞÅÏ¢</a></dd>";
+		echo "<dd><a href=index.php?cmd=info_add>æ–°å¢å¸¸ç”¨ä¿¡æ¯</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("user")>0){
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=user>ÓÃ»§¹ÜÀí</a></dt>";
+	echo "<dt><a href=index.php?cmd=user>ç”¨æˆ·ç®¡ç†</a></dt>";
 	if (getuserright("user")>=2) 
-		echo "<dd><a href=index.php?cmd=user_add>ĞÂÔöÓÃ»§</a></dd>";
+		echo "<dd><a href=index.php?cmd=user_add>æ–°å¢ç”¨æˆ·</a></dd>";
 	echo "</dl></li>\n";
 }
 if (getuserright("sysinfo")>0) {
 	echo "<li><dl>";
-	echo "<dt><a href=index.php?cmd=sysinfo>ÏµÍ³¹ÜÀí</a></dt>";
+	echo "<dt><a href=index.php?cmd=sysinfo>ç³»ç»Ÿç®¡ç†</a></dt>";
 	echo "</dl></li>\n";
 }
 
 /*
 echo "<li><dl>";
-echo "<dt><a href=index.php?cmd=user_pref>¸öÈËÉèÖÃ</a></dt>";
+echo "<dt><a href=index.php?cmd=user_pref>ä¸ªäººè®¾ç½®</a></dt>";
 echo "</dl></li>\n";
 
 */
 
 echo "<li><dl>";
-echo "<dt><a href=index.php?cmd=logout>ÍË³ö</a></dt>";
+echo "<dt><a href=index.php?cmd=logout>é€€å‡º</a></dt>";
 echo "</dl>";
 echo "</li>\n";
 echo "</ul>\n";
@@ -447,21 +447,21 @@ if ($cmd=="jifang_new") {
 	$cmd = "jifang";
 } else if ($cmd=="jifang_add") {
 	if (getuserright("jifang")>=2) {
-		echo "ĞÂÔö»ú·¿Ñ²¼ì¼ÇÂ¼<p>";
+		echo "æ–°å¢æœºæˆ¿å·¡æ£€è®°å½•<p>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=jifang_new type=hidden>";
 		echo "<table width=100%>";
-    		echo "<tr><td width=100>»·¾³×´¿ö: </td><td>Õı³£<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; Òì³£<input type=radio name=huanjing value=0></td></tr>";
-    		echo "<tr><td>·şÎñÆ÷×´¿ö: </td><td>Õı³£<input type=radio name=server value=1 checked> &nbsp; &nbsp; Òì³£<input type=radio name=server value=0></td></tr>";
-		echo "<tr><td>´æÔÚÎÊÌâ:</td><td><input type=text size=200 name=msg></td></tr>";
+    		echo "<tr><td width=100>ç¯å¢ƒçŠ¶å†µ: </td><td>æ­£å¸¸<input type=radio name=huanjing value=1 checked> &nbsp; &nbsp; å¼‚å¸¸<input type=radio name=huanjing value=0></td></tr>";
+    		echo "<tr><td>æœåŠ¡å™¨çŠ¶å†µ: </td><td>æ­£å¸¸<input type=radio name=server value=1 checked> &nbsp; &nbsp; å¼‚å¸¸<input type=radio name=server value=0></td></tr>";
+		echo "<tr><td>å­˜åœ¨é—®é¢˜:</td><td><input type=text size=200 name=msg></td></tr>";
 		echo "</table><p>";
-		echo "<input type=submit value=ĞÂÔö»ú·¿Ñ²¼ì¼ÇÂ¼>";
+		echo "<input type=submit value=æ–°å¢æœºæˆ¿å·¡æ£€è®°å½•>";
 		echo "</form>";
 	}
 	exit(0);
 } else if ($cmd=="jifang_modi") {
 	checkright("jifang",3);
-	echo "<p>ĞŞ¸Ä»ú·¿Ñ²¼ì¼ÇÂ¼<p>";
+	echo "<p>ä¿®æ”¹æœºæˆ¿å·¡æ£€è®°å½•<p>";
 	$id = safe_get("id");
 	if ($id) {
 		$q = "select id,tm,huanjing,server,msg from jifang_daily where id=".$id;
@@ -472,20 +472,20 @@ if ($cmd=="jifang_new") {
 		echo "<input name=cmd value=jifang_modi_do type=hidden>";
 		echo "<input name=id value=$r[0] type=hidden>";
 		echo "<table width=100%>";
-    		echo "<tr><td width=100>Ê±¼ä:</td><td>$r[1]</td></tr>";
-    		echo "<tr><td>»·¾³×´¿ö:</td><td>Õı³£<input type=radio name=huanjing value=1";
+    		echo "<tr><td width=100>æ—¶é—´:</td><td>$r[1]</td></tr>";
+    		echo "<tr><td>ç¯å¢ƒçŠ¶å†µ:</td><td>æ­£å¸¸<input type=radio name=huanjing value=1";
 		if ($r[2]=="1") echo " checked";
-		echo "> &nbsp; &nbsp; Òì³£<input type=radio name=huanjing value=0";
+		echo "> &nbsp; &nbsp; å¼‚å¸¸<input type=radio name=huanjing value=0";
 		if ($r[2]=="0") echo " checked";
 		echo "></td></tr>";
-    		echo "<tr><td>·şÎñÆ÷×´¿ö:</td><td>Õı³£<input type=radio name=server value=1";
+    		echo "<tr><td>æœåŠ¡å™¨çŠ¶å†µ:</td><td>æ­£å¸¸<input type=radio name=server value=1";
 		if ($r[3]=="1") echo " checked";
-		echo "> &nbsp; &nbsp; Òì³£<input type=radio name=server value=0";
+		echo "> &nbsp; &nbsp; å¼‚å¸¸<input type=radio name=server value=0";
 		if ($r[3]=="0") echo " checked";
 		echo "></td></tr>";
-		echo "<tr><td>´æÔÚÎÊÌâ:</td><td><input type=text size=200 name=msg value=\"$r[4]\"></td></tr>";
+		echo "<tr><td>å­˜åœ¨é—®é¢˜:</td><td><input type=text size=200 name=msg value=\"$r[4]\"></td></tr>";
 		echo "</table>";
-    		echo "<input type=submit value=ĞŞ¸Ä»ú·¿Ñ²¼ì¼ÇÂ¼></form>";
+    		echo "<input type=submit value=ä¿®æ”¹æœºæˆ¿å·¡æ£€è®°å½•></form>";
 	}
 	exit(0);
 }
@@ -498,7 +498,7 @@ if ($cmd=="jifang") {
 		$q = "select id,tm,huanjing,server,msg,op,ip from jifang_daily order by id desc limit 30";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><th>ĞòºÅ</th><th>Ê±¼ä</th><th>»·¾³</th><th>·şÎñÆ÷</th><th>ÊÂ¼şÃèÊö</th><th>ÊµÊ©ÈË</th>";
+	echo "<tr><th>åºå·</th><th>æ—¶é—´</th><th>ç¯å¢ƒ</th><th>æœåŠ¡å™¨</th><th>äº‹ä»¶æè¿°</th><th>å®æ–½äºº</th>";
 	if ($displayopip) 
 		echo "<th>IP</th>";
 	echo "</tr>";
@@ -512,12 +512,12 @@ if ($cmd=="jifang") {
 			echo "<td align=center>$count</td>";
 		echo "<td nowrap=\"nowrap\">".$r[1]."</td>";
 		echo "<td>";
-		if ($r[2]==0) echo "<font color=red>Òì³£</font>";
-		else echo "Õı³£";
+		if ($r[2]==0) echo "<font color=red>å¼‚å¸¸</font>";
+		else echo "æ­£å¸¸";
 		echo "</td>";
 		echo "<td align=center>";
-		if ($r[3]==0) echo "<font color=red>Òì³£</font>";
-		else echo "Õı³£";
+		if ($r[3]==0) echo "<font color=red>å¼‚å¸¸</font>";
+		else echo "æ­£å¸¸";
 		echo "</td>";
 		echo "<td>$r[4]</td>";
 		echo "<td>";
@@ -593,20 +593,20 @@ if ($cmd=="ticket_new") {
 	}
 	$cmd = "ticket";
 } else if ($cmd=="ticket_add") {
-	echo "<p>ĞÂÔö¹ÊÕÏ´¦ÀíÊÂ¼ş¼ÇÂ¼<p>";
+	echo "<p>æ–°å¢æ•…éšœå¤„ç†äº‹ä»¶è®°å½•<p>";
 	if (getuserright("ticket")>=2) {
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ticket_new type=hidden>";
-		echo "¿ªÊ¼Ê±¼ä: <input name=st value=\"";
+		echo "å¼€å§‹æ—¶é—´: <input name=st value=\"";
 		echo strftime("%Y-%m-%d %H:%M:00",time());
 		echo "\"><br>";
 		ticket_system_select("");
 		ticket_reason_select("");
 		ticket_level_select("");
-		echo "ÊÂ¼şÃèÊö: <input name=memo><br>";
-		echo "´¦ÀíÃèÊö: <input name=memo2 size=100><br>";
-		echo "Ò»´ÎĞÔÊÂ¼ş£¬Ö±½Ó¸üĞÂ½áÊøÊ±¼ä:<input type=checkbox name=isend value=1><p>";
-		echo "<input type=submit value=ĞÂÔö¹ÊÕÏ´¦ÀíÊÂ¼ş¼ÇÂ¼>";
+		echo "äº‹ä»¶æè¿°: <input name=memo><br>";
+		echo "å¤„ç†æè¿°: <input name=memo2 size=100><br>";
+		echo "ä¸€æ¬¡æ€§äº‹ä»¶ï¼Œç›´æ¥æ›´æ–°ç»“æŸæ—¶é—´:<input type=checkbox name=isend value=1><p>";
+		echo "<input type=submit value=æ–°å¢æ•…éšœå¤„ç†äº‹ä»¶è®°å½•>";
 		echo "</form>";
 	}
 	exit(0);
@@ -617,43 +617,43 @@ if ($cmd=="ticket_new") {
 		$q = "select id,tid,tm,memo from ticketdetail where id=".$did;
 		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
-		echo "ĞŞ¸Ä¹ÊÕÏ´¦Àí¹ı³Ì¼ÇÂ¼<br>";
+		echo "ä¿®æ”¹æ•…éšœå¤„ç†è¿‡ç¨‹è®°å½•<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ticketdetail_modi_do type=hidden>";
 		echo "<input name=tid value=$r[1] type=hidden>";
 		echo "<input name=did value=$r[0] type=hidden>";
-    		echo "Ê±¼ä:<input name=tm value=\"$r[2]\"><br>";
-    		echo "ÃèÊö:<input name=memo value=\"$r[3]\" size=100><br>";
-		echo "´¦Àí½áÊø,¸üĞÂ½áÊøÊ±¼ä:<input type=checkbox name=isend value=1><p>";
-    		echo "<input type=submit value=ĞŞ¸Ä¹ÊÕÏ´¦Àí¹ı³Ì¼ÇÂ¼></form>";
+    		echo "æ—¶é—´:<input name=tm value=\"$r[2]\"><br>";
+    		echo "æè¿°:<input name=memo value=\"$r[3]\" size=100><br>";
+		echo "å¤„ç†ç»“æŸ,æ›´æ–°ç»“æŸæ—¶é—´:<input type=checkbox name=isend value=1><p>";
+    		echo "<input type=submit value=ä¿®æ”¹æ•…éšœå¤„ç†è¿‡ç¨‹è®°å½•></form>";
 	} else if ($id) {
 		$q="select id,st,et,system,reason,level,memo from ticket where id=".$id;
 		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
 		if (getuserright("ticket")>=3) {
-			echo "ĞŞ¸Ä¹ÊÕÏ´¦ÀíĞÅÏ¢<br>";
+			echo "ä¿®æ”¹æ•…éšœå¤„ç†ä¿¡æ¯<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticket_modi_do type=hidden>";
 			echo "<input name=id value=$r[0] type=hidden>";
-    			echo "¿ªÊ¼Ê±¼ä: <input name=st value=\"$r[1]\"><br>";
-    			echo "½áÊøÊ±¼ä: <input name=et value=\"$r[2]\"><br>";
+    			echo "å¼€å§‹æ—¶é—´: <input name=st value=\"$r[1]\"><br>";
+    			echo "ç»“æŸæ—¶é—´: <input name=et value=\"$r[2]\"><br>";
 			ticket_system_select($r[3]);
 			ticket_reason_select($r[4]);
 			ticket_level_select($r[5]);
-    			echo "ÊÂ¼şÃèÊö: <input name=memo value=\"$r[6]\"><p>";
-    			echo "<input type=submit value=ĞŞ¸Ä¹ÊÕÏ´¦ÀíĞÅÏ¢></form>";
+    			echo "äº‹ä»¶æè¿°: <input name=memo value=\"$r[6]\"><p>";
+    			echo "<input type=submit value=ä¿®æ”¹æ•…éšœå¤„ç†ä¿¡æ¯></form>";
 		}
 		if (getuserright("ticket")>=2) {
-			echo "ĞÂÔö´¦Àí¹ı³ÌÃèÊö<br>";
+			echo "æ–°å¢å¤„ç†è¿‡ç¨‹æè¿°<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=ticketdetail_new type=hidden>";
 			echo "<input name=tid value=$r[0] type=hidden>";
-			echo "Ê±¼ä: <input name=tm value=\"";
+			echo "æ—¶é—´: <input name=tm value=\"";
 			echo strftime("%Y-%m-%d %H:%M:00",time());
 			echo "\"><br>";
-			echo "´¦ÀíÃèÊö: <input name=memo size=100><br>";
-			echo "´¦Àí½áÊø,¸üĞÂ½áÊøÊ±¼ä:<input type=checkbox name=isend value=1><p>";
-			echo "<input type=submit value=ĞÂÔö´¦ÀíÃèÊö>";
+			echo "å¤„ç†æè¿°: <input name=memo size=100><br>";
+			echo "å¤„ç†ç»“æŸ,æ›´æ–°ç»“æŸæ—¶é—´:<input type=checkbox name=isend value=1><p>";
+			echo "<input type=submit value=æ–°å¢å¤„ç†æè¿°>";
 			echo "</form>";
 		}
 	}
@@ -661,8 +661,8 @@ if ($cmd=="ticket_new") {
 } else if ($cmd=="ticket_stat") {
 	for ($year=date('Y'); $year>=2015; $year--) {
 		echo "<table>\n";
-		echo "<tr><td colspan=4 align=center>".$year."Äê¹ÊÕÏÍ³¼Æ</td></tr>\n";
-		echo "<tr><th>Ïà¹ØÏµÍ³</th><th>¹ÊÕÏÔ­Òò</th><th>¹ÊÕÏ¼¶±ğ</th><th>³öÏÖ´ÎÊı</th></tr>\n";
+		echo "<tr><td colspan=4 align=center>".$year."å¹´æ•…éšœç»Ÿè®¡</td></tr>\n";
+		echo "<tr><th>ç›¸å…³ç³»ç»Ÿ</th><th>æ•…éšœåŸå› </th><th>æ•…éšœçº§åˆ«</th><th>å‡ºç°æ¬¡æ•°</th></tr>\n";
 		$q = "select system,reason,level,count(*) from ticket where year(st)=$year group by system,reason,level";
 		$rr = mysql_query($q);
 		while ($r=mysql_fetch_row($rr)){
@@ -690,7 +690,7 @@ if ($cmd=="ticket") {
 	$rr = mysql_query($q);
 
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><th>ĞòºÅ</th><th nowrap=\"nowrap\">¹ÊÕÏÊ±¼ä</th><th nowrap=\"nowrap\">³ÖĞøÊ±¼ä</th><th>Ïà¹ØÏµÍ³</th><th>Ô­Òò</th><th>¼¶±ğ</th><th>ÊÂ¼şÃèÊö</th><th nowrap=\"nowrap\">Ê±¼ä</th><th>´¦Àí</th><th nowrap=\"nowrap\">ÊµÊ©ÈË</th> </tr>\n";
+	echo "<tr><th>åºå·</th><th nowrap=\"nowrap\">æ•…éšœæ—¶é—´</th><th nowrap=\"nowrap\">æŒç»­æ—¶é—´</th><th>ç›¸å…³ç³»ç»Ÿ</th><th>åŸå› </th><th>çº§åˆ«</th><th>äº‹ä»¶æè¿°</th><th nowrap=\"nowrap\">æ—¶é—´</th><th>å¤„ç†</th><th nowrap=\"nowrap\">å®æ–½äºº</th> </tr>\n";
 
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)){
@@ -713,7 +713,7 @@ if ($cmd=="ticket") {
 		if ($r[2]=="0000-00-00 00:00:00")
 			echo " ";
 		else  if ($r[7]!=0)
-			echo round($r[7]/3600,1),"Ğ¡Ê±";
+			echo round($r[7]/3600,1),"å°æ—¶";
 		echo "</td>";
 		echo "<td rowspan=$rows nowrap=\"nowrap\">";
 		ticket_system_display($r[3]);
@@ -761,7 +761,7 @@ if ($cmd=='cab_new') {
 	$mgt = safe_get2("mgt");
 	$cabuse = safe_get2("cabuse");
 	if ($cabid=="") {
-		echo "»ú¹ñ±àºÅ²»ÄÜÎª¿Õ";
+		echo "æœºæŸœç¼–å·ä¸èƒ½ä¸ºç©º";
 		exit(0);
 	}
 	$q = "insert into JF_CAB values('$cabid','$ps1','$ps2','$mgt','$cabuse')";
@@ -790,7 +790,7 @@ if ($cmd=='cab_new') {
 	$cmd = 'cab_list';
 } else if ($cmd=='cab_modi') {
 	checkright("server",3);
-	echo "<p>ĞŞ¸Ä»ú¹ñĞÅÏ¢<p>";
+	echo "<p>ä¿®æ”¹æœºæŸœä¿¡æ¯<p>";
 	$cabid = safe_get("cabid");
 	echo "<form action=index.php method=post>";
 	echo "<input type=hidden name=cmd value=cab_modi_do>";
@@ -798,31 +798,31 @@ if ($cmd=='cab_new') {
 	$q = "select * from JF_CAB where CABID='$cabid'";
 	$rr = mysql_query($q);
 	if ($r=mysql_fetch_row($rr)) {
-		echo "»ú¹ñ±àºÅ: <input name=cabid value=$r[0]>Î¨Ò»±êÊ¶£¬×ÖÄ¸»òÊı×Ö£¬¿ÉÒÔ°üº¬-_<br>";
-		echo "»ú¹ñÓÃÍ¾: <input name=cabuse value='$r[4]'><br>";
-		echo "Ö÷ÓÃµçÔ´: <input name=ps1 value='$r[1]' size=80><br>";
-		echo "±¸ÓÃµçÔ´: <input name=ps2 value='$r[2]' size=80><br>";
-		echo "Ôğ ÈÎ ÈË: <input name=mgt value='$r[3]' size=80><p>";
-		echo "<input type=submit name=Submit value=ĞŞ¸Ä»ú¹ñĞÅÏ¢>";
+		echo "æœºæŸœç¼–å·: <input name=cabid value=$r[0]>å”¯ä¸€æ ‡è¯†ï¼Œå­—æ¯æˆ–æ•°å­—ï¼Œå¯ä»¥åŒ…å«-_<br>";
+		echo "æœºæŸœç”¨é€”: <input name=cabuse value='$r[4]'><br>";
+		echo "ä¸»ç”¨ç”µæº: <input name=ps1 value='$r[1]' size=80><br>";
+		echo "å¤‡ç”¨ç”µæº: <input name=ps2 value='$r[2]' size=80><br>";
+		echo "è´£ ä»» äºº: <input name=mgt value='$r[3]' size=80><p>";
+		echo "<input type=submit name=Submit value=ä¿®æ”¹æœºæŸœä¿¡æ¯>";
 		echo "</form>";
 	}
 	changehist("select * from hist where oid like 'CAB$cabid%' order by tm desc");
 	echo "<p><hr width=250 align=left>";
 	if (getuserright("server")>=3) 
-		echo "<a href=index.php?cmd=cab_del&cabid=$r[0] onclick=\"return confirm('É¾³ı»ú¹ñ $r[0]/$r[4] ?');\">É¾³ı»ú¹ñ: $r[0]/$r[4]</a></td>";
+		echo "<a href=index.php?cmd=cab_del&cabid=$r[0] onclick=\"return confirm('åˆ é™¤æœºæŸœ $r[0]/$r[4] ?');\">åˆ é™¤æœºæŸœ: $r[0]/$r[4]</a></td>";
 	exit(0);
 } else if ($cmd=="cab_add") {
 	checkright("server",2);
-	echo "<p>ĞÂÔö»ú¹ñ:<p>";
+	echo "<p>æ–°å¢æœºæŸœ:<p>";
 ?>
 	<form action=index.php method=post>
 	<input type=hidden name=cmd value=cab_new>
-	»ú¹ñ±àºÅ: <input name=cabid>Î¨Ò»±êÊ¶£¬×ÖÄ¸»òÊı×Ö£¬¿ÉÒÔ°üº¬-_ <br> 
-	»ú¹ñÓÃÍ¾: <input name=cabuse size=80> <br>
-	Ö÷ÓÃµçÔ´: <input name=ps1 size=80> <br>
-	±¸ÓÃµçÔ´: <input name=ps2 size=80> <br>
-	Ôğ ÈÎ ÈË: <input name=mgt size=80> <p>
-	<input type="submit" name="Submit" value="ĞÂÔö»ú¹ñ">
+	æœºæŸœç¼–å·: <input name=cabid>å”¯ä¸€æ ‡è¯†ï¼Œå­—æ¯æˆ–æ•°å­—ï¼Œå¯ä»¥åŒ…å«-_ <br> 
+	æœºæŸœç”¨é€”: <input name=cabuse size=80> <br>
+	ä¸»ç”¨ç”µæº: <input name=ps1 size=80> <br>
+	å¤‡ç”¨ç”µæº: <input name=ps2 size=80> <br>
+	è´£ ä»» äºº: <input name=mgt size=80> <p>
+	<input type="submit" name="Submit" value="æ–°å¢æœºæŸœ">
 	</form>
 <?php
 	exit(0);
@@ -830,7 +830,7 @@ if ($cmd=='cab_new') {
 if ($cmd=='cab_list') {
 	checkright("server",1);
 	echo "<p><table border=1 cellspacing=0>";
-	echo "<tr><th>»ú¹ñ±àºÅ</th><th>ÓÃÍ¾</th><th>ÔğÈÎÈË</th><th>PS1</th><th>PS2</th><th>Éè±¸Êı</t><th>ÃüÁî</th></tr>\n";
+	echo "<tr><th>æœºæŸœç¼–å·</th><th>ç”¨é€”</th><th>è´£ä»»äºº</th><th>PS1</th><th>PS2</th><th>è®¾å¤‡æ•°</t><th>å‘½ä»¤</th></tr>\n";
 
 	$q = "select * from JF_CAB order by CABID";
 	$rr = mysql_query($q);
@@ -846,7 +846,7 @@ if ($cmd=='cab_list') {
 		echo $r2[0];
 		echo "</td><td>"; 
 		if (getuserright("server")>=3)
-			echo "<a href=index.php?cmd=cab_modi&cabid=$r[0]>ĞŞ¸Ä</a>";
+			echo "<a href=index.php?cmd=cab_modi&cabid=$r[0]>ä¿®æ”¹</a>";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
@@ -907,7 +907,7 @@ if ($cmd=='server_new') {
 	mysql_query($q);
 	$q = "update JF_Server set ServerID='$serverid',CABID='$cabid',StartU=$startu,EndU=$endu,KVM='$kvm',Type='$type',NAME='$name',USER='$user',MGT='$mgt',IP1='$ip1',IP2='$ip2',MAC1='$mac1',MAC2='$mac2',SN='$sn',Connector='$connector',Comment='$comment' where ServerID='$oldserverid'";
 	mysql_query($q);
-	echo "ĞŞ¸ÄÍê³É<p>";
+	echo "ä¿®æ”¹å®Œæˆ<p>";
 	$cmd = 'cabinfo_list';
 } else if ($cmd=='server_modi') {
 	checkright("server",3);
@@ -920,30 +920,30 @@ if ($cmd=='server_new') {
 	echo "<table>";
         if ($r=mysql_fetch_row($rr)) {
 		echo "<tr>";
-        	echo "<td>·şÎñÆ÷±àºÅ</td><td><input name=serverid value=\"$r[0]\"></td></tr>";
-                echo "<td>»ú¹ñ±àºÅ</td><td><input name=cabid value=\"$r[1]\"> </td></tr>";
-                echo "<td>¿ªÊ¼U</td><td><input name=startu value=\"$r[2]\"></td></tr>";
-                echo "<td>½áÊøU</td><td><input name=endu value=\"$r[3]\"></td></tr>";
+        	echo "<td>æœåŠ¡å™¨ç¼–å·</td><td><input name=serverid value=\"$r[0]\"></td></tr>";
+                echo "<td>æœºæŸœç¼–å·</td><td><input name=cabid value=\"$r[1]\"> </td></tr>";
+                echo "<td>å¼€å§‹U</td><td><input name=startu value=\"$r[2]\"></td></tr>";
+                echo "<td>ç»“æŸU</td><td><input name=endu value=\"$r[3]\"></td></tr>";
                 echo "<td>KVM</td><td><input name=kvm value=\"$r[4]\"></td></tr>";
-                echo "<td>ĞÍºÅ</td><td><input name=type value=\"$r[5]\"></td></tr>";
-                echo "<td>Ãû³Æ</td><td><input name=name value=\"$r[6]\"></td></tr>";
-                echo "<td>ÓÃÍ¾</td><td><input name=user value=\"$r[7]\"></td></tr>";
-                echo "<td>¹ÜÀíÔ±</td><td><input name=mgt value=\"$r[8]\"></td></tr>";
+                echo "<td>å‹å·</td><td><input name=type value=\"$r[5]\"></td></tr>";
+                echo "<td>åç§°</td><td><input name=name value=\"$r[6]\"></td></tr>";
+                echo "<td>ç”¨é€”</td><td><input name=user value=\"$r[7]\"></td></tr>";
+                echo "<td>ç®¡ç†å‘˜</td><td><input name=mgt value=\"$r[8]\"></td></tr>";
                 echo "<td>IP1</td><td><input name=ip1 value=\"$r[9]\"></td></tr>";
                 echo "<td>IP2</td><td><input name=ip2 value=\"$r[10]\"></td></tr>";
                 echo "<td>MAC1</td><td><input name=mac1 value=\"$r[11]\"></td></tr>";
                 echo "<td>MAC2</td><td><input name=mac2 value=\"$r[12]\"></td></tr>";
                 echo "<td>SN</td><td><input name=sn value=\"$r[13]\"></td></tr>";
-                echo "<td>Á¬½ÓÉè±¸</td><td><input name=connector value=\"$r[14]\"></td></tr>";
-                echo "<td>±¸×¢</td><td><input name=comment value=\"$r[15]\"></td></tr>";
+                echo "<td>è¿æ¥è®¾å¤‡</td><td><input name=connector value=\"$r[14]\"></td></tr>";
+                echo "<td>å¤‡æ³¨</td><td><input name=comment value=\"$r[15]\"></td></tr>";
 		echo "</table>";
-                echo "<input type=submit name=Submit value=ĞŞ¸Ä>";
+                echo "<input type=submit name=Submit value=ä¿®æ”¹>";
                 echo "</form>";
         }
 	changehist("select * from hist where oid like 'SERVER$serverid%' order by tm desc");
 	echo "<p><hr width=250 align=left>";
 	if (getuserright("server")>=3) 
-		echo "<a href=index.php?cmd=server_del&cabid=$r[1]&serverid=$r[0] onclick=\"return confirm('É¾³ı·şÎñÆ÷ $r[0]/$r[5]/$r[6] ?');\">É¾³ı·şÎñÆ÷: $r[0]/$r[5]/$r[6]</a></td>";
+		echo "<a href=index.php?cmd=server_del&cabid=$r[1]&serverid=$r[0] onclick=\"return confirm('åˆ é™¤æœåŠ¡å™¨ $r[0]/$r[5]/$r[6] ?');\">åˆ é™¤æœåŠ¡å™¨: $r[0]/$r[5]/$r[6]</a></td>";
 	exit(0);
 } else if ($cmd=='server_add') {
 	$cabid = safe_get("cabid");
@@ -951,24 +951,24 @@ if ($cmd=='server_new') {
        	echo "<form action=index.php method=post>";
        	echo "<input type=hidden name=cmd value=server_new>";
 	echo "<table>";
-       	echo "<tr><td>·şÎñÆ÷±àºÅ</td><td><input name=serverid>±ØĞëÎ¨Ò»£¬²»ÄÜÎª¿Õ</td></tr>";
-       	echo "<tr><td>»ú¹ñ±àºÅ</td><td><input name=cabid value=\"$cabid\"></td></tr>";
-       	echo "<tr><td>¿ªÊ¼U</td><td><input name=startu value=1>Êı×Ö</td></tr>";
-       	echo "<tr><td>½áÊøU</td><td><input name=endu value=1>Êı×Ö</td></tr>";
+       	echo "<tr><td>æœåŠ¡å™¨ç¼–å·</td><td><input name=serverid>å¿…é¡»å”¯ä¸€ï¼Œä¸èƒ½ä¸ºç©º</td></tr>";
+       	echo "<tr><td>æœºæŸœç¼–å·</td><td><input name=cabid value=\"$cabid\"></td></tr>";
+       	echo "<tr><td>å¼€å§‹U</td><td><input name=startu value=1>æ•°å­—</td></tr>";
+       	echo "<tr><td>ç»“æŸU</td><td><input name=endu value=1>æ•°å­—</td></tr>";
        	echo "<tr><td>KVM</td><td><input name=kvm></td></tr>";
-       	echo "<tr><td>ĞÍºÅ</td><td><input name=type></td></tr>";
-       	echo "<tr><td>Ãû³Æ</td><td><input name=name></td></tr>";
-       	echo "<tr><td>ÓÃÍ¾</td><td><input name=user></td></tr>";
-       	echo "<tr><td>¹ÜÀíÔ±</td><td><input name=mgt></td></tr>";
+       	echo "<tr><td>å‹å·</td><td><input name=type></td></tr>";
+       	echo "<tr><td>åç§°</td><td><input name=name></td></tr>";
+       	echo "<tr><td>ç”¨é€”</td><td><input name=user></td></tr>";
+       	echo "<tr><td>ç®¡ç†å‘˜</td><td><input name=mgt></td></tr>";
        	echo "<tr><td>IP1</td><td><input name=ip1></td></tr>";
        	echo "<tr><td>IP2</td><td><input name=ip2></td></tr>";
        	echo "<tr><td>MAC1</td><td><input name=mac1></td></tr>";
        	echo "<tr><td>MAC2</td><td><input name=mac2></td></tr>";
        	echo "<tr><td>SN</td><td><input name=sn></td></tr>";
-       	echo "<tr><td>Á¬½ÓÉè±¸</td><td><input name=connector></td></tr>";
-       	echo "<tr><td>±¸×¢</td><td><input name=comment></td></tr>";
+       	echo "<tr><td>è¿æ¥è®¾å¤‡</td><td><input name=connector></td></tr>";
+       	echo "<tr><td>å¤‡æ³¨</td><td><input name=comment></td></tr>";
 	echo "</table>";
-       	echo "<input type=submit name=Submit value=ĞÂÔö·şÎñÆ÷>";
+       	echo "<input type=submit name=Submit value=æ–°å¢æœåŠ¡å™¨>";
        	echo "</form>";
 	exit(0);
 } else if ($cmd=="server_filter_set") {
@@ -978,32 +978,32 @@ if ($cmd=='server_new') {
 	$cmd = "cab_server_list";
 } else if ($cmd=="server_filter") {
 	checkright("server",1);
-	echo "<p>·şÎñÆ÷ÏÔÊ¾É¸Ñ¡";
+	echo "<p>æœåŠ¡å™¨æ˜¾ç¤ºç­›é€‰";
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd value=server_filter_set type=hidden>";
-   	echo "·şÎñÆ÷É¸Ñ¡×Ö·û´®: <input name=serverfilter value=\"";
+   	echo "æœåŠ¡å™¨ç­›é€‰å­—ç¬¦ä¸²: <input name=serverfilter value=\"";
 	echo $_SESSION["serverfilter"];
 	echo "\"><p>";
-	echo "<input type=submit value=ÉèÖÃ·şÎñÆ÷ÏÔÊ¾É¸Ñ¡>";
+	echo "<input type=submit value=è®¾ç½®æœåŠ¡å™¨æ˜¾ç¤ºç­›é€‰>";
 	echo "</form>";
-	echo "×¢£ºÉèÖÃºó£¬½ö½öÏÔÊ¾°üº¬ÒÔÉÏ×Ö·û´®µÄ·şÎñÆ÷£¬Îª¿ÕÔòÈ«²¿ÏÔÊ¾";
+	echo "æ³¨ï¼šè®¾ç½®åï¼Œä»…ä»…æ˜¾ç¤ºåŒ…å«ä»¥ä¸Šå­—ç¬¦ä¸²çš„æœåŠ¡å™¨ï¼Œä¸ºç©ºåˆ™å…¨éƒ¨æ˜¾ç¤º";
 	exit(0);
 } 
 if ($cmd=='cab_server_list') {
 	checkright("server",1);
 	if ($_SESSION["serverfilter"]!="") {
 		$str = $_SESSION["serverfilter"];
-		echo "½öÏÔÊ¾ ";
+		echo "ä»…æ˜¾ç¤º ";
 		echo $str;
-		echo " Ïà¹Ø·şÎñÆ÷, <a href=index.php?cmd=server_filter>ÖØÉèÉ¸Ñ¡</a><p>";
+		echo " ç›¸å…³æœåŠ¡å™¨, <a href=index.php?cmd=server_filter>é‡è®¾ç­›é€‰</a><p>";
 		$q = "select CABID,ServerID,StartU,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment from JF_Server where CABID like '%$str%' or Type like '%$str%' or ServerID like '%$str%' or `NAME` like '%$str%' or `USER` like '%$str%' or MGT like '%$str%' or IP1 like '%$str%' or IP2 like '%$str%' or SN like '%$str%' or Comment like '%$str%' order by CABID,StartU";
 	} else 
 		$q = "select CABID,ServerID,StartU,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment from JF_Server order by CABID,StartU";
 ?>		
 <p><font size=1>
 	<table border=1 cellspacing=0>
-	<tr><th>»ú¹ñ</th><th>U</th><th>KVM</th><th>·şÎñÆ÷ĞÍºÅ</th><th>·şÎñÆ÷ÃèÊö</th><th>·şÎñÆ÷ÓÃÍ¾</th>
-	<th>ÔğÈÎÈË</th><th>IPµØÖ·</th><th>MACµØÖ·</th><th>SN</th><th>ÍøÂçÁ¬½Ó</th><th>±¸×¢</th></tr>
+	<tr><th>æœºæŸœ</th><th>U</th><th>KVM</th><th>æœåŠ¡å™¨å‹å·</th><th>æœåŠ¡å™¨æè¿°</th><th>æœåŠ¡å™¨ç”¨é€”</th>
+	<th>è´£ä»»äºº</th><th>IPåœ°å€</th><th>MACåœ°å€</th><th>SN</th><th>ç½‘ç»œè¿æ¥</th><th>å¤‡æ³¨</th></tr>
 <?php
 	$rr = mysql_query($q);
 	while ($r=mysql_fetch_row($rr)) {
@@ -1041,30 +1041,30 @@ if ($cmd=='cabinfo_list') {
 	$r=mysql_fetch_row(mysql_query($q));
 	echo "<table border=1 cellspacing=0 width=800>";
 	echo "<tr><td width=20%>";
-	echo "»ú¹ñ±àºÅ:";
+	echo "æœºæŸœç¼–å·:";
 	echo "</td><td>";
 	echo $r[0];
 	echo "</td><td width=20%>";
-	echo "»ú¹ñÔğÈÎÈË:";
+	echo "æœºæŸœè´£ä»»äºº:";
 	echo "</td><td>";
 	echo $r[3];
 	echo "</td></tr>";
 	echo "<tr><td>";
-	echo "µçÔ´1:";
+	echo "ç”µæº1:";
 	echo "</td><td>";
 	echo $r[1];
 	echo "</td><td>";
-	echo "µçÔ´2:";
+	echo "ç”µæº2:";
 	echo "</td><td>";
 	echo $r[2];
 	echo "</td></tr>";
 	echo "<tr><td>";
-	echo "ÓÃÍ¾:";
+	echo "ç”¨é€”:";
 	echo "</td><td colspan=3>";
 	echo $r[4];
 	echo "</td>";
 	echo "<tr><td>";
-	echo "´òÓ¡Ê±¼ä:";
+	echo "æ‰“å°æ—¶é—´:";
 	echo "</td><td colspan=3>";
 	echo $r[5];
 	echo "</td></tr>";
@@ -1073,8 +1073,8 @@ if ($cmd=='cabinfo_list') {
 ?>		
 <p><font size=1>
 	<table border=1 cellspacing=0>
-	<tr><th>U</th><th>KVM</th><th>·şÎñÆ÷ĞÍºÅ</th><th>·şÎñÆ÷ÃèÊö</th><th>·şÎñÆ÷ÓÃÍ¾</th>
-	<th>ÔğÈÎÈË</th><th>IPµØÖ·</th><th>MACµØÖ·</th><th>SN</th><th>ÍøÂçÁ¬½Ó</th><th>±¸×¢</th></tr>
+	<tr><th>U</th><th>KVM</th><th>æœåŠ¡å™¨å‹å·</th><th>æœåŠ¡å™¨æè¿°</th><th>æœåŠ¡å™¨ç”¨é€”</th>
+	<th>è´£ä»»äºº</th><th>IPåœ°å€</th><th>MACåœ°å€</th><th>SN</th><th>ç½‘ç»œè¿æ¥</th><th>å¤‡æ³¨</th></tr>
 <?php
 	$q = "select EndU-StartU+1,EndU,KVM,Type,JF_Server.NAME,JF_Server.USER,MGT,IP1,IP2,MAC1,MAC2,SN,Connector,Comment,ServerID from JF_Server where CABID= '$cabid' order by EndU desc";
 	$rr = mysql_query($q);
@@ -1154,25 +1154,25 @@ if ($cmd=='odf_new') {
 	$q = "select * from ODF where id ='$odfid'";
 	$rr = mysql_query($q);
 	if ($r=mysql_fetch_row($rr)) {
-		echo "»ú·¿: <input name=jf value=$r[1]> <br>";
-		echo "ODF±àºÅ: <input name=bh value=$r[2]><br>";
-		echo "ÓÃÍ¾: <input name=use value='$r[3]' size=80> <br>";
-		echo "±¸×¢: <input name=memo value='$r[4]' size=80> <br>";
-		echo "<input type=submit name=Submit value=ĞŞ¸Ä>";
+		echo "æœºæˆ¿: <input name=jf value=$r[1]> <br>";
+		echo "ODFç¼–å·: <input name=bh value=$r[2]><br>";
+		echo "ç”¨é€”: <input name=use value='$r[3]' size=80> <br>";
+		echo "å¤‡æ³¨: <input name=memo value='$r[4]' size=80> <br>";
+		echo "<input type=submit name=Submit value=ä¿®æ”¹>";
 		echo "</form>";
 	}
 	exit(0);
 } else if ($cmd=='odf_add') {
 	checkright("odf",2);
 ?>
-	<p>ĞÂÔöODF:<p><form action=index.php method=post>
+	<p>æ–°å¢ODF:<p><form action=index.php method=post>
 	<input type=hidden name=cmd value=odf_new>
-	»ú·¿: <input name=jf> <br> 
-	ODF±àºÅ: <input name=bh size=20><br>
-	Ğ¾Êı: <input name=xin size=8 value=12><br>
-	ÓÃÍ¾: <input name=use size=40><br>
-	±¸×¢: <input name=memo size=40><p>
-	<input type="submit" name="Submit" value="ĞÂÔöODF">
+	æœºæˆ¿: <input name=jf> <br> 
+	ODFç¼–å·: <input name=bh size=20><br>
+	èŠ¯æ•°: <input name=xin size=8 value=12><br>
+	ç”¨é€”: <input name=use size=40><br>
+	å¤‡æ³¨: <input name=memo size=40><p>
+	<input type="submit" name="Submit" value="æ–°å¢ODF">
 	</form>
 <?php
 	changehist("select * from hist where oid like 'ODF%' order by tm desc");
@@ -1181,7 +1181,7 @@ if ($cmd=='odf_new') {
 if ($cmd=='odf_list') {
 	checkright("odf",1);
 	echo "<p><table border=1 cellspacing=0>";
-	echo "<tr><th>»ú·¿</th><th>ODF±àºÅ</th><th>ÓÃÍ¾</th><th>±¸×¢</th><th>ÃüÁî</th></tr>\n";
+	echo "<tr><th>æœºæˆ¿</th><th>ODFç¼–å·</th><th>ç”¨é€”</th><th>å¤‡æ³¨</th><th>å‘½ä»¤</th></tr>\n";
 
 	$q = "select * from ODF order by JF,BH";
 	$count = 0;
@@ -1196,7 +1196,7 @@ if ($cmd=='odf_list') {
 		echo "</td><td>"; echo $r[4];
 		echo "</td><td>"; 
 		if (getuserright("odf")>=3)
-			echo "<a href=index.php?cmd=odf_modi&odfid=$r[0]>ĞŞ¸Ä</a>";
+			echo "<a href=index.php?cmd=odf_modi&odfid=$r[0]>ä¿®æ”¹</a>";
 		echo "</td></tr>\n";
 	}
 	echo "</table>";
@@ -1230,15 +1230,15 @@ if ($cmd=='odfpan_modi_do') {
 	$q = "select * from ODFPAN where id ='$id'";
 	$rr = mysql_query($q);
 	if ($r=mysql_fetch_row($rr)) {
-		echo "ODF±àºÅ: <input name=bh value=$r[1]><br>";
-		echo "Ğ¾ºÅ: <input name=x value=$r[2]><br>";
-		echo "ÑÕÉ«: <input name=s value=$r[3]><br>";
-		echo "¶Ô·½Ğ¾ºÅ: <input name=dx value=$r[4]><br>";
-		echo "ÓÃÍ¾: <input name=use value='$r[5]' size=80> <br>";
-		echo "ÌøÏß: <input name=tx value=$r[6]><br>";
-		echo "Éè±¸: <input name=sb value=$r[7]><br>";
-		echo "±¸×¢: <input name=memo value='$r[8]' size=80> <br>";
-		echo "<input type=submit name=Submit value=ĞŞ¸Ä>";
+		echo "ODFç¼–å·: <input name=bh value=$r[1]><br>";
+		echo "èŠ¯å·: <input name=x value=$r[2]><br>";
+		echo "é¢œè‰²: <input name=s value=$r[3]><br>";
+		echo "å¯¹æ–¹èŠ¯å·: <input name=dx value=$r[4]><br>";
+		echo "ç”¨é€”: <input name=use value='$r[5]' size=80> <br>";
+		echo "è·³çº¿: <input name=tx value=$r[6]><br>";
+		echo "è®¾å¤‡: <input name=sb value=$r[7]><br>";
+		echo "å¤‡æ³¨: <input name=memo value='$r[8]' size=80> <br>";
+		echo "<input type=submit name=Submit value=ä¿®æ”¹>";
 		echo "</form>";
 	}
 	echo "<p>";
@@ -1247,17 +1247,17 @@ if ($cmd=='odfpan_modi_do') {
 }
 if ($cmd=='odfpan_list') {
 	checkright("odf",1);
-	echo "ODFÅÌĞÅÏ¢<p>";
+	echo "ODFç›˜ä¿¡æ¯<p>";
 	$bh = safe_get2("bh");
 	$q = "select * from ODF where BH='$bh'";
 	$r = mysql_fetch_row(mysql_query($q));
-	echo "»ú·¿: ".$r[1]."<br>";
-	echo "ODF±àºÅ: ".$r[2]."<br>";
-	echo "ÓÃÍ¾: ".$r[3]."<br>";
-	echo "±¸×¢: ".$r[4]."<p>";
+	echo "æœºæˆ¿: ".$r[1]."<br>";
+	echo "ODFç¼–å·: ".$r[2]."<br>";
+	echo "ç”¨é€”: ".$r[3]."<br>";
+	echo "å¤‡æ³¨: ".$r[4]."<p>";
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><th>ODF±àºÅ</th><th>Ğ¾ºÅ</th><th>ÑÕÉ«</ht><th>¶Ô·½Ğ¾ºÅ</th><th>ÓÃÍ¾</th><th>ÌøÏß</th>";
-	echo "<th>Éè±¸</th><th>±¸×¢</th></tr>\n";
+	echo "<tr><th>ODFç¼–å·</th><th>èŠ¯å·</th><th>é¢œè‰²</ht><th>å¯¹æ–¹èŠ¯å·</th><th>ç”¨é€”</th><th>è·³çº¿</th>";
+	echo "<th>è®¾å¤‡</th><th>å¤‡æ³¨</th></tr>\n";
 	$q = "select * from ODFPAN where BH='$bh' order by X";
 	$count = 0;
 	$rr = mysql_query($q);
@@ -1339,19 +1339,19 @@ if ($cmd=="ip_new") {
 	$cmd = "ip";
 } else if ($cmd=="ip_filter") {
 	checkright("ip",1);
-	echo "<p>IPµØÖ·ÏÔÊ¾É¸Ñ¡";
+	echo "<p>IPåœ°å€æ˜¾ç¤ºç­›é€‰";
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd value=ip_filter_set type=hidden>";
-   	echo "IPµØÖ·É¸Ñ¡×Ö·û´®: <input name=ipfilter value=\"";
+   	echo "IPåœ°å€ç­›é€‰å­—ç¬¦ä¸²: <input name=ipfilter value=\"";
 	echo $_SESSION["ipfilter"];
 	echo "\"><p>";
-	echo "<input type=submit value=ÉèÖÃIPµØÖ·ÏÔÊ¾É¸Ñ¡>";
+	echo "<input type=submit value=è®¾ç½®IPåœ°å€æ˜¾ç¤ºç­›é€‰>";
 	echo "</form>";
-	echo "×¢£ºÉèÖÃºó£¬½ö½öÏÔÊ¾°üº¬ÒÔÉÏ×Ö·û´®µÄIPµØÖ·£¬Îª¿ÕÔòÈ«²¿ÏÔÊ¾";
+	echo "æ³¨ï¼šè®¾ç½®åï¼Œä»…ä»…æ˜¾ç¤ºåŒ…å«ä»¥ä¸Šå­—ç¬¦ä¸²çš„IPåœ°å€ï¼Œä¸ºç©ºåˆ™å…¨éƒ¨æ˜¾ç¤º";
 	exit(0);
 } else if ($cmd=="ip_add") {
 	if (getuserright("ip")>=2) {
-		echo "<p>ĞÂÔöIPµØÖ·¼ÇÂ¼";
+		echo "<p>æ–°å¢IPåœ°å€è®°å½•";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ip_new type=hidden>";
 		echo "<table>";
@@ -1359,14 +1359,14 @@ if ($cmd=="ip_new") {
     		echo "<tr><td>MASK</td><td>";
 		mask_select("");
 		echo "</td></tr>";
-    		echo "<tr><td>×ÓÍø?</td><td>·ñ<input type=radio name=net value=0 checked>  ÊÇ<input type=radio name=net value=1></td></tr>";
-    		echo "<tr><td>ÓÃÍ¾</td><td><input name=use size=50></td></tr>";
-		echo "<tr><td>ÁªÏµÈË</td><td>";
+    		echo "<tr><td>å­ç½‘?</td><td>å¦<input type=radio name=net value=0 checked>  æ˜¯<input type=radio name=net value=1></td></tr>";
+    		echo "<tr><td>ç”¨é€”</td><td><input name=use size=50></td></tr>";
+		echo "<tr><td>è”ç³»äºº</td><td>";
 		lxr_select("");
 		echo "</td></tr>";
-    		echo "<tr><td>±¸×¢</td><td><input name=memo size=100></td></tr>";
+    		echo "<tr><td>å¤‡æ³¨</td><td><input name=memo size=100></td></tr>";
 		echo "</table>";
-		echo "<input type=submit value=ĞÂÔöIP¼ÇÂ¼>";
+		echo "<input type=submit value=æ–°å¢IPè®°å½•>";
 		echo "</form>";
 	}
 	exit(0);
@@ -1377,7 +1377,7 @@ if ($cmd=="ip_new") {
 		$q = "select id,IP,MASK,net,`use`,lxr,memo from IP where id=".$id;
 		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
-		echo "ĞŞ¸Ä¼ÇÂ¼<br>";
+		echo "ä¿®æ”¹è®°å½•<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=ip_modi_do type=hidden>";
 		echo "<input name=id value=$r[0] type=hidden>";
@@ -1387,36 +1387,36 @@ if ($cmd=="ip_new") {
 		mask_select($r[2]);
 		echo "</td></tr>";
 		if ($r[3]=='0')
-    			echo "<tr><td>×ÓÍø? </td><td>no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
+    			echo "<tr><td>å­ç½‘? </td><td>no<input type=radio name=net value=0 checked>  yes<input type=radio name=net value=1>";
 		else
-    			echo "<tr><td>×ÓÍø? </td><td>no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
+    			echo "<tr><td>å­ç½‘? </td><td>no<input type=radio name=net value=0>  yes<input type=radio name=net value=1 checked>";
 		echo "</td></tr>";
-    		echo "<tr><td>ÓÃÍ¾</td><td><input name=use size=50 value=\"$r[4]\"></td></tr>";
-		echo "<tr><td>ÁªÏµÈË</td><td>";
+    		echo "<tr><td>ç”¨é€”</td><td><input name=use size=50 value=\"$r[4]\"></td></tr>";
+		echo "<tr><td>è”ç³»äºº</td><td>";
 		lxr_select($r[5]);
 		echo "</td></tr>";
-    		echo "<tr><td>±¸×¢</td><td><input size=100 name=memo value=\"$r[6]\"></td></tr>";
+    		echo "<tr><td>å¤‡æ³¨</td><td><input size=100 name=memo value=\"$r[6]\"></td></tr>";
 		echo "</table>";
-    		echo "<input type=submit name=ĞŞ¸Ä¼ÇÂ¼></form>";
+    		echo "<input type=submit name=ä¿®æ”¹è®°å½•></form>";
 		changehist("select * from hist where oid = 'IP$id' order by tm desc");
 		echo "<p>";
 		if (getuserright("vm")>=3) 
-			echo "<a href=index.php?cmd=ip_del&ipid=$r[0] onclick=\"return confirm('É¾³ıIP $r[1]/$r[2] ?');\">É¾³ıIP: $r[1]/$r[2]</a></td>";
+			echo "<a href=index.php?cmd=ip_del&ipid=$r[0] onclick=\"return confirm('åˆ é™¤IP $r[1]/$r[2] ?');\">åˆ é™¤IP: $r[1]/$r[2]</a></td>";
 	}
 	exit(0);
 }
 if ($cmd=="ip") {
 	checkright("ip",1);
 	if ($_SESSION["ipfilter"]!="") {
-		echo "½öÏÔÊ¾ ";
+		echo "ä»…æ˜¾ç¤º ";
 		echo $_SESSION["ipfilter"];
-		echo " Ïà¹ØIP, <a href=index.php?cmd=ip_filter>ÖØÉèÉ¸Ñ¡</a><p>";
+		echo " ç›¸å…³IP, <a href=index.php?cmd=ip_filter>é‡è®¾ç­›é€‰</a><p>";
 		$q = "select id,IP,MASK,net,`use`,lxr,memo from IP where IP like '%".$_SESSION["ipfilter"]."%'order by inet_aton(IP), inet_aton(MASK)";
 	} else
 		$q = "select id,IP,MASK,net,`use`,lxr,memo from IP order by inet_aton(IP), inet_aton(MASK)";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr><th>ĞòºÅ</th><th>IP</th><th>ÓÃÍ¾</th><th>ÁªÏµÈË</th><th>±¸×¢</th>";
+	echo " <tr><th>åºå·</th><th>IP</th><th>ç”¨é€”</th><th>è”ç³»äºº</th><th>å¤‡æ³¨</th>";
 	echo "</tr>";
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)){
@@ -1514,13 +1514,13 @@ if ($cmd=="vm_s_new") {
 	$cmd = "vm_c";
 } else if ($cmd=="vm_c_add") {
 	if (getuserright("vm")>=2) {
-		echo "<p>ĞÂÔöVM¼¯Èº";
+		echo "<p>æ–°å¢VMé›†ç¾¤";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=vm_c_new type=hidden>";
-    		echo "Ãû³Æ: <input name=name><br>";
+    		echo "åç§°: <input name=name><br>";
     		echo "IP: <input name=ip value=><br>";
-    		echo "±¸×¢: <input name=memo><br>";
-		echo "<input type=submit value=ĞÂÔöVM¼¯Èº¼ÇÂ¼>";
+    		echo "å¤‡æ³¨: <input name=memo><br>";
+		echo "<input type=submit value=æ–°å¢VMé›†ç¾¤è®°å½•>";
 		echo "</form>";
 	}
 	exit(0);
@@ -1531,7 +1531,7 @@ if ($cmd=="vm_c") {
 	$q = "select * from vm_cluster order by name";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr><th>ĞòºÅ</th><th>Ãû³Æ</th><th>¹ÜÀíIP</th><th>³ÉÔ±</th><th>±¸×¢</th>";
+	echo " <tr><th>åºå·</th><th>åç§°</th><th>ç®¡ç†IP</th><th>æˆå‘˜</th><th>è™šæ‹Ÿæœº</th><th>å¤‡æ³¨</th>";
 	echo "</tr>";
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)){
@@ -1555,6 +1555,18 @@ if ($cmd=="vm_c") {
 			echo "<br>";
 		}
 		echo "</td>";
+		echo "<td>";
+		$q = "select * from vm_host where cid='$r[0]'";
+		$rr2 = mysql_query($q);
+		while ($r2=mysql_fetch_row($rr2)){
+			if (getuserright("vm")>=3) 
+				echo "<a href=index.php?cmd=vm_host_modi&id=$r[0]&id=$r2[0]>";
+			echo "$r2[1]/$r2[4]/$r2[13]"; 
+			if (getuserright("vm")>=3) 
+				echo "</a>";
+			echo "<br>";
+		}
+		echo "</td>";
 		echo "<td>$r[3]</td>";
 		echo "</tr>";
 		echo "\n";
@@ -1563,46 +1575,46 @@ if ($cmd=="vm_c") {
 	$id = safe_get("id");
 	if( $id <>"" ) {
 		$vmsid = safe_get("vmsid");
-		if( $vmsid <> "") { // Ñ¡ÔñÁËÄ³¸ö¼¯Èº³ÉÔ±
+		if( $vmsid <> "") { // é€‰æ‹©äº†æŸä¸ªé›†ç¾¤æˆå‘˜
 			$q = "select * from vm_server where id=".$vmsid;
 			$r = mysql_fetch_row(mysql_query($q));
 			echo "<p>";
-			echo "ĞŞ¸Ä/ĞÂÔöVM³ÉÔ±¼ÇÂ¼<br>";
+			echo "ä¿®æ”¹/æ–°å¢VMæˆå‘˜è®°å½•<br>";
 			echo "<form action=index.php method=post>";
-			echo "²Ù×÷: ĞŞ¸Ä±¾Ìõ¼ÇÂ¼<input name=cmd value=vm_s_modi_do type=radio checked>";
-			echo "&nbsp;&nbsp;&nbsp;ĞÂÔöÒ»Ìõ¼ÇÂ¼<input name=cmd value=vm_s_new type=radio><br>";
+			echo "æ“ä½œ: ä¿®æ”¹æœ¬æ¡è®°å½•<input name=cmd value=vm_s_modi_do type=radio checked>";
+			echo "&nbsp;&nbsp;&nbsp;æ–°å¢ä¸€æ¡è®°å½•<input name=cmd value=vm_s_new type=radio><br>";
 			echo "<input name=sid value=\"$r[0]\" type=hidden>";
 			echo "<input name=cid value=\"$r[2]\" type=hidden>";
-    			echo "Ãû³Æ: <input name=name value=\"$r[1]\"><br>";
+    			echo "åç§°: <input name=name value=\"$r[1]\"><br>";
     			echo "IP: <input name=ip value=\"$r[3]\"><br>";
-    			echo "±¸×¢: <input name=memo value=\"$r[4]\"><br>";
-    			echo "<input type=submit name=ĞŞ¸Ä/ĞÂÔö¼ÇÂ¼></form>";
+    			echo "å¤‡æ³¨: <input name=memo value=\"$r[4]\"><br>";
+    			echo "<input type=submit name=ä¿®æ”¹/æ–°å¢è®°å½•></form>";
 			changehist("select * from hist where oid = 'VMSERVER$vmsid' order by tm desc");
 			echo "<p><form action=index.php method=post>";
 			echo "<input name=cmd value=vm_s_del type=hidden>";
 			echo "<input name=vmsid value=$r[0] type=hidden>";
-			echo "<input type=submit value=É¾³ıÕâÌõ¼ÇÂ¼ onclick=\"return confirm('È·ĞÅÉ¾³ıVM³ÉÔ± $r[1] ?');\">";
+			echo "<input type=submit value=åˆ é™¤è¿™æ¡è®°å½• onclick=\"return confirm('ç¡®ä¿¡åˆ é™¤VMæˆå‘˜ $r[1] ?');\">";
 			echo "</form>";
-		} else {  // Î´Ñ¡Ôñ³ÉÔ±
+		} else {  // æœªé€‰æ‹©æˆå‘˜
 			$q = "select * from vm_cluster where id=".$id;
 			$r = mysql_fetch_row(mysql_query($q));
 			echo "<p>";
-			echo "ĞŞ¸Ä¼ÇÂ¼<br>";
+			echo "ä¿®æ”¹è®°å½•<br>";
 			echo "<form action=index.php method=post>";
 			echo "<input name=cmd value=vm_c_modi type=hidden>";
 			echo "<input name=id value=\"$r[0]\" type=hidden>";
-    			echo "Ãû³Æ: <input name=name value=\"$r[1]\"><br>";
+    			echo "åç§°: <input name=name value=\"$r[1]\"><br>";
     			echo "IP: <input name=ip value=\"$r[2]\"><br>";
-    			echo "±¸×¢: <input name=memo value=\"$r[3]\"><br>";
-    			echo "<input type=submit name=ĞŞ¸Ä¼ÇÂ¼></form>";
+    			echo "å¤‡æ³¨: <input name=memo value=\"$r[3]\"><br>";
+    			echo "<input type=submit name=ä¿®æ”¹è®°å½•></form>";
 			changehist("select * from hist where oid = 'VMCLUSTER$id' order by tm desc");
 			echo "<p><form action=index.php method=post>";
 			echo "<input name=cmd value=vm_s_new type=hidden>";
 			echo "<input name=cid value=\"$r[0]\" type=hidden>";
-    			echo "Ãû³Æ: <input name=name><br>";
+    			echo "åç§°: <input name=name><br>";
     			echo "IP: <input name=ip value=><br>";
-    			echo "±¸×¢: <input name=memo><br>";
-			echo "<input type=submit value=ĞÂÔöVM¼¯Èº³ÉÔ±·şÎñÆ÷>";
+    			echo "å¤‡æ³¨: <input name=memo><br>";
+			echo "<input type=submit value=æ–°å¢VMé›†ç¾¤æˆå‘˜æœåŠ¡å™¨>";
 			echo "</form>";
 		}
 	}
@@ -1668,19 +1680,19 @@ if ($cmd=="vm_host_new") {
 		$q = "select * from vm_host where id=".$id;
 		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
-		echo "ĞŞ¸Ä/ĞÂÔöVM¼ÇÂ¼";
+		echo "ä¿®æ”¹/æ–°å¢VMè®°å½•";
 		echo "<table>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=id value=".$r[0]." type=hidden>";
-		echo "<tr><td>²Ù×÷</td><td>ĞŞ¸Ä±¾Ìõ¼ÇÂ¼<input name=cmd value=vm_host_modi_do type=radio checked>";
-		echo "&nbsp;&nbsp;&nbsp;ĞÂÔöÒ»Ìõ¼ÇÂ¼<input name=cmd value=vm_host_new type=radio></td></tr>";
-    		echo "<tr><td>Ãû³Æ</td><td><input name=name value=\"$r[1]\"></td></tr>";
-    		echo "<tr><td>ÔÚÓÃ</td><td>ÔÚÓÃ<input type=radio name=inuse value=1";
+		echo "<tr><td>æ“ä½œ</td><td>ä¿®æ”¹æœ¬æ¡è®°å½•<input name=cmd value=vm_host_modi_do type=radio checked>";
+		echo "&nbsp;&nbsp;&nbsp;æ–°å¢ä¸€æ¡è®°å½•<input name=cmd value=vm_host_new type=radio></td></tr>";
+    		echo "<tr><td>åç§°</td><td><input name=name value=\"$r[1]\"></td></tr>";
+    		echo "<tr><td>åœ¨ç”¨</td><td>åœ¨ç”¨<input type=radio name=inuse value=1";
 		if ($r[2]=="1") echo " checked";
-		echo ">  ²»ÔÚÓÃ<input type=radio name=inuse value=0";
+		echo ">  ä¸åœ¨ç”¨<input type=radio name=inuse value=0";
 		if ($r[2]=="0") echo " checked";
 		echo "></td></tr>";
-    		echo "<tr><td>¼¯Èº</td><td><select name=cid>";
+    		echo "<tr><td>é›†ç¾¤</td><td><select name=cid>";
 		$q = "select * from vm_cluster";
 		$rr2 = mysql_query($q);
 		while ($r2=mysql_fetch_row($rr2)) {
@@ -1690,35 +1702,35 @@ if ($cmd=="vm_host_new") {
 		}
 		echo "</select></td></tr>";
     		echo "<tr><td>IP</td><td><input name=ip value=\"$r[4]\"></td></tr>";
-    		echo "<tr><td>ÓÃÍ¾</td><td><input name=use value=\"$r[5]\"></td></tr>";
-		echo "<tr><td>¿ªÊ¼Ê±¼ä</td><td><input name=st value=\"$r[6]\"></td></tr>";
-		echo "<tr><td>½áÊøÊ±¼ä</td><td><input name=et value=\"$r[7]\"></td></tr>";
-		echo "<tr><td>ÁªÏµÈË</td><td>";
+    		echo "<tr><td>ç”¨é€”</td><td><input name=use value=\"$r[5]\"></td></tr>";
+		echo "<tr><td>å¼€å§‹æ—¶é—´</td><td><input name=st value=\"$r[6]\"></td></tr>";
+		echo "<tr><td>ç»“æŸæ—¶é—´</td><td><input name=et value=\"$r[7]\"></td></tr>";
+		echo "<tr><td>è”ç³»äºº</td><td>";
 		lxr_select($r[8]);
 		echo "</td></tr>";
 		echo "<tr><td>CPU</td><td><input name=cpu value=\"$r[9]\"></td></tr>";	
 		echo "<tr><td>MEM</td><td><input name=mem value=\"$r[10]\"></td></tr>";	
 		echo "<tr><td>DISK</td><td><input name=disk value=\"$r[11]\"></td></tr>";	
 		echo "<tr><td>DISK2</td><td><input name=disk2 value=\"$r[12]\"></td></tr>";	
-    		echo "<tr><td>±¸×¢</td><td><input name=memo value=\"$r[13]\"></td></tr>";
+    		echo "<tr><td>å¤‡æ³¨</td><td><input name=memo value=\"$r[13]\"></td></tr>";
 		echo "</table>";
-		echo "<input type=submit value=ĞŞ¸Ä/ĞÂÔöVM¼ÇÂ¼>";
+		echo "<input type=submit value=ä¿®æ”¹/æ–°å¢VMè®°å½•>";
 		echo "</form>";
 		changehist("select * from hist where oid = 'VMHOST$id' order by tm desc");
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=vm_host_del type=hidden>";
 		echo "<input name=hostid value=$r[0] type=hidden>";
-		echo "<input type=submit value=É¾³ıVM¼ÇÂ¼ onclick=\"return confirm('È·ĞÅÉ¾³ıVM $r[1] ?');\">";
+		echo "<input type=submit value=åˆ é™¤VMè®°å½• onclick=\"return confirm('ç¡®ä¿¡åˆ é™¤VM $r[1] ?');\">";
 		echo "</form>";
 	
 	}  else if (getuserright("vm")>=2) {
 		echo "<p>";
-		echo "ĞÂÔöVM¼ÇÂ¼<br>";
+		echo "æ–°å¢VMè®°å½•<br>";
 		echo "<table>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=cmd value=vm_host_new type=hidden>";
-    		echo "<tr><td>Ãû³Æ</td><td><input name=name></td></tr>";
-    		echo "<tr><td>¼¯Èº</td><td><select name=cid>";
+    		echo "<tr><td>åç§°</td><td><input name=name></td></tr>";
+    		echo "<tr><td>é›†ç¾¤</td><td><select name=cid>";
 		$q = "select * from vm_cluster";
 		$rr = mysql_query($q);
 		while ($r=mysql_fetch_row($rr)) {
@@ -1726,22 +1738,22 @@ if ($cmd=="vm_host_new") {
 		}
 		echo "</select></td></tr>";
     		echo "<tr><td>IP</td><td><input name=ip></td></tr>";
-    		echo "<tr><td>ÔÚÓÃ</td><td>ÔÚÓÃ<input type=radio name=inuse value=1 checked>  ²»ÔÚÓÃ<input type=radio name=inuse value=0></td></tr>";
-    		echo "<tr><td>ÓÃÍ¾</td><td><input name=use></td></tr>";
-		echo "<tr><td>¿ªÊ¼Ê±¼ä</td><td><input name=st value=\"";
+    		echo "<tr><td>åœ¨ç”¨</td><td>åœ¨ç”¨<input type=radio name=inuse value=1 checked>  ä¸åœ¨ç”¨<input type=radio name=inuse value=0></td></tr>";
+    		echo "<tr><td>ç”¨é€”</td><td><input name=use></td></tr>";
+		echo "<tr><td>å¼€å§‹æ—¶é—´</td><td><input name=st value=\"";
 		echo strftime("%Y-%m-%d",time());
 		echo "\"></td></tr>";
-		echo "<tr><td>½áÊøÊ±¼ä</td><td><input name=et value=\"0000-00-00\"></td></tr>";
-		echo "<tr><td>ÁªÏµÈË</td><td>";
+		echo "<tr><td>ç»“æŸæ—¶é—´</td><td><input name=et value=\"0000-00-00\"></td></tr>";
+		echo "<tr><td>è”ç³»äºº</td><td>";
 		lxr_select("");
 		echo "</td></tr>";
 		echo "<tr><td>CPU</td><td><input name=cpu></td></tr>";	
 		echo "<tr><td>MEM</td><td><input name=mem></td></tr>";	
 		echo "<tr><td>DISK</td><td><input name=disk></td></tr>";	
 		echo "<tr><td>DISK2</td><td><input name=disk2></td></tr>";	
-    		echo "<tr><td>±¸×¢</td><td><input name=memo></td></tr>";
+    		echo "<tr><td>å¤‡æ³¨</td><td><input name=memo></td></tr>";
 		echo "</table>";
-		echo "<input type=submit value=ĞÂÔöVM¼ÇÂ¼>";
+		echo "<input type=submit value=æ–°å¢VMè®°å½•>";
 		echo "</form>";
 	}
 	exit(0);
@@ -1760,13 +1772,13 @@ if ($cmd=="vm") {
 	$q = "select * from vm_host order by $sortby";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><td>ĞòºÅ</td><td align=center><a href=index.php?cmd=vm&s=name>Ãû³Æ</a></td>";
-	echo "<td><a href=index.php?cmd=vm&s=inuse>ÔÚÓÃ</a></td>";
-	echo "<td align=center><a href=index.php?cmd=vm&s=cluster>¼¯Èº</a></td>";
+	echo "<tr><td>åºå·</td><td align=center><a href=index.php?cmd=vm&s=name>åç§°</a></td>";
+	echo "<td><a href=index.php?cmd=vm&s=inuse>åœ¨ç”¨</a></td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=cluster>é›†ç¾¤</a></td>";
 	echo "<td align=center><a href=index.php?cmd=vm&s=ip>IP</a></td>";
-	echo "<td align=center><a href=index.php?cmd=vm&s=use>ÓÃÍ¾</a></td><td align=center>¿ªÊ¼Ê±¼ä</td>";
-	echo "<td align=center><a href=index.php?cmd=vm&s=et>½áÊøÊ±¼ä</a></td>";
-	echo "<td align=center><a href=index.php?cmd=vm&s=lxr>ÁªÏµÈË</a></td><td>CPU</td><td>MEM</td><td>DISK</td><td>DISK2</td><td>±¸×¢</td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=use>ç”¨é€”</a></td><td align=center>å¼€å§‹æ—¶é—´</td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=et>ç»“æŸæ—¶é—´</a></td>";
+	echo "<td align=center><a href=index.php?cmd=vm&s=lxr>è”ç³»äºº</a></td><td>CPU</td><td>MEM</td><td>DISK</td><td>DISK2</td><td>å¤‡æ³¨</td>";
 	echo "</tr>";
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)){
@@ -1778,14 +1790,14 @@ if ($cmd=="vm") {
 			echo "<td align=center>$count</td>";
 		echo "<td>$r[1]</td>";
 		echo "<td>";
-		if ($r[2]=="1") echo "ÔÚÓÃ";
-		else echo "¹Ø»ú";
+		if ($r[2]=="1") echo "åœ¨ç”¨";
+		else echo "å…³æœº";
 		echo "</td>";
 		echo "<td>";
 		$q = "select * from vm_cluster where id='$r[3]'";
 		$r2 = mysql_fetch_row(mysql_query($q));
 		if ($r2) echo $r2[1]."/".$r2[2];
-		else echo $r[3]."Î´Öª¼¯ÈºID";
+		else echo $r[3]."æœªçŸ¥é›†ç¾¤ID";
 		echo "</td>";
 		echo "<td>$r[4]</td>"; // IP
 		echo "<td>$r[5]</td>"; // use
@@ -1843,18 +1855,18 @@ if ($cmd=="lxr_new") {
 	mysql_query($q);
 	$cmd = "lxr";
 } else if ($cmd=="lxr_add") {
-	echo "<p>ĞÂÔöÁªÏµÈË<p>";
+	echo "<p>æ–°å¢è”ç³»äºº<p>";
 	if (getuserright("lxr")>=2) {
 		echo "<p><form action=index.php method=post>";
 		echo "<input name=cmd value=lxr_new type=hidden>";
-    		echo "²¿ÃÅ: <input name=dept><br>";
-    		echo "ĞÕÃû: <input name=name><br>";
-    		echo "µç»°: <input name=dh><br>";
-    		echo "ÊÖ»ú: <input name=sj><br>";
-    		echo "ÓÊÏä: <input name=email><br>";
+    		echo "éƒ¨é—¨: <input name=dept><br>";
+    		echo "å§“å: <input name=name><br>";
+    		echo "ç”µè¯: <input name=dh><br>";
+    		echo "æ‰‹æœº: <input name=sj><br>";
+    		echo "é‚®ç®±: <input name=email><br>";
     		echo "QQ: <input name=qq><br>";
-    		echo "±¸×¢: <input name=memo><br>";
-		echo "<input type=submit value=ĞÂÔöÁªÏµÈË¼ÇÂ¼>";
+    		echo "å¤‡æ³¨: <input name=memo><br>";
+		echo "<input type=submit value=æ–°å¢è”ç³»äººè®°å½•>";
 		echo "</form>";
 	}
 	exit(0);
@@ -1864,23 +1876,23 @@ if ($cmd=="lxr_new") {
 		$q = "select * from lxr where id=".$id;
 		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
-		echo "ĞŞ¸Ä/ĞÂÔöÁªÏµÈË¼ÇÂ¼<br>";
+		echo "ä¿®æ”¹/æ–°å¢è”ç³»äººè®°å½•<br>";
 		echo "<form action=index.php method=post>";
 		echo "<input name=id value=$r[0] type=hidden>";
-		echo "²Ù×÷: ĞŞ¸Ä±¾Ìõ¼ÇÂ¼<input name=cmd value=lxr_modi_do type=radio checked>";
-		echo "&nbsp;&nbsp;&nbsp;ĞÂÔöÒ»Ìõ¼ÇÂ¼<input name=cmd value=lxr_new type=radio><br>";
-    		echo "²¿ÃÅ: <input name=dept value=\"$r[1]\"><br>";
-    		echo "ĞÕÃû: <input name=name value=\"$r[2]\"><br>";
-    		echo "µç»°: <input name=dh   value=\"$r[3]\"><br>";
-    		echo "ÊÖ»ú: <input name=sj   value=\"$r[4]\"><br>";
-    		echo "ÓÊÏä: <input name=email value=\"$r[5]\"><br>";
+		echo "æ“ä½œ: ä¿®æ”¹æœ¬æ¡è®°å½•<input name=cmd value=lxr_modi_do type=radio checked>";
+		echo "&nbsp;&nbsp;&nbsp;æ–°å¢ä¸€æ¡è®°å½•<input name=cmd value=lxr_new type=radio><br>";
+    		echo "éƒ¨é—¨: <input name=dept value=\"$r[1]\"><br>";
+    		echo "å§“å: <input name=name value=\"$r[2]\"><br>";
+    		echo "ç”µè¯: <input name=dh   value=\"$r[3]\"><br>";
+    		echo "æ‰‹æœº: <input name=sj   value=\"$r[4]\"><br>";
+    		echo "é‚®ç®±: <input name=email value=\"$r[5]\"><br>";
     		echo "QQ  : <input name=qq   value=\"$r[6]\"><br>";
-    		echo "±¸×¢: <input name=memo value=\"$r[7]\"><br>";
-    		echo "<input type=submit name=ĞŞ¸Ä/ĞÂÔö¼ÇÂ¼></form>";
+    		echo "å¤‡æ³¨: <input name=memo value=\"$r[7]\"><br>";
+    		echo "<input type=submit name=ä¿®æ”¹/æ–°å¢è®°å½•></form>";
 		changehist("select * from hist where oid = 'VMLXR$id' order by tm desc");
 		echo "<p>";
 		if (getuserright("lxr")>=3) 
-			echo "<a href=index.php?cmd=lxr_del&lxrid=$r[0] onclick=\"return confirm('É¾³ıÁªÏµÈË $r[1]/$r[2] ?');\">É¾³ıÁªÏµÈË£º $r[1]/$r[2]</a></td>";
+			echo "<a href=index.php?cmd=lxr_del&lxrid=$r[0] onclick=\"return confirm('åˆ é™¤è”ç³»äºº $r[1]/$r[2] ?');\">åˆ é™¤è”ç³»äººï¼š $r[1]/$r[2]</a></td>";
 	}
 	exit(0);
 } else if ($cmd=="lxr_detail") {
@@ -1890,14 +1902,14 @@ if ($cmd=="lxr_new") {
 		$q = "select * from lxr where id=".$id;
 		$r = mysql_fetch_row(mysql_query($q));
 		echo "<p>";
-		echo "ÁªÏµÈËÏêÏ¸ĞÅÏ¢<p>";
-    		echo "²¿ÃÅ: $r[1]<br>";
-    		echo "ĞÕÃû: $r[2]<br>";
-    		echo "µç»°: $r[3]<br>";
-    		echo "ÊÖ»ú: $r[4]<br>";
-    		echo "ÓÊÏä: $r[5]<br>";
+		echo "è”ç³»äººè¯¦ç»†ä¿¡æ¯<p>";
+    		echo "éƒ¨é—¨: $r[1]<br>";
+    		echo "å§“å: $r[2]<br>";
+    		echo "ç”µè¯: $r[3]<br>";
+    		echo "æ‰‹æœº: $r[4]<br>";
+    		echo "é‚®ç®±: $r[5]<br>";
     		echo "QQ  : $r[6]<br>";
-    		echo "±¸×¢: $r[7]<p>";
+    		echo "å¤‡æ³¨: $r[7]<p>";
 		changehist("select * from hist where oid = 'VMLXR$id' order by tm desc");
 		echo "<p>";
 	}
@@ -1908,7 +1920,7 @@ if ($cmd=="lxr") {
 	$q = "select * from lxr order by dept, name";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr><th>ĞòºÅ</th><th>²¿ÃÅ</th><th>ĞÕÃû</th><th>µç»°</th><th>ÊÖ»ú</th><th>email</th><th>QQ</th><th>±¸×¢</th>";
+	echo " <tr><th>åºå·</th><th>éƒ¨é—¨</th><th>å§“å</th><th>ç”µè¯</th><th>æ‰‹æœº</th><th>email</th><th>QQ</th><th>å¤‡æ³¨</th>";
 	echo "</tr>";
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)){
@@ -1964,9 +1976,9 @@ if ($cmd=="info_new") {
 	checkright("info",2);
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd value=info_new type=hidden>";
-	echo "±êÌâ:<input name=title size=75> <br>";
-	echo "ÄÚÈİ:<textarea name=memo cols=100 rows=40></textarea><br>";
-	echo " <input type=submit value=ĞÂÔö³£ÓÃĞÅÏ¢> </form>";
+	echo "æ ‡é¢˜:<input name=title size=75> <br>";
+	echo "å†…å®¹:<textarea name=memo cols=100 rows=40></textarea><br>";
+	echo " <input type=submit value=æ–°å¢å¸¸ç”¨ä¿¡æ¯> </form>";
  	exit(0);
 }
 if ($cmd=="info") { 
@@ -1974,7 +1986,7 @@ if ($cmd=="info") {
 	$q = "select id,title,left(memo,100) from info order by sortid,id";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo " <tr><th>ĞòºÅ</th><th>±êÌâ</th><th>ÄÚÈİÕªÒª</th><th>ÃüÁî</th></tr>";
+	echo " <tr><th>åºå·</th><th>æ ‡é¢˜</th><th>å†…å®¹æ‘˜è¦</th><th>å‘½ä»¤</th></tr>";
 
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)){
@@ -1984,10 +1996,10 @@ if ($cmd=="info") {
 		echo "<td><a class=\"info\" href=index.php?cmd=info_detail&id=$r[0]>$r[2]<a/></td>";
 		echo "<td>";
 		if (getuserright("info")>=2) 
-			echo "<a href=index.php?cmd=info_modi&id=$r[0]>ĞŞ¸Ä<a/> ";
+			echo "<a href=index.php?cmd=info_modi&id=$r[0]>ä¿®æ”¹<a/> ";
 		if (getuserright("info")>=3) {
-			echo "<a href=index.php?cmd=info_up&id=$r[0]>ÉÏÒÆ<a/> ";
-			echo "<a href=index.php?cmd=info_down&id=$r[0]>ÏÂÒÆ<a/> ";
+			echo "<a href=index.php?cmd=info_up&id=$r[0]>ä¸Šç§»<a/> ";
+			echo "<a href=index.php?cmd=info_down&id=$r[0]>ä¸‹ç§»<a/> ";
 		}
 		echo "</td>";
 		echo "</tr>\n";
@@ -2009,8 +2021,8 @@ if ($cmd=="info_detail") {
 	echo "<hr>";
         $q = "select * from file where infoid=$id";
         $rr = mysql_query($q);
-        echo "¸½¼şĞÅÏ¢<table>";
-        echo "<tr><th>ĞòºÅ</th><th>Ê±¼ä</th><th>ÎÄ¼şÃû</th><th>´óĞ¡</th><th>ÀàĞÍ</th><th>ÃüÁî</th></tr>\n";
+        echo "é™„ä»¶ä¿¡æ¯<table>";
+        echo "<tr><th>åºå·</th><th>æ—¶é—´</th><th>æ–‡ä»¶å</th><th>å¤§å°</th><th>ç±»å‹</th><th>å‘½ä»¤</th></tr>\n";
         $count = 0;
         while ($r=mysql_fetch_row($rr)) {
                 $count++;
@@ -2019,7 +2031,7 @@ if ($cmd=="info_detail") {
                 echo "<td>$r[2]</td>";
                 echo "<td>$r[3]</td>";
                 echo "<td>$r[4]</td>";
-                echo "<td><a href=index.php?cmd=file_down&id=$id&fid=$r[0] target=_blank>ÏÂÔØ</a></td>";
+                echo "<td><a href=index.php?cmd=file_down&id=$id&fid=$r[0] target=_blank>ä¸‹è½½</a></td>";
                 echo "</tr>\n";
         }
         echo "</table><p>";
@@ -2029,8 +2041,8 @@ if ($cmd=="info_detail") {
 if ($cmd=="file_upload") {
 	checkright("info",2);
 	if ($_FILES['userfile']['error']<>0) { 
-		echo "ÎÄ¼şÉÏÔØ´íÎó<p>";
-		echo "´íÎó´úÂë:".$_FILES['userfile']['error'];
+		echo "æ–‡ä»¶ä¸Šè½½é”™è¯¯<p>";
+		echo "é”™è¯¯ä»£ç :".$_FILES['userfile']['error'];
 		$cmd = "info_modi";
 	} else {
 		$infoid = safe_get("id");
@@ -2064,22 +2076,22 @@ if ($cmd=="info_modi") {
 	$id = safe_get("id");
 	$q = "select id,title,memo from info where id=$id";
 	$r = mysql_fetch_row(mysql_query($q));
-	echo "ĞŞ¸ÄĞÅÏ¢<br>";
+	echo "ä¿®æ”¹ä¿¡æ¯<br>";
 	echo "<form action=index.php method=post>";
 	echo "<input name=cmd value=info_modi_do type=hidden>";
 	echo "<input name=id value=$r[0] type=hidden>";
-    	echo "±êÌâ:<br><input name=title value=\"$r[1]\" size=75><p>";
-   	echo "ÄÚÈİ:<br><textarea name=memo cols=100 rows=40>";
+    	echo "æ ‡é¢˜:<br><input name=title value=\"$r[1]\" size=75><p>";
+   	echo "å†…å®¹:<br><textarea name=memo cols=100 rows=40>";
 	echo $r[2];
 	echo "</textarea><p>";
 	if (getuserright("info")>=3) 
-   		echo "<input type=submit value=ĞŞ¸Ä></form><p>";
+   		echo "<input type=submit value=ä¿®æ”¹></form><p>";
 	else echo "</form><p>";
 	echo "<hr>";
 	$q = "select * from file where infoid=".$id;
 	$rr = mysql_query($q);
-	echo "¸½¼şĞÅÏ¢<table>";
-	echo "<tr><th>ĞòºÅ</th><th>Ê±¼ä</th><th>ÎÄ¼şÃû</th><th>´óĞ¡</th><th>ÀàĞÍ</th><th>ÃüÁî</th></tr>\n";
+	echo "é™„ä»¶ä¿¡æ¯<table>";
+	echo "<tr><th>åºå·</th><th>æ—¶é—´</th><th>æ–‡ä»¶å</th><th>å¤§å°</th><th>ç±»å‹</th><th>å‘½ä»¤</th></tr>\n";
 	$count = 0;
 	while ($r=mysql_fetch_row($rr)) {
 		$count++;
@@ -2089,19 +2101,19 @@ if ($cmd=="info_modi") {
 		echo "<td>$r[3]</td>";
 		echo "<td>$r[4]</td>";
 		if (getuserright("info")>=3) 
-			echo "<td><a href=index.php?cmd=file_del&id=$id&fid=$r[0]>É¾³ı(ÒÆµ½»ØÊÕÕ¾)</a></td>";
+			echo "<td><a href=index.php?cmd=file_del&id=$id&fid=$r[0]>åˆ é™¤(ç§»åˆ°å›æ”¶ç«™)</a></td>";
 		else
 			echo "<td></td>";
 		echo "</tr>\n";
 	}
 	echo "</table><p>";
-	echo "ÉÏ´«¸½¼ş<br>";
+	echo "ä¸Šä¼ é™„ä»¶<br>";
 	echo "<form enctype=\"multipart/form-data\" action=\"index.php\" method=\"post\">";
 	echo "<input name=cmd value=file_upload type=hidden>";
 	echo "<input name=id value=".$id." type=hidden>";
-	echo "ÇëÑ¡ÔñÎÄ¼ş£º <br> ";
+	echo "è¯·é€‰æ‹©æ–‡ä»¶ï¼š <br> ";
 	echo "<input name=\"userfile\" type=\"file\"><br>";
-	echo "<input type=\"submit\" value=\"ÉÏ´«ÎÄ¼ş\">   ";
+	echo "<input type=\"submit\" value=\"ä¸Šä¼ æ–‡ä»¶\">   ";
 	echo "</form>   ";
 	exit(0);
 } // end cmd==info_detail
@@ -2125,7 +2137,7 @@ if ($cmd=="user_new") {
 	checkright("user",3);
 	$email = safe_get("email");
 	if ($email==$_SESSION["user"]) {
-		echo "<font color=red>²»ÄÜÉ¾³ı×Ô¼º</font><p>";
+		echo "<font color=red>ä¸èƒ½åˆ é™¤è‡ªå·±</font><p>";
 	} else {
 		$q = "delete from user where email='$email'";
 		mysql_query($q);
@@ -2145,15 +2157,15 @@ if ($cmd=="user_new") {
 } else if ($cmd=="user_add") {
 	checkright("user",2);
 ?>
-<p>ĞÂÔöÓÃ»§<p>
-µÇÂ¼Ê±£¬ÀûÓÃµÇÂ¼ÃûºÍÃÜÂëÁ¬½Óµ½POP3ÓÊ¼ş·şÎñÆ÷ÉÏÑéÖ¤ÓÃ»§Éí·İ<br>
+<p>æ–°å¢ç”¨æˆ·<p>
+ç™»å½•æ—¶ï¼Œåˆ©ç”¨ç™»å½•åå’Œå¯†ç è¿æ¥åˆ°POP3é‚®ä»¶æœåŠ¡å™¨ä¸ŠéªŒè¯ç”¨æˆ·èº«ä»½<br>
 <form action=index.php method=get>
 <input name=cmd value=user_new type=hidden>
-ÓÃ»§ÓÊ¼şµÇÂ¼Ãû£º<input name=email><br>
-POP3ÓÊ¼ş·şÎñÆ÷£º<input name=pop3server><br>
-ÓÃ»§ĞÕÃû: <input name=fullname><br>
-ÊÇ·ñ³¬¼¶¹ÜÀíÔ±£º<input name=super type=checkbox value=1><p>
-<input type=submit value=ĞÂÔöÓÃ»§>
+ç”¨æˆ·é‚®ä»¶ç™»å½•åï¼š<input name=email><br>
+POP3é‚®ä»¶æœåŠ¡å™¨ï¼š<input name=pop3server><br>
+ç”¨æˆ·å§“å: <input name=fullname><br>
+æ˜¯å¦è¶…çº§ç®¡ç†å‘˜ï¼š<input name=super type=checkbox value=1><p>
+<input type=submit value=æ–°å¢ç”¨æˆ·>
 </form>
 <?php 
 	exit(0);
@@ -2163,22 +2175,22 @@ POP3ÓÊ¼ş·şÎñÆ÷£º<input name=pop3server><br>
 	$q = "select email,pop3server,truename,isadmin from user where email='$email'";
 	$r = mysql_fetch_row(mysql_query($q));
 ?>
-<p>ĞŞ¸ÄÓÃ»§<p>
-µÇÂ¼Ê±£¬ÀûÓÃµÇÂ¼ÃûºÍÃÜÂëÁ¬½Óµ½POP3ÓÊ¼ş·şÎñÆ÷ÉÏÑéÖ¤ÓÃ»§Éí·İ<br>
+<p>ä¿®æ”¹ç”¨æˆ·<p>
+ç™»å½•æ—¶ï¼Œåˆ©ç”¨ç™»å½•åå’Œå¯†ç è¿æ¥åˆ°POP3é‚®ä»¶æœåŠ¡å™¨ä¸ŠéªŒè¯ç”¨æˆ·èº«ä»½<br>
 <form action=index.php method=get>
 <input name=cmd value=user_new type=hidden>
-ÓÃ»§ÓÊ¼şµÇÂ¼Ãû£º<input name=email value="<?php echo $r[0]; ?>"><br>
-POP3ÓÊ¼ş·şÎñÆ÷£º<input name=pop3server value="<?php echo $r[1]; ?>"><br>
-ÓÃ»§ĞÕÃû: <input name=fullname value="<?php echo $r[2]; ?>"><br>
-ÊÇ·ñ³¬¼¶¹ÜÀíÔ±£º<input name=super type=checkbox value=1 <?php if($r[3]=="1") echo "checked"; ?>><p>
-<input type=submit value=ĞŞ¸ÄÓÃ»§>
+ç”¨æˆ·é‚®ä»¶ç™»å½•åï¼š<input name=email value="<?php echo $r[0]; ?>"><br>
+POP3é‚®ä»¶æœåŠ¡å™¨ï¼š<input name=pop3server value="<?php echo $r[1]; ?>"><br>
+ç”¨æˆ·å§“å: <input name=fullname value="<?php echo $r[2]; ?>"><br>
+æ˜¯å¦è¶…çº§ç®¡ç†å‘˜ï¼š<input name=super type=checkbox value=1 <?php if($r[3]=="1") echo "checked"; ?>><p>
+<input type=submit value=ä¿®æ”¹ç”¨æˆ·>
 </form>
 
 <hr width=500 align=left>
-ĞŞ¸ÄÓÃ»§È¨ÏŞ<p>
+ä¿®æ”¹ç”¨æˆ·æƒé™<p>
 <form action=index.php method=get>
 <input name=cmd value=user_right type=hidden>
-ÓÃ»§µÇÂ¼Ãû£º<select name=user>
+ç”¨æˆ·ç™»å½•åï¼š<select name=user>
 <?php
 	$q = "select email from user";
 	$rr = mysql_query($q);
@@ -2187,7 +2199,7 @@ POP3ÓÊ¼ş·şÎñÆ÷£º<input name=pop3server value="<?php echo $r[1]; ?>"><br>
 	}
 ?>
 </select>
-Ä£¿é: <select name=module>
+æ¨¡å—: <select name=module>
 <?php
 	$q = "select module,memo from module order by id";
 	$rr = mysql_query($q);
@@ -2196,12 +2208,12 @@ POP3ÓÊ¼ş·şÎñÆ÷£º<input name=pop3server value="<?php echo $r[1]; ?>"><br>
 	}
 ?>
 </select><br>
-È¨ÏŞ£º<br>
-<input name=right type=radio value=0 checked>ÎŞ<br>
-<input name=right type=radio value=1>Ö»¶Á<br>
-<input name=right type=radio value=2>ĞÂÔö<br>
-<input name=right type=radio value=3>ËùÓĞ<p>
-<input type=submit value=ĞŞ¸ÄÓÃ»§È¨ÏŞ>
+æƒé™ï¼š<br>
+<input name=right type=radio value=0 checked>æ— <br>
+<input name=right type=radio value=1>åªè¯»<br>
+<input name=right type=radio value=2>æ–°å¢<br>
+<input name=right type=radio value=3>æ‰€æœ‰<p>
+<input type=submit value=ä¿®æ”¹ç”¨æˆ·æƒé™>
 </form>
 <?php
 	exit(0);
@@ -2212,9 +2224,9 @@ if ($cmd=="user") {
 	$rr = mysql_query($q);
 	$count = 0;
 	echo "<p><table border=1 cellspacing=0>";
-	echo "<tr><th>ĞòºÅ</th><th>µÇÂ¼Ãû</th><th>POP3·şÎñÆ÷</th><th>È«Ãû</th><th>³¬¼¶¹ÜÀíÔ±</th><th>·ÖÄ£¿éÈ¨ÏŞ</th>";
+	echo "<tr><th>åºå·</th><th>ç™»å½•å</th><th>POP3æœåŠ¡å™¨</th><th>å…¨å</th><th>è¶…çº§ç®¡ç†å‘˜</th><th>åˆ†æ¨¡å—æƒé™</th>";
 	if (getuserright("user")>=3) 
-		echo "<th>ÃüÁî</th>";
+		echo "<th>å‘½ä»¤</th>";
 	echo "</tr>\n";
 	while ($r=mysql_fetch_row($rr)) {
 		$count++;
@@ -2224,8 +2236,8 @@ if ($cmd=="user") {
 		echo "<td>$r[3]</td>";
 		echo "<td align=center>";
 		if($r[2]=="0")
-			echo "·ñ";
-		else echo "<font color=red>ÊÇ</font>";
+			echo "å¦";
+		else echo "<font color=red>æ˜¯</font>";
 		echo "</td>";
 		echo "<td>";
 		$q = "select module.module,module.memo,userright.right from userright,module where userright.module =module.module and userright.user='$r[0]' order by module.id";
@@ -2237,9 +2249,9 @@ if ($cmd=="user") {
 			echo "<td width=30%>$r2[0]</td>";
 			echo "<td width=50%>$r2[1]</td>";
 			echo "<td width=20%>";
-			if($r2[2]=="1") echo "Ö»¶Á";
-			else if($r2[2]=="2") echo "ĞÂÔö";
-			else if($r2[2]=="3") echo "ËùÓĞ";
+			if($r2[2]=="1") echo "åªè¯»";
+			else if($r2[2]=="2") echo "æ–°å¢";
+			else if($r2[2]=="3") echo "æ‰€æœ‰";
 			echo "</td>";
 			echo "</tr>\n";
 		}
@@ -2247,8 +2259,8 @@ if ($cmd=="user") {
 		echo "</td>\n";
 		if (getuserright("user")>=3)  {
 			echo "<td>";
-			echo "<a href=index.php?cmd=user_modi&email=$r[0]>ĞŞ¸Ä</a> &nbsp;&nbsp;";
-			echo "<a href=index.php?cmd=user_del&email=$r[0] onclick=\"return confirm('È·ĞÅÉ¾³ı $r[0] ?');\">É¾³ı</a>";
+			echo "<a href=index.php?cmd=user_modi&email=$r[0]>ä¿®æ”¹</a> &nbsp;&nbsp;";
+			echo "<a href=index.php?cmd=user_del&email=$r[0] onclick=\"return confirm('ç¡®ä¿¡åˆ é™¤ $r[0] ?');\">åˆ é™¤</a>";
 			echo "</td>";
 		}
 		echo "</tr>";
@@ -2294,11 +2306,11 @@ if ($cmd=="ticket_system_new") {
 	$q = "select id, `desc` from ticket_system where id=$id";
 	$r = mysql_fetch_row(mysql_query($q));
 	echo "<p><form action=index.php method=get>";
-	echo "ĞŞ¸Ä¹ÊÕÏÏà¹ØÏµÍ³: <p>";
+	echo "ä¿®æ”¹æ•…éšœç›¸å…³ç³»ç»Ÿ: <p>";
 	echo "<input name=cmd value=ticket_system_modi_do type=hidden>";
 	echo "<input name=id value=\"$r[0]\" type=hidden>";
-	echo "ÏµÍ³£º<input name=desc value=\"$r[1]\"><p>";
-	echo "<input type=submit value=ĞŞ¸ÄÏµÍ³ĞÅÏ¢>";
+	echo "ç³»ç»Ÿï¼š<input name=desc value=\"$r[1]\"><p>";
+	echo "<input type=submit value=ä¿®æ”¹ç³»ç»Ÿä¿¡æ¯>";
 	exit(0);
 }
 if ($cmd=="ticket_reason_new") {
@@ -2336,11 +2348,11 @@ if ($cmd=="ticket_reason_new") {
 	$q = "select id, `desc` from ticket_reason where id=$id";
 	$r = mysql_fetch_row(mysql_query($q));
 	echo "<p><form action=index.php method=get>";
-	echo "ĞŞ¸Ä¹ÊÕÏÀàĞÍ: <p>";
+	echo "ä¿®æ”¹æ•…éšœç±»å‹: <p>";
 	echo "<input name=cmd value=ticket_reason_modi_do type=hidden>";
 	echo "<input name=id value=\"$r[0]\" type=hidden>";
-	echo "ÏµÍ³£º<input name=desc value=\"$r[1]\"><p>";
-	echo "<input type=submit value=ĞŞ¸Ä¹ÊÕÏÀàĞÍ>";
+	echo "ç³»ç»Ÿï¼š<input name=desc value=\"$r[1]\"><p>";
+	echo "<input type=submit value=ä¿®æ”¹æ•…éšœç±»å‹>";
 	exit(0);
 }
 if ($cmd=="sysinfo_modi") {
@@ -2364,34 +2376,34 @@ if($cmd=="sysinfo") {
 	$displayopip = getdisplayopip();
 	echo $displayopip;
 ?>
-ÏµÍ³ĞÅÏ¢ÉèÖÃ<p>
+ç³»ç»Ÿä¿¡æ¯è®¾ç½®<p>
 <form action=index.php method=get>
 <input name=cmd value=sysinfo_modi type=hidden>
-ÏµÍ³°æ±¾£º<input name=version value="<?php echo $sysversion;?>"><br>
-ÍøÒ³±êÌâ£º<input name=title value="<?php echo $systitle;?>"><br>
-ÁªÏµĞÅÏ¢£º<input name=lxr value="<?php echo $syslxr;?>"><p>
-¼ÇÂ¼¹ÜÀíÔ±IP: 
-<input type=radio name=displayopip value=0<?php if($displayopip=="0") echo " checked";?>>·ñ</input>
-<input type=radio name=displayopip value=1<?php if($displayopip=="1") echo " checked";?>>ÊÇ</input><p>
+ç³»ç»Ÿç‰ˆæœ¬ï¼š<input name=version value="<?php echo $sysversion;?>"><br>
+ç½‘é¡µæ ‡é¢˜ï¼š<input name=title value="<?php echo $systitle;?>"><br>
+è”ç³»ä¿¡æ¯ï¼š<input name=lxr value="<?php echo $syslxr;?>"><p>
+è®°å½•ç®¡ç†å‘˜IP: 
+<input type=radio name=displayopip value=0<?php if($displayopip=="0") echo " checked";?>>å¦</input>
+<input type=radio name=displayopip value=1<?php if($displayopip=="1") echo " checked";?>>æ˜¯</input><p>
 
 <?php 	if (getuserright("sysinfo")>=3) 
-		echo "<input type=submit value=ĞŞ¸ÄÏµÍ³ĞÅÏ¢>";
+		echo "<input type=submit value=ä¿®æ”¹ç³»ç»Ÿä¿¡æ¯>";
 	echo "</form>";
 
-	echo "<hr width=400 align=left>¹ÊÕÏ´¦ÀíÖĞ²ÎÊıÉèÖÃ<p>";
+	echo "<hr width=400 align=left>æ•…éšœå¤„ç†ä¸­å‚æ•°è®¾ç½®<p>";
 	echo "<p><form action=index.php method=get>";
-	echo "Ïà¹ØÏµÍ³: ";
+	echo "ç›¸å…³ç³»ç»Ÿ: ";
 	echo "<input name=cmd value=ticket_system_new type=hidden>";
 	echo "<input name=desc>";
  	if(getuserright("sysinfo")>=3) 
-		echo "<input type=submit value=ĞÂÔöÏµÍ³>";
+		echo "<input type=submit value=æ–°å¢ç³»ç»Ÿ>";
 	$q = "select id, `desc` from ticket_system order by sortid,id";
 	echo "</form>";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><th>ĞòºÅ</th><th>ÏµÍ³</th>";
+	echo "<tr><th>åºå·</th><th>ç³»ç»Ÿ</th>";
 	if (getuserright("sysinfo")>=3)
-		echo "<th>ÃüÁî</th>";
+		echo "<th>å‘½ä»¤</th>";
 	echo "</tr>\n";
 
 	$count = 0;
@@ -2401,10 +2413,10 @@ if($cmd=="sysinfo") {
 		echo "<td>$r[1]</td>";
 		if (getuserright("sysinfo")>=3) {
 			echo "<td>&nbsp;";
-			echo "<a href=index.php?cmd=ticket_system_del&id=$r[0] onclick=\"return confirm('É¾³ı $r[1] ?');\">É¾³ı<a/> ";
-			echo "<a href=index.php?cmd=ticket_system_modi&id=$r[0]>ĞŞ¸Ä<a/> ";
-			echo "<a href=index.php?cmd=ticket_system_up&id=$r[0]>ÉÏÒÆ<a/> ";
-			echo "<a href=index.php?cmd=ticket_system_down&id=$r[0]>ÏÂÒÆ<a/> ";
+			echo "<a href=index.php?cmd=ticket_system_del&id=$r[0] onclick=\"return confirm('åˆ é™¤ $r[1] ?');\">åˆ é™¤<a/> ";
+			echo "<a href=index.php?cmd=ticket_system_modi&id=$r[0]>ä¿®æ”¹<a/> ";
+			echo "<a href=index.php?cmd=ticket_system_up&id=$r[0]>ä¸Šç§»<a/> ";
+			echo "<a href=index.php?cmd=ticket_system_down&id=$r[0]>ä¸‹ç§»<a/> ";
 			echo "&nbsp;</td>";
 		}
 		echo "</tr>\n";
@@ -2413,18 +2425,18 @@ if($cmd=="sysinfo") {
 
 
 	echo "<p><form action=index.php method=get>";
-	echo "¹ÊÕÏÀàĞÍ: ";
+	echo "æ•…éšœç±»å‹: ";
 	echo "<input name=cmd value=ticket_reason_new type=hidden>";
 	echo "<input name=desc>";
  	if (getuserright("sysinfo")>=3) 
-		echo "<input type=submit value=ĞÂÔöÀàĞÍ>";
+		echo "<input type=submit value=æ–°å¢ç±»å‹>";
 	echo "</form>";
 	$q = "select id, `desc` from ticket_reason order by sortid,id";
 	$rr = mysql_query($q);
 	echo "<table border=1 cellspacing=0>";
-	echo "<tr><th>ĞòºÅ</th><th>ÀàĞÍ</th>";
+	echo "<tr><th>åºå·</th><th>ç±»å‹</th>";
 	if (getuserright("sysinfo")>=3)
-		echo "<th>ÃüÁî</th>";
+		echo "<th>å‘½ä»¤</th>";
 	echo "</tr>\n";
 
 	$count = 0;
@@ -2434,10 +2446,10 @@ if($cmd=="sysinfo") {
 		echo "<td>$r[1]</td>";
 		if (getuserright("sysinfo")>=3) {
 			echo "<td>&nbsp;";
-			echo "<a href=index.php?cmd=ticket_reason_del&id=$r[0] onclick=\"return confirm('É¾³ı $r[1] ?');\">É¾³ı<a/> ";
-			echo "<a href=index.php?cmd=ticket_reason_modi&id=$r[0]>ĞŞ¸Ä<a/> ";
-			echo "<a href=index.php?cmd=ticket_reason_up&id=$r[0]>ÉÏÒÆ<a/> ";
-			echo "<a href=index.php?cmd=ticket_reason_down&id=$r[0]>ÏÂÒÆ<a/> ";
+			echo "<a href=index.php?cmd=ticket_reason_del&id=$r[0] onclick=\"return confirm('åˆ é™¤ $r[1] ?');\">åˆ é™¤<a/> ";
+			echo "<a href=index.php?cmd=ticket_reason_modi&id=$r[0]>ä¿®æ”¹<a/> ";
+			echo "<a href=index.php?cmd=ticket_reason_up&id=$r[0]>ä¸Šç§»<a/> ";
+			echo "<a href=index.php?cmd=ticket_reason_down&id=$r[0]>ä¸‹ç§»<a/> ";
 			echo "&nbsp;</td>";
 		}
 		echo "</tr>\n";
@@ -2465,16 +2477,16 @@ if ($cmd=="user_pref") {
 	echo " From: ";
 	echo  $_SERVER["REMOTE_ADDR"]; 
 	echo "<p>";
-	echo "¸öÈËÆ«ºÃÉèÖÃ<p>";
+	echo "ä¸ªäººåå¥½è®¾ç½®<p>";
 	$tdm = getticketdisplaymode();
 ?>
 
 <form action=index.php method=get>
 <input name=cmd value=user_pref_tdm type=hidden>
-¹ÊÕÏ´¦ÀíÏÔÊ¾Ä£Ê½: 
-<input type=radio name=tdm value=0<?php if($tdm=="0") echo " checked";?>>ÊÊºÏ¿íÆÁ</input>
-<input type=radio name=tdm value=1<?php if($tdm=="1") echo " checked";?>>ÊÊºÏÕ­ÆÁ</input>
-<input type=submit value=ĞŞ¸Ä¹ÊÕÏ´¦ÀíÏÔÊ¾Ä£Ê½>  <p>
+æ•…éšœå¤„ç†æ˜¾ç¤ºæ¨¡å¼: 
+<input type=radio name=tdm value=0<?php if($tdm=="0") echo " checked";?>>é€‚åˆå®½å±</input>
+<input type=radio name=tdm value=1<?php if($tdm=="1") echo " checked";?>>é€‚åˆçª„å±</input>
+<input type=submit value=ä¿®æ”¹æ•…éšœå¤„ç†æ˜¾ç¤ºæ¨¡å¼>  <p>
 
 <?php
 	exit(0);
